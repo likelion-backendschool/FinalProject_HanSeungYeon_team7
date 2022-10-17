@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>아이디 확인</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-join flex-grow flex flex-col items-center justify-center">
+
+        <div class="max-w-md w-full px-2 pt-4">
+            <h1 class="font-bold text-lg">아이디 확인</h1>
+
+            <div class="flex flex-col gap-3">
+                <div class="form-control">
+                    <span th:if="${member != null}" class="input input-bordered" style="display: flex; align-items: center"
+                          th:text="|해당 계정의 아이디는 ${member.username} 입니다.|"></span>
+                    <span th:if="${member == null}" class="input input-bordered" style="display: flex; align-items: center"
+                          th:text="|해당 이메일을 가진 회원은 존재하지않습니다.|"></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 mt-2 gap-2">
+                <a href="/member/join" class="btn btn-primary">로그인</a>
+            </div>
+
+            <ul class="flex my-2" style="justify-content: center">
+                <li class="mx-2" style="color: #888888">
+                    <a href="/member/findUsername" >아이디 찾기</a>
+                </li>
+                <li class="mx-2" style="color: #888888">
+                    <a href="/member/findPassword" >비밀번호 찾기</a>
+                </li>
+            </ul>
+        </div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

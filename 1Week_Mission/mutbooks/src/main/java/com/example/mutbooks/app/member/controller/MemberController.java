@@ -86,7 +86,18 @@ public class MemberController {
     // 아이디 찾기 폼
     @PreAuthorize("isAnonymous")
     @GetMapping("/findUsername")
-    public String findUsername() {
+    public String showFindUsername() {
         return "member/find_username";
+    }
+
+    // 이메일로 아이디 찾기
+    @PreAuthorize("isAnonymous()")
+    @PostMapping("/findUsername")
+    public String findUsername(@Valid String email, Model model) {
+        Member member = memberService.findByEmail(email);
+
+        model.addAttribute("member", member);
+
+        return "member/confirm_username";
     }
 }

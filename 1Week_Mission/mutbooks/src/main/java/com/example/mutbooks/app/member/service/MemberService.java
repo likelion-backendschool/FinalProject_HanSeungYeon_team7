@@ -52,4 +52,9 @@ public class MemberService {
 
         memberRepository.save(member);
     }
+
+    // 이메일로 아이디 조회
+    public Member findByEmail(String email) {
+        return memberRepository.findByEmail(email).orElse(null);
+    }
 }
