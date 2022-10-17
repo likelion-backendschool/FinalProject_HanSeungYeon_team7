@@ -34,4 +34,9 @@ public class Member extends BaseEntity {
     public boolean isWriter() {
         return isGeneral() == false;
     }
+
+    // 관리자 회원 여부
+    public boolean isAdmin() {
+        return authLevel.equals(7);
+    }
 }
