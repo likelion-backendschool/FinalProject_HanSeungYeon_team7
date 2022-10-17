@@ -82,4 +82,11 @@ public class MemberController {
         // TODO: 회원 정보 조회 페이지로 리다이렉트
         return "redirect:/";
     }
+
+    // 아이디 찾기 폼
+    @PreAuthorize("isAnonymous")
+    @GetMapping("/findUsername")
+    public String findUsername() {
+        return "member/find_username";
+    }
 }
