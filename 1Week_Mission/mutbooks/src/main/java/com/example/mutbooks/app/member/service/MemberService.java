@@ -1,5 +1,6 @@
 package com.example.mutbooks.app.member.service;
 
+import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     @Transactional
     public Member join(JoinForm joinForm) {
@@ -35,6 +37,7 @@ public class MemberService {
         memberRepository.save(member);
 
         // TODO : 가입 축하 이메일 전송
+        mailService.sendMail(member.getUsername(), member.getEmail());
 
         return member;
     }
