@@ -21,6 +21,7 @@ public class Member extends BaseEntity {
     @JsonIgnore
     private String password;
     private String nickname;
+    @Column(unique = true)
     private String email;
     private Integer authLevel;  // 권한레벨(3 = 일반, 7 = 관리자)
 }
