@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>회원정보 수정</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-join flex-grow flex flex-col items-center justify-center">
+
+        <div class="max-w-md w-full px-2 pt-4">
+            <h1 class="font-bold text-lg">회원정보 수정</h1>
+
+            <script>
+                let MemberJoin__submitDone = false;
+
+                function MemberJoin__submit(form) {
+                    if (MemberJoin__submitDone) {
+                        return;
+                    }
+
+                    form.email.value = form.email.value.trim();
+
+                    if (form.email.value.length == 0) {
+                        warningModal("이메일을 입력해주세요.");
+                        form.email.focus();
+
+                        return;
+                    }
+
+                    form.submit();
+                    MemberJoin__submitDone = true;
+                }
+            </script>
+
+
+            <form th:action method="POST" class="flex flex-col gap-3"
+                  onsubmit="MemberJoin__submit(this); return false;">
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">이메일(필수)</span>
+                    </label>
+                    <input type="email" name="email" placeholder="이메일" class="input input-bordered" maxlength="50"
+                    th:value="${member.email}">
+                </div>
+
+<!--                작가명-->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">작가명(선택)</span>
+                    </label>
+                    <input type="text" name="nickname" placeholder="작가명" class="input input-bordered" maxlength="50"
+                    th:value="${member.nickname}">
+                    <span class="label-text mt-2">*작가명을 입력하지 않으면 일반 회원으로 전환됩니다.</span>
+                </div>
+
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <input class="btn btn-primary" type="submit" value="수정 완료">
+                </div>
+            </form>
+        </div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>
