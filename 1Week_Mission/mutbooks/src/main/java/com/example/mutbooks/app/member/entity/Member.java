@@ -24,4 +24,14 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String email;
     private Integer authLevel;  // 권한레벨(3 = 일반, 7 = 관리자)
+
+    // 일반 회원 여부
+    public boolean isGeneral() {
+        return nickname.isEmpty();
+    }
+
+    // 작가 회원 여부
+    public boolean isWriter() {
+        return isGeneral() == false;
+    }
 }
