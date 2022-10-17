@@ -3,6 +3,7 @@ package com.example.mutbooks.app.member.controller;
 import com.example.mutbooks.app.base.security.dto.MemberContext;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
+import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,5 +59,16 @@ public class MemberController {
         model.addAttribute("member", member);
 
         return "member/modify";
+    }
+
+    // 회원정보 수정
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify")
+    public String modify(@AuthenticationPrincipal MemberContext memberContext, @Valid ModifyForm modifyForm) {
+        Long memberId = memberContext.getId();
+        memberService.modify(memberId, modifyForm);
+
+        // TODO: 회원 정보 조회 페이지로 리다이렉트
+        return "redirect:/";
     }
 }

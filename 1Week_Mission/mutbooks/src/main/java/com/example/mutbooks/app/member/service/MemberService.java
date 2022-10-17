@@ -2,6 +2,7 @@ package com.example.mutbooks.app.member.service;
 
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
+import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,5 +37,19 @@ public class MemberService {
         // TODO : 가입 축하 이메일 전송
 
         return member;
+    }
+
+    @Transactional
+    public void modify(Long memberId, ModifyForm modifyForm) {
+        // TODO : 예외 처리
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new RuntimeException()
+        );
+
+        // TODO : 원래 작가 회원인 경우, 닉네임 삭제는 불가하도록 수정(글 작성자 이름 표시 문제때문)
+        member.setEmail(modifyForm.getEmail());
+        member.setNickname(modifyForm.getNickname());
+
+        memberRepository.save(member);
     }
 }
