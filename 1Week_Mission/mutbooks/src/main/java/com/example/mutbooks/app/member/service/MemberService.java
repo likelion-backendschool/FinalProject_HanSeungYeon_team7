@@ -40,7 +40,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void modify(Long memberId, ModifyForm modifyForm) {
+    public void modifyProfile(Long memberId, ModifyForm modifyForm) {
         // TODO : 예외 처리
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new RuntimeException()

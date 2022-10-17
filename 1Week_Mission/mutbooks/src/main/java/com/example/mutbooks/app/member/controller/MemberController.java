@@ -61,12 +61,23 @@ public class MemberController {
         return "member/modify";
     }
 
+    // 회원정보 조회
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/profile")
+    public String showProfile(@AuthenticationPrincipal MemberContext memberContext, Model model) {
+        Member member = memberContext.getMember();
+
+        model.addAttribute("member", member);
+
+        return "member/profile";
+    }
+
     // 회원정보 수정
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify")
-    public String modify(@AuthenticationPrincipal MemberContext memberContext, @Valid ModifyForm modifyForm) {
+    public String modifyProfile(@AuthenticationPrincipal MemberContext memberContext, @Valid ModifyForm modifyForm) {
         Long memberId = memberContext.getId();
-        memberService.modify(memberId, modifyForm);
+        memberService.modifyProfile(memberId, modifyForm);
 
         // TODO: 회원 정보 조회 페이지로 리다이렉트
         return "redirect:/";
