@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: dev
+    include:
+      - base-addi
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+logging:
+  level:
+    root: info
+    com.ll.exam.app__2022_10_11.app: debug
+    org.hibernate.type.descriptor.sql: trace
+custom:
+  site:
+    name: MUTBooks
+    baseUrl: "http://localhost:8010"
