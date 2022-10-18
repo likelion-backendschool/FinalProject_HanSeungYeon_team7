@@ -24,7 +24,12 @@
                     <label class="label">
                         <span class="label-text">내용</span>
                     </label>
-                    <div class="textarea textarea-bordered min-h-[500px] h-[calc(100vh-400px)]" th:utext="${post.content}"></div>
+<!--                    <div class="toast-ui-viewer">-->
+<!--                        <script type="text/x-template">-->
+<!--                            ${post.content}-->
+<!--                        </script>-->
+<!--                    </div>-->
+                    <div class="textarea textarea-bordered min-h-[500px] h-[calc(100vh-400px)]" th:utext="${post.contentHtml}"></div>
                 </div>
 
                 <div class="grid grid-cols-2 mt-2 gap-2">
