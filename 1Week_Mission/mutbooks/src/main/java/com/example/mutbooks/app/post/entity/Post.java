@@ -3,12 +3,16 @@ package com.example.mutbooks.app.post.entity;
 import com.example.mutbooks.app.base.entity.BaseEntity;
 import com.example.mutbooks.app.hashTag.entity.PostHashTag;
 import com.example.mutbooks.app.member.entity.Member;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -27,16 +31,16 @@ public class Post extends BaseEntity {
     private List<PostHashTag> hashTags = new ArrayList<>();
 
     // 해당 게시글의 해시태그들을 한 문장으로 반환
-//    public String getHashTagString() {
-//        if(hashTags.isEmpty()) {
-//            return "";
-//        }
-//
-//        return "#" + hashTags
-//                .stream()
-//                .map(hashTag -> hashTag.getPostKeyword().getContent())
-//                .sorted()
-//                .collect(Collectors.joining(" #"))
-//                .trim();
-//    }
+    public String getHashTagString() {
+        if(hashTags.isEmpty()) {
+            return "";
+        }
+
+        return "#" + hashTags
+                .stream()
+                .map(hashTag -> hashTag.getPostKeyword().getContent())
+                .sorted()
+                .collect(Collectors.joining(" #"))
+                .trim();
+    }
 }

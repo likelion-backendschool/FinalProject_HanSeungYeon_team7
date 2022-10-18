@@ -56,6 +56,12 @@ public class PostService {
         post.setContent(writeForm.getContent());
         post.setContentHtml(writeForm.getContentHtml());
 
+        // 해시태그 적용
+        String keywords = writeForm.getKeywords();
+        if(keywords != null) {
+            hashTagService.apply(post, keywords);
+        }
+
         postRepository.save(post);
     }
 

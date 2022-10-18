@@ -8,6 +8,7 @@ import com.example.mutbooks.app.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,12 +21,32 @@ public class HashTagService {
 
     // 게시글에 해시태그 반영
     public void apply(Post post, String keywords) {
-        // 해시태그의 키워드 리스트
+        // 1. 기존 해시태그 가져오기
+        List<PostHashTag> oldHashTags = findByPostId(post.getId());
+
+        // 2. 새로운 해시태그 키워드 리스트
         List<String> keywordContents = Arrays.stream(keywords.split("#"))
                 .map(String::trim)
                 .filter(s -> s.length() > 0)
                 .collect(Collectors.toList());
 
+        // 3. 삭제할 해시태그 구하기(기존 해시태그 리스트에서 새로운 해시태그 리스트에 없는 것)
+        List<PostHashTag> deleteHashTags = new ArrayList<>();
+        for(PostHashTag oldHashTag : oldHashTags) {
+            // 기존에 등록된 해시태그가 새롭게 등록된 해시태그에 포함되었는지 여부
+            boolean contains = keywordContents.stream().anyMatch(s -> s.equals(oldHashTag.getPostKeyword().getContent()));
+
+            if(!contains) {
+                deleteHashTags.add(oldHashTag);
+            }
+        }
+
+        // 4. 3번에서 구한 해시태그 삭제
+        deleteHashTags.forEach(hashTag -> {
+            hashTagRepository.delete(hashTag);
+        });
+
+        // 5. 나머지 해시태그는 저장
         keywordContents.forEach(keywordContent -> {
             save(post, keywordContent);
         });
