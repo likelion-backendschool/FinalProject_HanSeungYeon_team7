@@ -29,12 +29,13 @@ class PostServiceTest {
     void t1() {
         Member author = memberRepository.findByUsername("user2").orElse(null);
 
-        Post post = postService.write(author, new WriteForm("제목", "마크다운 원문 내용", null));
+        Post post = postService.write(author, new WriteForm("제목", "안녕하세요1", "<ul><li><p>안녕하세요1</p></li></ul>", null));
 
         assertThat(post).isNotNull();
         assertThat(post.getAuthor().getUsername()).isEqualTo("user2");
         assertThat(post.getSubject()).isEqualTo("제목");
-        assertThat(post.getContent()).isEqualTo("마크다운 원문 내용");
+        assertThat(post.getContent()).isEqualTo("안녕하세요1");
+        assertThat(post.getContentHtml()).isEqualTo("<ul><li><p>안녕하세요1</p></li></ul>");
     }
 
     @Test
@@ -43,7 +44,7 @@ class PostServiceTest {
         Member author = memberRepository.findByUsername("user2").orElse(null);
 
         Post post = postService.findById(1);
-        postService.modify(post, new WriteForm("new 제목", "new 마크다운 원문 내용", null));
+        postService.modify(post, new WriteForm("new 제목", "new 마크다운 원문 내용", null, null));
 
         assertThat(post).isNotNull();
         assertThat(post.getSubject()).isEqualTo("new 제목");
