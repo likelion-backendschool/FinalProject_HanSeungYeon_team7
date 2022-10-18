@@ -1,4 +1,4 @@
-package com.example.mutbooks.hashTag.entity;
+package com.example.mutbooks.app.hashTag.entity;
 
 import com.example.mutbooks.app.base.entity.BaseEntity;
 import com.example.mutbooks.app.keyword.entity.PostKeyword;

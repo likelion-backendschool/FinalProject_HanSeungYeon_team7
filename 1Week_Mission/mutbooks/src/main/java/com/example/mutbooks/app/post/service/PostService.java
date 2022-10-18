@@ -1,5 +1,6 @@
 package com.example.mutbooks.app.post.service;
 
+import com.example.mutbooks.app.hashTag.service.HashTagService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.post.entity.Post;
 import com.example.mutbooks.app.post.form.WriteForm;
@@ -15,6 +16,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
+    private final HashTagService hashTagService;
 
     public Post findById(long id) {
         // TODO : 예외 처리
@@ -38,6 +40,12 @@ public class PostService {
                 .build();
 
         postRepository.save(post);
+
+        // 해시태그 적용
+        String keywords = writeForm.getKeywords();
+        if(keywords != null) {
+            hashTagService.apply(post, keywords);
+        }
 
         return post;
     }
