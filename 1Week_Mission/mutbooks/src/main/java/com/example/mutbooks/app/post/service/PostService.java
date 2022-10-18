@@ -33,6 +33,7 @@ public class PostService {
         Post post = Post.builder()
                 .subject(writeForm.getSubject())
                 .content(writeForm.getContent())
+                .contentHtml(writeForm.getContentHtml())
                 .author(author)
                 .build();
 

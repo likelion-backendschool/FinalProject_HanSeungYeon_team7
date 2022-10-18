@@ -11,6 +11,7 @@ public class WriteForm {
     @NotEmpty
     private String subject;     // 제목
     @NotEmpty
-    private String content;     // 내용
+    private String content;     // 마크다운 원문
+    private String contentHtml; // 렌더링 결과 HTML
     private String keywords;    // 해시태그
 }
