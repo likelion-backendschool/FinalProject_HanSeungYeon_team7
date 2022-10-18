@@ -36,4 +36,17 @@ class PostServiceTest {
         assertThat(post.getSubject()).isEqualTo("제목");
         assertThat(post.getContent()).isEqualTo("마크다운 원문 내용");
     }
+
+    @Test
+    @DisplayName("글 수정")
+    void t2() {
+        Member author = memberRepository.findByUsername("user2").orElse(null);
+
+        Post post = postService.findById(1);
+        postService.modify(post, new WriteForm("new 제목", "new 마크다운 원문 내용", null));
+
+        assertThat(post).isNotNull();
+        assertThat(post.getSubject()).isEqualTo("new 제목");
+        assertThat(post.getContent()).isEqualTo("new 마크다운 원문 내용");
+    }
 }
