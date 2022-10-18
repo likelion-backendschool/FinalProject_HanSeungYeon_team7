@@ -46,6 +46,7 @@ public class PostService {
     public void modify(Post post, WriteForm writeForm) {
         post.setSubject(writeForm.getSubject());
         post.setContent(writeForm.getContent());
+        post.setContentHtml(writeForm.getContentHtml());
 
         postRepository.save(post);
     }
