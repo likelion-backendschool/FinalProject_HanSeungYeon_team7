@@ -32,13 +32,19 @@
                     <div class="textarea textarea-bordered min-h-[500px] h-[calc(100vh-400px)]" th:utext="${post.contentHtml}"></div>
                 </div>
 
+                <div class="my-2">
+                    <div th:each="hashTag : ${post.hashTags}" class="badge badge-lg badge-accent mx-1">
+                        <span>#</span>
+                        <span th:text="${hashTag.postKeyword.content}"></span>
+                    </div>
+<!--                    <div class="input input-bordered text-" th:text="${post.hashTagString}"></div>-->
+                </div>
+
                 <div class="grid grid-cols-2 mt-2 gap-2">
                     <a th:href="|/post/${post.id}/modify|" class="btn btn-secondary btn-outline">수정</a>
                     <a onclick="if(!confirm('해당 글을 삭제하시겠습니까?')) return false;" th:href="|/post/${post.id}/delete|" class="btn btn-secondary btn-outline">삭제</a>
                 </div>
             </div>
-        </div>
-
         </div>
     </section>
 
