@@ -23,6 +23,16 @@ import javax.validation.Valid;
 public class PostController {
     private final PostService postService;
 
+    // 글 상세조회
+    @GetMapping("/{id}")
+    public String showDetail(@PathVariable long id, Model model) {
+        Post post = postService.findById(id);
+
+        model.addAttribute("post", post);
+
+        return "post/detail";
+    }
+
     // 글 작성폼
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/write")

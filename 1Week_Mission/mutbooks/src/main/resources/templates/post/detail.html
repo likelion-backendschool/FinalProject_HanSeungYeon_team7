@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>글 상세(임시)</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+
+        <div class="px-2 pt-4">
+            <h1 class="font-bold text-lg">글 상세(임시)</h1>
+
+            <div class="flex flex-col gap-3">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">제목</span>
+                    </label>
+                    <div class="input input-bordered" th:text="${post.subject}">
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">내용</span>
+                    </label>
+                    <div class="textarea textarea-bordered min-h-[500px] h-[calc(100vh-400px)]" th:utext="${post.content}"></div>
+                </div>
+
+                <div class="grid grid-cols-2 mt-2 gap-2">
+                    <a th:href="|/post/${post.id}/modify|" class="btn btn-secondary btn-outline">수정</a>
+                    <a th:href="|/post/${post.id}/delete|" class="btn btn-secondary btn-outline">삭제</a>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>
