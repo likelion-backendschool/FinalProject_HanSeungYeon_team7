@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>글 수정</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+
+        <div class="px-2 pt-4">
+            <h1 class="font-bold text-lg">글 수정</h1>
+
+            <script>
+                let SongCreate__submitDone = false;
+
+                function SongCreate__submit(form) {
+                    if (SongCreate__submitDone) {
+                        return;
+                    }
+
+                    form.subject.value = form.subject.value.trim();
+
+                    if (form.subject.value.length == 0) {
+                        warningModal("제목을 입력해주세요.");
+                        form.subject.focus();
+
+                        return;
+                    }
+
+                    form.content.value = form.content.value.trim();
+
+                    if (form.content.value.length == 0) {
+                        warningModal("내용을 입력해주세요.");
+                        form.content.focus();
+
+                        return;
+                    }
+
+                    form.submit();
+                    SongCreate__submitDone = true;
+                }
+            </script>
+
+
+            <form th:action method="POST" class="flex flex-col gap-3"
+                  onsubmit="SongCreate__submit(this); return false;">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">제목</span>
+                    </label>
+                    <input autofocus type="text" name="subject" placeholder="제목" class="input input-bordered"
+                           maxlength="50" th:value="${post.subject}">
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">내용</span>
+                    </label>
+                    <textarea name="content" placeholder="#내용" class="textarea textarea-bordered min-h-[500px] h-[calc(100vh-400px)]"
+                              maxlength="10000" th:utext="${post.content}"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 mt-2 gap-2">
+                    <button type="button" onclick="history.back();" class="btn btn-secondary btn-outline">취소</button>
+                    <input class="btn btn-primary" type="submit" value="완료">
+                </div>
+            </form>
+        </div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>
