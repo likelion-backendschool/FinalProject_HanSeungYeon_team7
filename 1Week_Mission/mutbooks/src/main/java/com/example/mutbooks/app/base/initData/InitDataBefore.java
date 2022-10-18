@@ -7,8 +7,8 @@ import com.example.mutbooks.app.member.service.MemberService;
 public interface InitDataBefore {
     default void before(MemberService memberService) {
         // 일반 회원
-        Member member1 = memberService.join(new JoinForm("user1", "1234", "작가1", "user1@test.com"));
+        Member member1 = memberService.join(new JoinForm("user1", "1234", null, "user1@test.com"));
         // 작가 회원
-        Member member2 = memberService.join(new JoinForm("user2", "1234", "작가2", "user2@test.com"));
+        Member member2 = memberService.join(new JoinForm("user2", "1234", "작가", "user2@test.com"));
     }
 }
