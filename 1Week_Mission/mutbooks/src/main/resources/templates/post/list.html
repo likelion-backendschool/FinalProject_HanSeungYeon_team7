@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>글 리스트</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+
+        <div class="px-2 pt-4">
+            <h1 class="font-bold text-lg">글 리스트</h1>
+
+            <div class="overflow-x-auto">
+                <table class="table w-full">
+                    <!-- head -->
+                    <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>작성날짜</th>
+                        <th>수정날짜</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="post : ${posts}">
+                        <tr class="hover">
+                            <th th:text="${post.id}"></th>
+                            <td th:text="${post.subject}"></td>
+                            <td th:text="${post.author.username}"></td>
+                            <td th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd hh:mm')}"></td>
+                            <td th:text="${#temporals.format(post.updateDate, 'yyyy-MM-dd hh:mm')}"></td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

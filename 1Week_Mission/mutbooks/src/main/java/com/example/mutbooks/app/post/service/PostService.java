@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -19,6 +21,11 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(() -> {
             throw new RuntimeException();
         });
+    }
+
+    // 글 전체조회
+    public List<Post> findAllByOrderByIdDesc() {
+        return postRepository.findAllByOrderByIdDesc();
     }
 
     @Transactional

@@ -16,22 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class PostController {
     private final PostService postService;
-
-    // 글 상세조회
-    @GetMapping("/{id}")
-    public String showDetail(@PathVariable long id, Model model) {
-        Post post = postService.findById(id);
-
-        model.addAttribute("post", post);
-
-        return "post/detail";
-    }
 
     // 글 작성폼
     @PreAuthorize("isAuthenticated()")
@@ -49,6 +40,26 @@ public class PostController {
         Post post = postService.write(author, writeForm);
 
         return "redirect:/post/%d".formatted(post.getId());
+    }
+
+    // 글 상세조회
+    @GetMapping("/{id}")
+    public String showDetail(@PathVariable long id, Model model) {
+        Post post = postService.findById(id);
+
+        model.addAttribute("post", post);
+
+        return "post/detail";
+    }
+    
+    // 글 리스트 조회
+    @GetMapping("/list")
+    public String showList(Model model) {
+        List<Post> posts = postService.findAllByOrderByIdDesc();
+
+        model.addAttribute("posts", posts);
+
+        return "post/list";
     }
 
     // 글 수정폼
