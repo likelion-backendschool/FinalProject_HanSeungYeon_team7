@@ -42,8 +42,18 @@ public class PostService {
         postRepository.save(post);
     }
 
-    // 수정 권한 여부 체크(글쓴이 본인인지)
+    @Transactional
+    public void delete(Post post) {
+        postRepository.delete(post);
+    }
+
+    // 수정 권한 여부 체크(수정 권한: 글쓴이 본인)
     public boolean canModify(Member member, Post post) {
         return member.getId().equals(post.getAuthor().getId());
+    }
+
+    // 삭제 권한 여부 체크(삭제 권한: 글쓴이 본인)
+    public boolean canDelete(Member member, Post post) {
+        return canModify(member, post);
     }
 }

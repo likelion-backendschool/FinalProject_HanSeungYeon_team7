@@ -84,4 +84,22 @@ public class PostController {
 
         return "redirect:/post/%d".formatted(post.getId());
     }
+
+    // TODO: POST 방식으로 바꾸기
+    // 글 삭제
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}/delete")
+    public String delete(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext) {
+        Member member = memberContext.getMember();
+        Post post = postService.findById(id);
+
+        // TODO : 예외 처리
+        if(!postService.canDelete(member, post)) {
+            throw new RuntimeException();
+        }
+        postService.delete(post);
+
+        // 글 리스트 페이지로 리다이렉트
+        return "redirect:/post/list";
+    }
 }
