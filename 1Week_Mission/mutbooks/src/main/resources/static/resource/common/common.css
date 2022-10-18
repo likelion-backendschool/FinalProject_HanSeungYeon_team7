@@ -1,3 +1,4 @@
+/* 지마켓 산스 불러오기 */
 @font-face {
     font-family: 'GmarketSansMedium';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
@@ -10,3 +11,45 @@ html > body {
     text-underline-position: under;
     color: #444;
 }
+
+
+/* 지마켓 산스 불러오기 */
+@font-face {
+    font-family: "GmarketSansMedium";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff")
+    format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 토스트 UI 에디터 관련 스타일 시작 */
+html > body,
+html > body .ProseMirror,
+html > body .toastui-editor-contents,
+html > body code[class*="language-"],
+html > body pre[class*="language-"],
+html > body code[class*="lang-"],
+html > body pre[class*="lang-"] {
+    font-family: "GmarketSansMedium";
+    text-underline-position: under;
+    letter-spacing: 0;
+}
+
+html > body code[class*="language-"],
+html > body pre[class*="language-"],
+html > body code[class*="lang-"],
+html > body pre[class*="lang-"] {
+    color: white;
+    background-color: #444;
+}
+
+html > body .ProseMirror,
+html > body .toastui-editor-contents {
+    font-size: 1.1rem;
+}
+
+.toastui-editor-dark {
+    background-color: #333;
+}
+/* 토스트 UI 에디터 관련 스타일 끝 */
+
