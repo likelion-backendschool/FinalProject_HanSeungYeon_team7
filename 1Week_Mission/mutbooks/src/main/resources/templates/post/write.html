@@ -31,10 +31,14 @@
 
                     // Toast UI
                     const editor = $(form).find(".toast-ui-editor").data("data-toast-editor");
-                    const markdown = editor.getMarkdown();
-                    const html = m
+                    const markdown = editor.getMarkdown();  // 마크다운 원문
+                    const html = editor.getHTML();          // 렌더링한 HTML
+
                     console.log(markdown);
+                    console.log(html);
+
                     form.content.value = markdown.trim();
+                    form.contentHtml.value = html.trim();
                     if (form.content.value.length == 0) {
                         alert("내용을 입력해주세요");
                         editor.focus();
@@ -49,6 +53,7 @@
             <form th:action method="POST" class="flex flex-col gap-3"
                   onsubmit="SongCreate__submit(this); return false;">
                 <input type="hidden" name="content" />
+                <input type="hidden" name="contentHtml" />
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text">제목</span>
