@@ -57,4 +57,21 @@ public class PostController {
 
         return "post/modify";
     }
+
+    // 글 수정
+    // TODO: 작성폼 DTO 재활용 처리 문제
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/modify")
+    public String modify(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext, @Valid WriteForm writeForm) {
+        Member member = memberContext.getMember();
+        Post post = postService.findById(id);
+
+        // TODO : 예외 처리
+        if(!postService.canModify(member, post)) {
+            throw new RuntimeException();
+        }
+        postService.modify(post, writeForm);
+
+        return "redirect:/post/%d".formatted(post.getId());
+    }
 }

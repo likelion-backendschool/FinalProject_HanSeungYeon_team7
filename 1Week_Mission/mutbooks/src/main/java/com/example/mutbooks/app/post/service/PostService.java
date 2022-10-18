@@ -34,6 +34,14 @@ public class PostService {
         return post;
     }
 
+    @Transactional
+    public void modify(Post post, WriteForm writeForm) {
+        post.setSubject(writeForm.getSubject());
+        post.setContent(writeForm.getContent());
+
+        postRepository.save(post);
+    }
+
     // 수정 권한 여부 체크(글쓴이 본인인지)
     public boolean canModify(Member member, Post post) {
         return member.getId().equals(post.getAuthor().getId());
