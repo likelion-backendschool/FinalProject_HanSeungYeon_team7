@@ -102,6 +102,13 @@ public class MemberController {
         return "redirect:/member/profile";
     }
 
+    // 비밀번호 수정폼
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/modifyPassword")
+    public String modifyPassword(@AuthenticationPrincipal MemberContext memberContext, @Valid String password) {
+        return "member/modify_password";
+    }
+
     // 회원정보 조회
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
