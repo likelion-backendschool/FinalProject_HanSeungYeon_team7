@@ -25,9 +25,9 @@ public class PostService {
         });
     }
 
-    // 글 전체조회
-    public List<Post> findAllByOrderByIdDesc() {
-        return postRepository.findAllByOrderByIdDesc();
+    // 내 글 전체조회
+    public List<Post> findAllByAuthorIdOrderByIdDesc(Long authorId) {
+        return postRepository.findAllByAuthorIdOrderByIdDesc(authorId);
     }
 
     @Transactional
@@ -70,13 +70,18 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    // 수정 권한 여부 체크(수정 권한: 글쓴이 본인)
+    // 글 수정 권한 여부 체크(수정 권한: 글쓴이 본인)
     public boolean canModify(Member member, Post post) {
         return member.getId().equals(post.getAuthor().getId());
     }
 
-    // 삭제 권한 여부 체크(삭제 권한: 글쓴이 본인)
+    // 글 삭제 권한 여부 체크(삭제 권한: 글쓴이 본인)
     public boolean canDelete(Member member, Post post) {
+        return canModify(member, post);
+    }
+
+    // 글 조회 권한 여부 체크(권한: 글쓴이 본인)
+    public boolean canSelect(Member member, Post post) {
         return canModify(member, post);
     }
 }

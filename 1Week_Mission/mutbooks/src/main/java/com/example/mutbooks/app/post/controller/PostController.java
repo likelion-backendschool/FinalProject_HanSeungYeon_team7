@@ -44,20 +44,28 @@ public class PostController {
         return "redirect:/post/%d".formatted(post.getId());
     }
 
-    // 글 상세조회
+    // 내글 상세조회
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public String showDetail(@PathVariable long id, Model model) {
+    public String showDetail(@AuthenticationPrincipal MemberContext memberContext, @PathVariable long id, Model model) {
+        Member member = memberContext.getMember();
         Post post = postService.findById(id);
 
+        // 조회권한 검사
+        if(!postService.canSelect(member, post)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         model.addAttribute("post", post);
 
         return "post/detail";
     }
     
-    // 글 리스트 조회
+    // 내글 리스트 조회
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
-    public String showList(Model model) {
-        List<Post> posts = postService.findAllByOrderByIdDesc();
+    public String showList(@AuthenticationPrincipal MemberContext memberContext, Model model) {
+        Long authorId = memberContext.getMember().getId();
+        List<Post> posts = postService.findAllByAuthorIdOrderByIdDesc(authorId);
 
         model.addAttribute("posts", posts);
 
