@@ -105,8 +105,24 @@ public class MemberController {
     // 비밀번호 수정폼
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modifyPassword")
-    public String modifyPassword(@AuthenticationPrincipal MemberContext memberContext, @Valid String password) {
+    public String modifyPassword() {
         return "member/modify_password";
+    }
+
+    // 비밀번호 수정
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modifyPassword")
+    public String modifyProfile(@AuthenticationPrincipal MemberContext memberContext, String password, HttpServletRequest request) {
+        Member member = memberService.findByUsername(memberContext.getUsername());
+        memberService.modifyPassword(member, password);
+
+        // 강제 로그아웃 처리 후 로그인 페이지로 리다이렉트
+        try {
+            request.logout();
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        }
+        return "redirect:/member/login";
     }
 
     // 회원정보 조회
