@@ -6,6 +6,7 @@ import com.example.mutbooks.app.post.entity.Post;
 import com.example.mutbooks.app.post.form.WriteForm;
 import com.example.mutbooks.app.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -69,27 +71,25 @@ public class PostController {
         Member member = memberContext.getMember();
         Post post = postService.findById(id);
 
-        // TODO : 예외 처리
+        // 수정권한 검사
         if(!postService.canModify(member, post)) {
-            throw new RuntimeException();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-
         model.addAttribute("post", post);
 
         return "post/modify";
     }
 
     // 글 수정
-    // TODO: 작성폼 DTO 재활용 처리 문제
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/modify")
     public String modify(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext, @Valid WriteForm writeForm) {
         Member member = memberContext.getMember();
         Post post = postService.findById(id);
 
-        // TODO : 예외 처리
+        // 수정권한 검사
         if(!postService.canModify(member, post)) {
-            throw new RuntimeException();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         postService.modify(post, writeForm);
 

@@ -2,6 +2,7 @@ package com.example.mutbooks.app.post.service;
 
 import com.example.mutbooks.app.hashTag.service.HashTagService;
 import com.example.mutbooks.app.member.entity.Member;
+import com.example.mutbooks.app.post.exception.PostNotFoundException;
 import com.example.mutbooks.app.post.entity.Post;
 import com.example.mutbooks.app.post.form.WriteForm;
 import com.example.mutbooks.app.post.repository.PostRepository;
@@ -19,9 +20,8 @@ public class PostService {
     private final HashTagService hashTagService;
 
     public Post findById(long id) {
-        // TODO : 예외 처리
         return postRepository.findById(id).orElseThrow(() -> {
-            throw new RuntimeException();
+            throw new PostNotFoundException();
         });
     }
 
