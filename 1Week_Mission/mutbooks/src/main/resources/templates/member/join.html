@@ -92,8 +92,12 @@
                         <span class="label-text">작가명(선택)</span>
                     </label>
                     <input type="text" name="nickname" placeholder="작가명" th:value="${joinForm.nickname}"
-                           class="input input-bordered" maxlength="50">
+                           class="input input-bordered" minlength="2" maxlength="10">
                     <span class="label-text mt-2">*작가 회원으로 가입을 원하는 경우, 작가명을 입력해주세요.</span>
+                </div>
+                <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('nickname')}" >
+                    <span>*</span>
+                    <span th:errors="*{nickname}"></span>
                 </div>
 
                 <div class="grid grid-cols-1 mt-2 gap-2">

@@ -65,12 +65,27 @@ public class MemberController {
     // 회원정보 수정폼
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify")
-    public String showModify(@AuthenticationPrincipal MemberContext memberContext, Model model) {
+    public String showModify(@AuthenticationPrincipal MemberContext memberContext, ModifyForm modifyForm, Model model) {
         Member member = memberContext.getMember();
 
         model.addAttribute("member", member);
 
         return "member/modify";
+    }
+
+    // 회원정보 수정
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify")
+    public String modifyProfile(@AuthenticationPrincipal MemberContext memberContext,
+                                @Valid ModifyForm modifyForm, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return "member/modify";
+        }
+
+        Long memberId = memberContext.getId();
+        memberService.modifyProfile(memberId, modifyForm);
+
+        return "redirect:/member/profile";
     }
 
     // 회원정보 조회
@@ -82,16 +97,6 @@ public class MemberController {
         model.addAttribute("member", member);
 
         return "member/profile";
-    }
-
-    // 회원정보 수정
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/modify")
-    public String modifyProfile(@AuthenticationPrincipal MemberContext memberContext, @Valid ModifyForm modifyForm) {
-        Long memberId = memberContext.getId();
-        memberService.modifyProfile(memberId, modifyForm);
-
-        return "redirect:/member/profile";
     }
 
     // 아이디 찾기 폼

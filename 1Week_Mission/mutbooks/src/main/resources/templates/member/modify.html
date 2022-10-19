@@ -36,7 +36,7 @@
 
 
             <form th:action method="POST" class="flex flex-col gap-3"
-                  onsubmit="MemberJoin__submit(this); return false;">
+                  onsubmit="MemberJoin__submit(this); return false;" th:object="${modifyForm}">
 
                 <div class="form-control">
                     <label class="label">
@@ -51,8 +51,8 @@
                     <label class="label">
                         <span class="label-text">작가명(선택)</span>
                     </label>
-                    <input type="text" name="nickname" placeholder="작가명" class="input input-bordered" maxlength="50"
-                    th:value="${member.nickname}">
+                    <input type="text" name="nickname" placeholder="작가명" th:value="${member.nickname}"
+                           class="input input-bordered" minlength="2" maxlength="10">
                     <span class="label-text mt-2">*작가명을 입력하지 않으면 일반 회원으로 전환됩니다.</span>
                 </div>
 
