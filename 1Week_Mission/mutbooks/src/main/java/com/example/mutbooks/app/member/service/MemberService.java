@@ -20,11 +20,6 @@ public class MemberService {
 
     @Transactional
     public Member join(JoinForm joinForm) {
-        // TODO : 중복 가입 예외 처리
-        if (memberRepository.findByUsername(joinForm.getUsername()).isPresent()) {
-            throw new RuntimeException();
-        }
-
         // 기본 권한 = 일반
         Member member = Member.builder()
                 .username(joinForm.getUsername())
@@ -36,8 +31,9 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        // TODO : 가입 축하 이메일 전송
-        mailService.sendMail(member.getUsername(), member.getEmail());
+        // 가입 축하 이메일 전송
+        // TODO: 테스트를 위해 잠시 주석 처리
+//        mailService.sendMail(member.getUsername(), member.getEmail());
 
         return member;
     }
@@ -59,5 +55,10 @@ public class MemberService {
     // 이메일로 아이디 조회
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email).orElse(null);
+    }
+
+    // 아이디로 회원조회
+    public Member findByUsername(String username) {
+        return memberRepository.findByUsername(username).orElse(null);
     }
 }

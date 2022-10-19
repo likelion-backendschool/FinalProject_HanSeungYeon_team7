@@ -52,30 +52,38 @@
                 }
             </script>
 
-
             <form th:action method="POST" class="flex flex-col gap-3"
-                  onsubmit="MemberJoin__submit(this); return false;">
+                  onsubmit="MemberJoin__submit(this); return false;" th:object="${joinForm}" >
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text">아이디(필수)</span>
                     </label>
-                    <input autofocus type="text" name="username" placeholder="아이디" class="input input-bordered"
-                           maxlength="50">
+                    <input autofocus type="text" name="username" th:value="${joinForm.username}" placeholder="아이디" class="input input-bordered"
+                           minlength="5" maxlength="20">
+                </div>
+                <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('username')}" >
+                    <span>*</span>
+                    <span th:errors="*{username}"></span>
                 </div>
 
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text">비밀번호(필수)</span>
                     </label>
-                    <input type="password" name="password"
-                           placeholder="비밀번호" class="input input-bordered" maxlength="50">
+                    <input type="password" name="password" placeholder="비밀번호"
+                           class="input input-bordered" minlength="8" maxlength="16">
                 </div>
 
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text">이메일(필수)</span>
                     </label>
-                    <input type="email" name="email" placeholder="이메일" class="input input-bordered" maxlength="50">
+                    <input type="email" name="email" placeholder="이메일" th:value="${joinForm.email}"
+                           class="input input-bordered" maxlength="50">
+                </div>
+                <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('email')}" >
+                    <span>*</span>
+                    <span th:errors="*{email}"></span>
                 </div>
 
 <!--                작가명-->
@@ -83,7 +91,8 @@
                     <label class="label">
                         <span class="label-text">작가명(선택)</span>
                     </label>
-                    <input type="text" name="nickname" placeholder="작가명" class="input input-bordered" maxlength="50">
+                    <input type="text" name="nickname" placeholder="작가명" th:value="${joinForm.nickname}"
+                           class="input input-bordered" maxlength="50">
                     <span class="label-text mt-2">*작가 회원으로 가입을 원하는 경우, 작가명을 입력해주세요.</span>
                 </div>
 

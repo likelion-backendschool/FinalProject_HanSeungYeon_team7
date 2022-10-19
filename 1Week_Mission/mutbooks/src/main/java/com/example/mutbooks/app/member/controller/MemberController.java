@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -26,19 +28,29 @@ public class MemberController {
     // 회원가입 폼
     @PreAuthorize("isAnonymous()")
     @GetMapping("/join")
-    public String showJoin() {
+    public String showJoin(JoinForm joinForm) {
         return "member/join";
     }
 
     // 회원가입
     @PreAuthorize("isAnonymous()")
     @PostMapping("/join")
-    public String join(@Valid JoinForm joinForm, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) {
-
+    public String join(@Valid JoinForm joinForm, BindingResult bindingResult, HttpSession session) throws ServletException {
+        // 아이디 중복 검사
+        Member oldMember = memberService.findByUsername(joinForm.getUsername());
+        if (oldMember != null) {
+            bindingResult.rejectValue("username", "duplicated username", "중복된 아이디 입니다.");
+            return "member/join";
+        }
+        // 이메일 중복 검사
+        oldMember = memberService.findByEmail(joinForm.getEmail());
+        if(oldMember != null) {
+            bindingResult.rejectValue("email", "duplicated email", "중복된 이메일 입니다.");
+            return "member/join";
         }
 
-        memberService.join(joinForm);
+        Member member = memberService.join(joinForm);
+        // TODO: 회원가입 완료 후, 자동 로그인 처리
 
         return "redirect:/";
     }
@@ -79,8 +91,7 @@ public class MemberController {
         Long memberId = memberContext.getId();
         memberService.modifyProfile(memberId, modifyForm);
 
-        // TODO: 회원 정보 조회 페이지로 리다이렉트
-        return "redirect:/";
+        return "redirect:/member/profile";
     }
 
     // 아이디 찾기 폼
