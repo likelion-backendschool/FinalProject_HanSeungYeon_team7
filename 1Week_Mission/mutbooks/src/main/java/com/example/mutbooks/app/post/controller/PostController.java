@@ -11,10 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -63,9 +60,11 @@ public class PostController {
     // 내글 리스트 조회
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
-    public String showList(@AuthenticationPrincipal MemberContext memberContext, Model model) {
-        Long authorId = memberContext.getMember().getId();
-        List<Post> posts = postService.findAllByAuthorIdOrderByIdDesc(authorId);
+    public String showList(@RequestParam(defaultValue = "hashTag") String kwType, @RequestParam(defaultValue = "") String kw
+            , @AuthenticationPrincipal MemberContext memberContext, Model model) {
+        Member author = memberContext.getMember();
+
+        List<Post> posts = postService.search(author, kwType, kw);
 
         model.addAttribute("posts", posts);
 

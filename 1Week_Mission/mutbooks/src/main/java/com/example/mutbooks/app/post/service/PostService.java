@@ -30,6 +30,11 @@ public class PostService {
         return postRepository.findAllByAuthorIdOrderByIdDesc(authorId);
     }
 
+    // 내 글 전체/키워드 기반 겁색 조회
+    public List<Post> search(Member author, String kwType, String kw) {
+        return postRepository.searchQsl(author, kwType, kw);
+    }
+
     @Transactional
     public Post write(Member author, WriteForm writeForm) {
         Post post = Post.builder()

@@ -28,8 +28,16 @@
                     <th:block th:each="post : ${posts}">
                         <tr class="hover">
                             <th th:text="${post.id}"></th>
-                            <td>
+                            <td class="flex" style="align-items: center">
                                 <a th:href="|/post/${post.id}|" th:text="${post.subject}"></a>
+                                <div class="mx-3">
+                                    <div th:each="hashTag : ${post.hashTags}" class="badge badge-lg badge-accent mx-1">
+                                        <a th:href="${hashTag.getSearchUrl}">
+                                            <span>#</span>
+                                            <span th:text="${hashTag.postKeyword.content}"></span>
+                                        </a>
+                                    </div>
+                                </div>
                             </td>
                             <td th:text="${post.author.username}"></td>
                             <td th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd hh:mm')}"></td>
