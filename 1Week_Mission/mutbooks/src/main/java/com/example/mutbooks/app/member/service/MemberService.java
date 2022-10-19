@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -59,12 +61,26 @@ public class MemberService {
     }
 
     // 아이디 + 이메일 회원 조회
+    @Transactional
     public Member findByUsernameAndEmail(String username, String email) {
         Member member = memberRepository.findByUsernameAndEmail(username, email).orElse(null);
-        // 임시 비번 발급
+        // 임시 비번 발급 후, 비밀번호 업데이트
         if(member != null) {
-            mailService.sendTempPassword(username, email);
+            // 1. 임시 비밀번호 생성(UUID이용)
+            String tempPwd= UUID.randomUUID().toString().replace("-", "");//-를 제거
+            tempPwd = tempPwd.substring(0,10);  //tempPwd를 앞에서부터 10자리 잘라줌
+            // 2. 메일 전송
+            mailService.sendTempPassword(username, email, tempPwd);
+            // 3. 회원 비밀번호 -> 임시 비밀번호로 변경
+            modifyPassword(member, tempPwd);
         }
         return member;
+    }
+
+    // 비밀번호 수정
+    @Transactional
+    public void modifyPassword(Member member, String newPwd) {
+        String newEncodePwd = passwordEncoder.encode(newPwd);
+        member.setPassword(newEncodePwd);
     }
 }

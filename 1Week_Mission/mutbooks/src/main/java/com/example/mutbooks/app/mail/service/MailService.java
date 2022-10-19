@@ -6,7 +6,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +43,7 @@ public class MailService {
     }
 
     // 임시 비밀번호 발급 메일 전송
-    public void sendTempPassword(String username, String email) {
-        //임시 비밀번호 생성(UUID이용)
-        String tempPw= UUID.randomUUID().toString().replace("-", "");//-를 제거
-        tempPw = tempPw.substring(0,10);//tempPw를 앞에서부터 10자리 잘라줌
-
+    public void sendTempPassword(String username, String email, String tempPwd) {
         // 수신 대상을 담을 ArrayList 생성
         ArrayList<String> toUserList = new ArrayList<>();
 
@@ -71,7 +66,7 @@ public class MailService {
         // 메일 내용
         String content = """
         %S 님의 임시 비밀번호는 %s 입니다.
-        """.formatted(username, tempPw);
+        """.formatted(username, tempPwd);
         simpleMessage.setText(content);
 
         // 메일 발송
