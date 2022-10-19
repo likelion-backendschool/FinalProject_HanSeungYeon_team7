@@ -130,4 +130,11 @@ public class MemberController {
 
         return "member/confirm_username";
     }
+
+    // 비밀번호 찾기 폼
+    @PreAuthorize("isAnonymous")
+    @GetMapping("/findPassword")
+    public String showFindPassword() {
+        return "member/find_password";
+    }
 }
