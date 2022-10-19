@@ -2,6 +2,7 @@ package com.example.mutbooks.app.base.security.dto;
 
 import com.example.mutbooks.app.member.entity.Member;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -12,10 +13,13 @@ import java.util.List;
 public class MemberContext extends User {
     private final Long id;
     private final LocalDateTime createDate;
-    private final LocalDateTime updateDate;
+    @Setter
+    private LocalDateTime updateDate;
     private final String username;
-    private final String email;
-    private final String nickname;
+    @Setter
+    private String email;
+    @Setter
+    private String nickname;
 
     public MemberContext(Member member, List<GrantedAuthority> authorities) {
         super(member.getUsername(), member.getPassword(), authorities);

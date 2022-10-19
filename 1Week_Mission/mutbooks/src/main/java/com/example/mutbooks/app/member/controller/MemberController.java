@@ -7,7 +7,10 @@ import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
@@ -35,7 +38,7 @@ public class MemberController {
     // 회원가입
     @PreAuthorize("isAnonymous()")
     @PostMapping("/join")
-    public String join(@Valid JoinForm joinForm, BindingResult bindingResult, HttpSession session) throws ServletException {
+    public String join(@Valid JoinForm joinForm, BindingResult bindingResult, HttpServletRequest request) throws ServletException {
         // 아이디 중복 검사
         Member oldMember = memberService.findByUsername(joinForm.getUsername());
         if (oldMember != null) {
@@ -50,7 +53,12 @@ public class MemberController {
         }
 
         Member member = memberService.join(joinForm);
-        // TODO: 회원가입 완료 후, 자동 로그인 처리
+        // 회원가입 완료 후, 자동 로그인 처리
+        try {
+            request.login(joinForm.getUsername(), joinForm.getPassword());
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        }
 
         return "redirect:/";
     }
@@ -82,8 +90,14 @@ public class MemberController {
             return "member/modify";
         }
 
-        Long memberId = memberContext.getId();
-        memberService.modifyProfile(memberId, modifyForm);
+        Member member = memberService.findByUsername(memberContext.getUsername());
+        memberService.modifyProfile(member, modifyForm);
+        // 세션에 담긴 회원 기본정보 수정
+        memberContext.setUpdateDate(member.getUpdateDate());
+        memberContext.setNickname(member.getNickname());
+        memberContext.setEmail(member.getEmail());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(memberContext, member.getPassword(), memberContext.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return "redirect:/member/profile";
     }

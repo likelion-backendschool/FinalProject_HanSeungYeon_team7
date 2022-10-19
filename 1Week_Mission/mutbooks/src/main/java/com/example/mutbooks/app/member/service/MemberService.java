@@ -38,14 +38,10 @@ public class MemberService {
         return member;
     }
 
+    // 회원기본 정보 수정
     @Transactional
-    public void modifyProfile(Long memberId, ModifyForm modifyForm) {
-        // TODO : 예외 처리
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new RuntimeException()
-        );
-
-        // TODO : 원래 작가 회원인 경우, 닉네임 삭제는 불가하도록 수정(글 작성자 이름 표시 문제때문)
+    public void modifyProfile(Member member, ModifyForm modifyForm) {
+        // TODO : 작가->일반 회원 될 수 있는지 고민(글 작성자 이름 표시 문제)
         member.setEmail(modifyForm.getEmail());
         member.setNickname(modifyForm.getNickname());
 
