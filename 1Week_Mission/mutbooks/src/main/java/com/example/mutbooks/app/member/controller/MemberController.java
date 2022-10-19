@@ -137,4 +137,15 @@ public class MemberController {
     public String showFindPassword() {
         return "member/find_password";
     }
+
+    // 아이디 + 이메일로 임시 비밀번호 발급하기
+    @PreAuthorize("isAnonymous()")
+    @PostMapping("/findPassword")
+    public String findPassword(@Valid String username, String email, Model model) {
+        Member member = memberService.findByUsernameAndEmail(username, email);
+
+        model.addAttribute("member", member);
+
+        return "member/confirm_password";
+    }
 }

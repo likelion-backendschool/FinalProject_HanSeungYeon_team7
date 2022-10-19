@@ -31,9 +31,9 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        // 가입 축하 이메일 전송
         // TODO: 테스트를 위해 잠시 주석 처리
-//        mailService.sendMail(member.getUsername(), member.getEmail());
+        // 가입 축하 이메일 전송
+//        mailService.sendJoinCongrats(member.getUsername(), member.getEmail());
 
         return member;
     }
@@ -56,5 +56,15 @@ public class MemberService {
     // 아이디로 회원조회
     public Member findByUsername(String username) {
         return memberRepository.findByUsername(username).orElse(null);
+    }
+
+    // 아이디 + 이메일 회원 조회
+    public Member findByUsernameAndEmail(String username, String email) {
+        Member member = memberRepository.findByUsernameAndEmail(username, email).orElse(null);
+        // 임시 비번 발급
+        if(member != null) {
+            mailService.sendTempPassword(username, email);
+        }
+        return member;
     }
 }
