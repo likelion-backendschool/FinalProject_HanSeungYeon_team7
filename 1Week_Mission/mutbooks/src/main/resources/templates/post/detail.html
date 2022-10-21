@@ -10,29 +10,16 @@
     <section class="section section-write container mx-auto">
 
         <div class="px-2 pt-4">
-            <h1 class="font-bold text-lg">글 상세(임시)</h1>
-
-            <div class="flex flex-col gap-3">
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">제목</span>
-                    </label>
-                    <div class="input input-bordered" th:text="${post.subject}">
+            <div class="flex flex-col gap-3 mt-4">
+                <div class="border-b-2 border-zinc-200 pb-3">
+                    <h1 class="text-2xl" th:text="${post.subject}"></h1>
                 </div>
 
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">내용</span>
-                    </label>
-<!--                    <div class="toast-ui-viewer">-->
-<!--                        <script type="text/x-template">-->
-<!--                            ${post.content}-->
-<!--                        </script>-->
-<!--                    </div>-->
-                    <div class="textarea textarea-bordered min-h-[500px] h-[calc(100vh-400px)]" th:utext="${post.contentHtml}"></div>
+                <div class="mt-4">
+                    <div id="content"></div>
                 </div>
 
-                <div class="my-2">
+                <div class="my-4">
                     <div th:each="hashTag : ${post.hashTags}" class="badge badge-lg badge-accent mx-1">
                         <span>#</span>
                         <span th:text="${hashTag.postKeyword.content}"></span>
@@ -46,8 +33,23 @@
                 </div>
             </div>
         </div>
-    </section>
 
+        <!--Toast UI Viewer 적용-->
+        <script th:inline="javascript">
+            const Editor = toastui.Editor.factory;
+
+            /*<![CDATA[*/
+            const contentMarkdown = [[${post.content}]];
+            /*]]>*/
+
+            const content = new Editor({
+                el: document.querySelector('#content'),
+                height: '500px',
+                viewer: true,
+                initialValue: contentMarkdown
+            });
+        </script>
+    </section>
 </main>
 </body>
 </html>
