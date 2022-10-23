@@ -42,10 +42,7 @@ public class MemberService {
     @Transactional
     public void modifyProfile(Member member, ModifyForm modifyForm) {
         // TODO : 작가->일반 회원 될 수 있는지 고민(글 작성자 이름 표시 문제)
-        member.setEmail(modifyForm.getEmail());
-        member.setNickname(modifyForm.getNickname());
-
-        memberRepository.save(member);
+        member.modifyInfo(modifyForm.getEmail(), modifyForm.getNickname().trim());
     }
 
     // 이메일로 아이디 조회

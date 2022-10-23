@@ -27,7 +27,7 @@ public class Member extends BaseEntity {
 
     // 일반 회원 여부
     public boolean isGeneral() {
-        return nickname.isEmpty();
+        return nickname == null || nickname.equals("");
     }
 
     // 작가 회원 여부
@@ -43,5 +43,11 @@ public class Member extends BaseEntity {
     // 비밀번호 수정
     public void modifyPassword(String newPassword) {
         this.password = newPassword;
+    }
+
+    // 기본정보 수정
+    public void modifyInfo(String email, String nickname) {
+        this.email = email;
+        this.nickname = nickname;
     }
 }
