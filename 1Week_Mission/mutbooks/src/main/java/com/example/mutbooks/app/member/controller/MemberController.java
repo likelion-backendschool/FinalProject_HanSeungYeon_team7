@@ -5,8 +5,9 @@ import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
-import com.example.mutbooks.app.member.form.PasswordModifyForm;
+import com.example.mutbooks.app.member.form.PwdModifyForm;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.app.member.validator.PwdModifyFormValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +31,7 @@ import javax.validation.Valid;
 public class MemberController {
     private final MemberService memberService;
     private final MailService mailService;
+    private final PwdModifyFormValidator pwdModifyFormValidator;
 
     // 회원가입 폼
     @PreAuthorize("isAnonymous()")
@@ -112,7 +114,7 @@ public class MemberController {
     // 비밀번호 수정폼
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modifyPassword")
-    public String modifyPassword() {
+    public String modifyPassword(PwdModifyForm pwdModifyForm) {
         return "member/modify_password";
     }
 
@@ -120,8 +122,16 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modifyPassword")
     public String modifyProfile(@AuthenticationPrincipal MemberContext memberContext,
-                                @Valid PasswordModifyForm pwdModifyForm, BindingResult bindingResult,
+                                @Valid PwdModifyForm pwdModifyForm, BindingResult bindingResult,
                                 HttpServletRequest request) {
+        // 유효성 검증 추가
+        pwdModifyFormValidator.validate(pwdModifyForm, bindingResult);
+
+        if(bindingResult.hasErrors()) {
+            System.out.println("bindingResult = " + bindingResult.getErrorCount());
+            return "member/modify_password";
+        }
+
         Member member = memberService.findByUsername(memberContext.getUsername());
         memberService.modifyPassword(member, pwdModifyForm);
 
