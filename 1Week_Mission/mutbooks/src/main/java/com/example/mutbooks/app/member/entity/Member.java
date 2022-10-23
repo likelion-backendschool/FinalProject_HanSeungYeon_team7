@@ -39,4 +39,9 @@ public class Member extends BaseEntity {
     public boolean isAdmin() {
         return authLevel.equals(7);
     }
+
+    // 비밀번호 수정
+    public void modifyPassword(String newPassword) {
+        this.password = newPassword;
+    }
 }

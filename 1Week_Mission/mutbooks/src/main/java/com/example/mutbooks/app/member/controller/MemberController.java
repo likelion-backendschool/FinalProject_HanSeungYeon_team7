@@ -5,6 +5,7 @@ import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
+import com.example.mutbooks.app.member.form.PasswordModifyForm;
 import com.example.mutbooks.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -118,9 +119,11 @@ public class MemberController {
     // 비밀번호 수정
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modifyPassword")
-    public String modifyProfile(@AuthenticationPrincipal MemberContext memberContext, String password, HttpServletRequest request) {
+    public String modifyProfile(@AuthenticationPrincipal MemberContext memberContext,
+                                @Valid PasswordModifyForm pwdModifyForm, BindingResult bindingResult,
+                                HttpServletRequest request) {
         Member member = memberService.findByUsername(memberContext.getUsername());
-        memberService.modifyPassword(member, password);
+        memberService.modifyPassword(member, pwdModifyForm);
 
         // 강제 로그아웃 처리 후 로그인 페이지로 리다이렉트
         try {

@@ -2,8 +2,10 @@ package com.example.mutbooks.app.member.service;
 
 import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
+import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
+import com.example.mutbooks.app.member.form.PasswordModifyForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -73,10 +75,21 @@ public class MemberService {
         return member;
     }
 
+    @Transactional
+    public void modifyPassword(Member member, String password) {
+        String newPassword = passwordEncoder.encode(password);
+        member.modifyPassword(newPassword);
+    }
+
     // 비밀번호 수정
     @Transactional
-    public void modifyPassword(Member member, String newPwd) {
-        String newEncodePwd = passwordEncoder.encode(newPwd);
-        member.setPassword(newEncodePwd);
+    public void modifyPassword(Member member, PasswordModifyForm pwdModifyForm) {
+        // 기존 비밀번호가 맞는지 검증 후 수정
+        if(!passwordEncoder.matches(pwdModifyForm.getPassword(), member.getPassword())) {
+            throw new PasswordNotMatchedException("기존 비밀번호와 일치하지 않습니다.");
+        }
+
+        String newPassword = passwordEncoder.encode(pwdModifyForm.getNewPassword());
+        member.modifyPassword(newPassword);
     }
 }
