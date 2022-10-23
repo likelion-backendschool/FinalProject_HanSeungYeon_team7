@@ -1,4 +1,4 @@
-package com.example.mutbooks.app.hashTag.entity;
+package com.example.mutbooks.app.postHashTag.entity;
 
 import com.example.mutbooks.app.base.entity.BaseEntity;
 import com.example.mutbooks.app.keyword.entity.PostKeyword;
@@ -30,7 +30,7 @@ public class PostHashTag extends BaseEntity {
 
     // postHashTag 키워드로 게시글 검색 요청 url
     public String getSearchUrl() {
-        String url = "/post/list?kwType=hashTag&kw=%s".formatted(this.getPostKeyword().getContent());
+        String url = "/post/list?kwType=postHashTag&kw=%s".formatted(this.getPostKeyword().getContent());
         return url;
     }
 }

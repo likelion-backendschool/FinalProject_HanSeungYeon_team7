@@ -60,7 +60,7 @@ public class PostController {
     // 내글 리스트 조회
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
-    public String showList(@RequestParam(defaultValue = "hashTag") String kwType, @RequestParam(defaultValue = "") String kw
+    public String showList(@RequestParam(defaultValue = "postHashTag") String kwType, @RequestParam(defaultValue = "") String kw
             , @AuthenticationPrincipal MemberContext memberContext, Model model) {
         Member author = memberContext.getMember();
 

@@ -1,6 +1,6 @@
-package com.example.mutbooks.app.hashTag.repository;
+package com.example.mutbooks.app.postHashTag.repository;
 
-import com.example.mutbooks.app.hashTag.entity.PostHashTag;
+import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

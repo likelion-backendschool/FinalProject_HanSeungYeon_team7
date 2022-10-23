@@ -1,7 +1,7 @@
 package com.example.mutbooks.app.post.entity;
 
 import com.example.mutbooks.app.base.entity.BaseEntity;
-import com.example.mutbooks.app.hashTag.entity.PostHashTag;
+import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
 import com.example.mutbooks.app.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Getter;

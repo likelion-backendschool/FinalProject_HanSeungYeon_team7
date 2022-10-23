@@ -1,6 +1,6 @@
-package com.example.mutbooks.app.hashTag.service;
+package com.example.mutbooks.app.postHashTag.service;
 
-import com.example.mutbooks.app.hashTag.entity.PostHashTag;
+import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
 import com.example.mutbooks.app.keyword.service.KeywordService;
 import com.example.mutbooks.app.post.entity.Post;
 import com.example.mutbooks.app.post.service.PostService;

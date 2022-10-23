@@ -1,6 +1,6 @@
 package com.example.mutbooks.app.post.service;
 
-import com.example.mutbooks.app.hashTag.service.HashTagService;
+import com.example.mutbooks.app.postHashTag.service.HashTagService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.post.exception.PostNotFoundException;
 import com.example.mutbooks.app.post.entity.Post;

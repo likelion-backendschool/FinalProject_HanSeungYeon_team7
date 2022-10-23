@@ -1,7 +1,7 @@
-package com.example.mutbooks.app.hashTag.service;
+package com.example.mutbooks.app.postHashTag.service;
 
-import com.example.mutbooks.app.hashTag.entity.PostHashTag;
-import com.example.mutbooks.app.hashTag.repository.HashTagRepository;
+import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
+import com.example.mutbooks.app.postHashTag.repository.HashTagRepository;
 import com.example.mutbooks.app.keyword.entity.PostKeyword;
 import com.example.mutbooks.app.keyword.service.KeywordService;
 import com.example.mutbooks.app.post.entity.Post;
@@ -62,7 +62,7 @@ public class HashTagService {
         if(hashTag != null) {
             return hashTag;
         }
-        // 3. (postId + keywordId) 로 DB에 없으면 hashTag 저장
+        // 3. (postId + keywordId) 로 DB에 없으면 postHashTag 저장
         hashTag = PostHashTag.builder()
                 .member(post.getAuthor())
                 .post(post)
@@ -73,7 +73,7 @@ public class HashTagService {
         return hashTag;
     }
 
-    // postId로 hashTag 조회
+    // postId로 postHashTag 조회
     public List<PostHashTag> findByPostId(long postId) {
         return hashTagRepository.findByPostId(postId);
     }
