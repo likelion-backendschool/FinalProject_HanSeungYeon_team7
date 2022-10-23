@@ -11,6 +11,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -20,13 +21,11 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 @ToString(callSuper = true)
 public class PostHashTag extends BaseEntity {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;  // 회원
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Post post;      // 글
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private PostKeyword postKeyword;    // 키워드
 
     // postHashTag 키워드로 게시글 검색 요청 url
