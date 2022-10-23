@@ -1,7 +1,7 @@
 package com.example.mutbooks.app.postHashTag.service;
 
 import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
-import com.example.mutbooks.app.postHashTag.repository.HashTagRepository;
+import com.example.mutbooks.app.postHashTag.repository.PostHashTagRepository;
 import com.example.mutbooks.app.keyword.entity.PostKeyword;
 import com.example.mutbooks.app.keyword.service.KeywordService;
 import com.example.mutbooks.app.post.entity.Post;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class HashTagService {
-    private final HashTagRepository hashTagRepository;
+    private final PostHashTagRepository postHashTagRepository;
     private final KeywordService keywordService;
 
     // 게시글에 해시태그 반영
@@ -43,7 +43,7 @@ public class HashTagService {
 
         // 4. 3번에서 구한 해시태그 삭제
         deleteHashTags.forEach(hashTag -> {
-            hashTagRepository.delete(hashTag);
+            postHashTagRepository.delete(hashTag);
         });
 
         // 5. 나머지 해시태그는 저장
@@ -58,7 +58,7 @@ public class HashTagService {
         PostKeyword keyword = keywordService.save(keywordContent);
 
         // 2. (postId + keywordId) 가 DB에 있으면 바로 리턴
-        PostHashTag hashTag = hashTagRepository.findByPostIdAndPostKeywordId(post.getId(), keyword.getId()).orElse(null);
+        PostHashTag hashTag = postHashTagRepository.findByPostIdAndPostKeywordId(post.getId(), keyword.getId()).orElse(null);
         if(hashTag != null) {
             return hashTag;
         }
@@ -68,13 +68,13 @@ public class HashTagService {
                 .post(post)
                 .postKeyword(keyword)
                 .build();
-        hashTagRepository.save(hashTag);
+        postHashTagRepository.save(hashTag);
 
         return hashTag;
     }
 
     // postId로 postHashTag 조회
     public List<PostHashTag> findByPostId(long postId) {
-        return hashTagRepository.findByPostId(postId);
+        return postHashTagRepository.findByPostId(postId);
     }
 }
