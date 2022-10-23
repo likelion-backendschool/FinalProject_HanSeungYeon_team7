@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>내 프로필</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-join flex-grow flex flex-col items-center justify-center">
+
+        <div class="max-w-md w-full px-2 pt-4">
+            <h1 class="font-bold text-lg">내 프로필</h1>
+
+            <div class="flex flex-col gap-3">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">아이디</span>
+                    </label>
+                    <span class="input input-bordered" style="display: flex; align-items: center" th:text="${member.username}"></span>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">이메일</span>
+                    </label>
+                    <span class="input input-bordered" style="display: flex; align-items: center" th:text="${member.email}"></span>
+                </div>
+
+<!--                작가명-->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">작가명</span>
+                    </label>
+                    <span class="input input-bordered" style="display: flex; align-items: center" th:text="${member.nickname}"></span>
+                </div>
+
+                <div class="grid grid-cols-2 mt-2 gap-2">
+                    <a href="/member/modify" class="btn btn-secondary btn-outline">기본정보 수정</a>
+                    <a href="/member/modifyPassword" class="btn btn-secondary btn-outline">비밀번호 수정</a>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>
