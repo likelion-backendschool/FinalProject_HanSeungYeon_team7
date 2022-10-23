@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class HashTagService {
+public class PostHashTagService {
     private final PostHashTagRepository postHashTagRepository;
     private final KeywordService keywordService;
 

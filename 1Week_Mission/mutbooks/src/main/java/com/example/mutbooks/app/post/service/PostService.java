@@ -1,6 +1,6 @@
 package com.example.mutbooks.app.post.service;
 
-import com.example.mutbooks.app.postHashTag.service.HashTagService;
+import com.example.mutbooks.app.postHashTag.service.PostHashTagService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.post.exception.PostNotFoundException;
 import com.example.mutbooks.app.post.entity.Post;
@@ -17,7 +17,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
-    private final HashTagService hashTagService;
+    private final PostHashTagService postHashTagService;
 
     public Post findById(long id) {
         return postRepository.findById(id).orElseThrow(() -> {
@@ -49,7 +49,7 @@ public class PostService {
         // 해시태그 적용
         String keywords = writeForm.getKeywords();
         if(keywords != null) {
-            hashTagService.apply(post, keywords);
+            postHashTagService.apply(post, keywords);
         }
 
         return post;
@@ -64,7 +64,7 @@ public class PostService {
         // 해시태그 적용
         String keywords = writeForm.getKeywords();
         if(keywords != null) {
-            hashTagService.apply(post, keywords);
+            postHashTagService.apply(post, keywords);
         }
 
         postRepository.save(post);

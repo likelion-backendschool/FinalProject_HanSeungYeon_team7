@@ -18,11 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-class HashTagServiceTest {
+class PostHashTagServiceTest {
     @Autowired
     private PostService postService;
     @Autowired
-    private HashTagService hashTagService;
+    private PostHashTagService postHashTagService;
     @Autowired
     private KeywordService keywordService;
 
@@ -35,11 +35,11 @@ class HashTagServiceTest {
         String keywordContent2 = "판타지";
         String keywordContent3 = "소설";
         // when
-        hashTagService.save(post, keywordContent1);
-        hashTagService.save(post, keywordContent2);
-        hashTagService.save(post, keywordContent3);
+        postHashTagService.save(post, keywordContent1);
+        postHashTagService.save(post, keywordContent2);
+        postHashTagService.save(post, keywordContent3);
         // then
-        List<PostHashTag> hashTags = hashTagService.findByPostId(2);
+        List<PostHashTag> hashTags = postHashTagService.findByPostId(2);
 
         assertThat(hashTags.size()).isEqualTo(2);
         assertThat(hashTags.get(0).getPostKeyword().getContent()).isEqualTo("판타지");
@@ -53,9 +53,9 @@ class HashTagServiceTest {
         Post post = postService.findById(1);
         String keywords = "#판타지  #소설 # SF # 소설";
         // when
-        hashTagService.apply(post, keywords);
+        postHashTagService.apply(post, keywords);
         // then
-        List<PostHashTag> hashTags = hashTagService.findByPostId(1);
+        List<PostHashTag> hashTags = postHashTagService.findByPostId(1);
 
         assertThat(hashTags.size()).isEqualTo(3);
         assertThat(hashTags.get(0).getPostKeyword().getContent()).isEqualTo("판타지");

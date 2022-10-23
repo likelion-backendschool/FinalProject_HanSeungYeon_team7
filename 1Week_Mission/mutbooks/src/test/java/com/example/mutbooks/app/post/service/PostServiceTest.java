@@ -1,7 +1,7 @@
 package com.example.mutbooks.app.post.service;
 
 import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
-import com.example.mutbooks.app.postHashTag.service.HashTagService;
+import com.example.mutbooks.app.postHashTag.service.PostHashTagService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import com.example.mutbooks.app.post.entity.Post;
@@ -29,7 +29,7 @@ class PostServiceTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private HashTagService hashTagService;
+    private PostHashTagService postHashTagService;
 
     @Test
     @DisplayName("글 작성")
@@ -46,7 +46,7 @@ class PostServiceTest {
         assertThat(post.getContent()).isEqualTo("안녕하세요1");
         assertThat(post.getContentHtml()).isEqualTo("<ul><li><p>안녕하세요1</p></li></ul>");
         // 해시태그
-        List<PostHashTag> hashTags = hashTagService.findByPostId(3);
+        List<PostHashTag> hashTags = postHashTagService.findByPostId(3);
         assertThat(hashTags.size()).isEqualTo(2);
         assertThat(hashTags.get(0).getPostKeyword().getContent()).isEqualTo("로맨스");
         assertThat(hashTags.get(1).getPostKeyword().getContent()).isEqualTo("판타지");
@@ -66,7 +66,7 @@ class PostServiceTest {
         assertThat(post.getContent()).isEqualTo("new 안녕하세요");
         assertThat(post.getContentHtml()).isEqualTo("<ul><li><p>new 안녕하세요</p></li></ul>");
         // 해시태그
-        List<PostHashTag> hashTags = hashTagService.findByPostId(1);
+        List<PostHashTag> hashTags = postHashTagService.findByPostId(1);
         assertThat(hashTags.size()).isEqualTo(3);
         assertThat(hashTags.get(0).getPostKeyword().getContent()).isEqualTo("판타지");
         assertThat(hashTags.get(1).getPostKeyword().getContent()).isEqualTo("소설");
