@@ -33,10 +33,6 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        // TODO: 테스트를 위해 잠시 주석 처리
-        // 가입 축하 이메일 전송
-//        mailService.sendJoinCongrats(member.getUsername(), member.getEmail());
-
         return member;
     }
 

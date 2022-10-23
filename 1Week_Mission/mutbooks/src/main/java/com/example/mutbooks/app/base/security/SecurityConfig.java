@@ -28,6 +28,7 @@ public class SecurityConfig {
                 )
                 .logout(
                         logout -> logout.logoutUrl("/member/logout")
+                        // 로그아웃 후 기본 이동경로 = /login?logout
                 )
                 .csrf().disable(); // CSRF 토큰 끄기;
 

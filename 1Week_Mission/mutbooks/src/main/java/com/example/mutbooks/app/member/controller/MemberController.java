@@ -1,6 +1,7 @@
 package com.example.mutbooks.app.member.controller;
 
 import com.example.mutbooks.app.base.security.dto.MemberContext;
+import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
@@ -27,6 +28,7 @@ import javax.validation.Valid;
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+    private final MailService mailService;
 
     // 회원가입 폼
     @PreAuthorize("isAnonymous()")
@@ -53,6 +55,10 @@ public class MemberController {
         }
 
         Member member = memberService.join(joinForm);
+        // TODO: 테스트를 위해 잠시 주석 처리
+        // 가입 축하 이메일 전송
+//        mailService.sendJoinCongrats(member.getUsername(), member.getEmail());
+
         // 회원가입 완료 후, 자동 로그인 처리
         try {
             request.login(joinForm.getUsername(), joinForm.getPassword());
