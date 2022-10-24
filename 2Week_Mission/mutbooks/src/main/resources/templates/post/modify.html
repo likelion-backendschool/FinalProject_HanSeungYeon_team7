@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>글 수정</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+
+        <div class="px-2 pt-4">
+            <h1 class="font-bold text-lg">글 수정</h1>
+
+            <script>
+                let SongCreate__submitDone = false;
+
+                function SongCreate__submit(form) {
+                    if (SongCreate__submitDone) {
+                        return;
+                    }
+
+                    form.subject.value = form.subject.value.trim();
+
+                    if (form.subject.value.length == 0) {
+                        warningModal("제목을 입력해주세요.");
+                        form.subject.focus();
+
+                        return;
+                    }
+
+                    // Toast UI
+                    const editor = $(form).find(".toast-ui-editor").data("data-toast-editor");
+                    const markdown = editor.getMarkdown();  // 마크다운 원문
+                    const html = editor.getHTML();          // 렌더링한 HTML
+
+                    console.log(markdown);
+                    console.log(html);
+
+                    form.content.value = markdown.trim();
+                    form.contentHtml.value = html.trim();
+                    if (form.content.value.length == 0) {
+                        alert("내용을 입력해주세요");
+                        editor.focus();
+                    }
+
+                    form.submit();
+                    SongCreate__submitDone = true;
+                }
+            </script>
+
+
+            <form th:action method="POST" class="flex flex-col gap-3"
+                  onsubmit="SongCreate__submit(this); return false;">
+                <input type="hidden" name="content" />
+                <input type="hidden" name="contentHtml" />
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">제목</span>
+                    </label>
+                    <input autofocus type="text" name="subject" placeholder="제목" class="input input-bordered"
+                           maxlength="50" th:value="${post.subject}">
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">내용</span>
+                    </label>
+                    <div class="toast-ui-editor" toast-ui-editor--height="calc(100vh - 300px)" th:text="${post.content}"></div>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">해시태그</span>
+                    </label>
+                    <input autofocus type="text" name="keywords" placeholder="#태그입력" class="input input-bordered"
+                           maxlength="50" th:value="${post.hashTagString}">
+                </div>
+
+                <div class="grid grid-cols-2 mt-2 gap-2">
+                    <button type="button" onclick="history.back();" class="btn btn-secondary btn-outline">취소</button>
+                    <input class="btn btn-primary" type="submit" value="완료">
+                </div>
+            </form>
+        </div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>
