@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -45,5 +46,14 @@ public class ProductController {
         Product product = productService.create(author, productForm);
 
         return "redirect:/product/" + product.getId();
+    }
+
+    // 도서 상세조회
+    @GetMapping("/{id}")
+    public String showDetail(@PathVariable long id, Model model) {
+        Product product = productService.findById(id);
+        model.addAttribute("product", product);
+
+        return "product/detail";
     }
 }

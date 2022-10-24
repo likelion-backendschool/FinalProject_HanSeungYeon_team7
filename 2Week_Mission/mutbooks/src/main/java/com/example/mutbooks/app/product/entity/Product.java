@@ -1,8 +1,9 @@
 package com.example.mutbooks.app.product.entity;
 
 import com.example.mutbooks.app.base.entity.BaseEntity;
-import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
 import com.example.mutbooks.app.member.entity.Member;
+import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
+import com.example.mutbooks.app.productHashTag.entity.ProductHashTag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,8 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,4 +33,7 @@ public class Product extends BaseEntity {
     private String content;     // 상품설명
 
     private int price;          // 판매가
+
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.ALL})
+    private List<ProductHashTag> productHashTags = new ArrayList<>();   // 도서 해시태그 리스트
 }

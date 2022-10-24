@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>도서 정보</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+
+        <div class="px-2 pt-4">
+            <div class="flex flex-col gap-3 mt-4">
+                <div class="border-b-2 border-zinc-200 pb-3 font-bold">
+                    <h1 class="text-2xl" th:text="${product.subject}"></h1>
+                </div>
+
+                <div class="mt-4">
+                    <span>가격</span>
+                    <span th:text="${product.price}"></span>
+                </div>
+
+                <div class="mt-4">
+                    <span>설명</span>
+                    <span th:text="${product.content}"></span>
+                </div>
+
+                <div class="mt-4">
+                    <span>작가명</span>
+                    <span th:text="${product.author.getNickname()}"></span>
+                </div>
+
+                <div th:each="productHashTag : ${product.productHashTags}" class="badge badge-lg badge-accent mx-1">
+                    <span>#</span>
+                    <span th:text="${productHashTag.productKeyword.content}"></span>
+                </div>
+
+                <div>
+                    <a
+                            th:href="@{|/product/${product.id}/modify|}"
+                            class="btn btn-secondary btn-sm btn-outline">
+                        <span class="ml-1">수정</span>
+                    </a>
+
+                    <a href="javascript:;"
+                       onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();"
+                       class="btn btn-secondary btn-sm btn-outline">
+                        <span class="ml-1">삭제</span>
+                    </a>
+                    <form th:action="@{|/product/${product.id}/remove|}" method="POST" hidden></form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

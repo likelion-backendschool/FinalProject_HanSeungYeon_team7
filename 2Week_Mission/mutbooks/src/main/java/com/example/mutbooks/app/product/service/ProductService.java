@@ -6,6 +6,7 @@ import com.example.mutbooks.app.postKeyword.service.PostKeywordService;
 import com.example.mutbooks.app.product.entity.Product;
 import com.example.mutbooks.app.product.form.ProductForm;
 import com.example.mutbooks.app.product.repository.ProductRepository;
+import com.example.mutbooks.app.productHashTag.exception.ProductNotFoundException;
 import com.example.mutbooks.app.productHashTag.service.ProductHashTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,5 +41,11 @@ public class ProductService {
         }
 
         return product;
+    }
+
+    public Product findById(long id) {
+        return productRepository.findById(id).orElseThrow(() -> {
+            throw new ProductNotFoundException("해당 도서는 존재하지 않습니다.");
+        });
     }
 }
