@@ -4,9 +4,10 @@ import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
 import com.example.mutbooks.app.postKeyword.service.PostKeywordService;
 import com.example.mutbooks.app.product.entity.Product;
-import com.example.mutbooks.app.product.form.ProductForm;
-import com.example.mutbooks.app.product.repository.ProductRepository;
 import com.example.mutbooks.app.product.exception.ProductNotFoundException;
+import com.example.mutbooks.app.product.form.ProductForm;
+import com.example.mutbooks.app.product.form.ProductModifyForm;
+import com.example.mutbooks.app.product.repository.ProductRepository;
 import com.example.mutbooks.app.productHashTag.service.ProductHashTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,19 @@ public class ProductService {
 
     public List<Product> findAllByOrderByIdDesc() {
         return productRepository.findALlByOrderByIdDesc();
+    }
+
+    // 도서 이름, 가격, 설명, 해시태그 수정
+    @Transactional
+    public void modify(Product product, ProductModifyForm productModifyForm) {
+        product.setSubject(productModifyForm.getSubject());
+        product.setContent(productModifyForm.getContent());
+        product.setPrice(productModifyForm.getPrice());
+        // 해시태그 적용
+        String productKeywords = productModifyForm.getProductKeywords();
+        if(productKeywords != null) {
+            productHashTagService.apply(product, productKeywords);
+        }
     }
 
     // 수정 권한 검사

@@ -6,6 +6,7 @@ import com.example.mutbooks.app.postKeyword.dto.PostKeywordDto;
 import com.example.mutbooks.app.postKeyword.service.PostKeywordService;
 import com.example.mutbooks.app.product.entity.Product;
 import com.example.mutbooks.app.product.form.ProductForm;
+import com.example.mutbooks.app.product.form.ProductModifyForm;
 import com.example.mutbooks.app.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,7 +45,12 @@ public class ProductController {
     // 도서 등록
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String create(@AuthenticationPrincipal MemberContext memberContext, @Valid ProductForm productForm) {
+    public String create(@AuthenticationPrincipal MemberContext memberContext,
+                         @Valid ProductForm productForm, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return "/product/create";
+        }
+
         Member author = memberContext.getMember();
         Product product = productService.create(author, productForm);
 
@@ -83,5 +90,27 @@ public class ProductController {
         model.addAttribute("product", product);
 
         return "/product/modify";
+    }
+
+    // 도서 수정
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/modify")
+    public String modify(@PathVariable long id,
+                         @AuthenticationPrincipal MemberContext memberContext,
+                         @Valid ProductModifyForm productModifyForm, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return "product/modify";
+        }
+
+        Product product = productService.findById(id);
+        Member member = memberContext.getMember();
+
+        // 수정 권한 검사
+        if(productService.canModify(member, product) == false) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        productService.modify(product, productModifyForm);
+
+        return "redirect:/product/%d".formatted(product.getId());
     }
 }
