@@ -1,7 +1,7 @@
 package com.example.mutbooks.app.product.entity;
 
 import com.example.mutbooks.app.base.entity.BaseEntity;
-import com.example.mutbooks.app.keyword.entity.PostKeyword;
+import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
 import com.example.mutbooks.app.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

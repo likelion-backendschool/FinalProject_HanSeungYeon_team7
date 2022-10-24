@@ -1,7 +1,7 @@
-package com.example.mutbooks.app.keyword.service;
+package com.example.mutbooks.app.postKeyword.service;
 
-import com.example.mutbooks.app.keyword.entity.PostKeyword;
-import com.example.mutbooks.app.keyword.repository.KeywordRepository;
+import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
+import com.example.mutbooks.app.postKeyword.repository.PostKeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class KeywordService {
-    private final KeywordRepository keywordRepository;
+public class PostKeywordService {
+    private final PostKeywordRepository postKeywordRepository;
 
     // 키워드 저장
     @Transactional
@@ -25,13 +25,13 @@ public class KeywordService {
         keyword = PostKeyword.builder()
                 .content(content)
                 .build();
-        keywordRepository.save(keyword);
+        postKeywordRepository.save(keyword);
 
         return keyword;
     }
 
     // 키워드 content 로 조회
     public PostKeyword findByContent(String content) {
-        return keywordRepository.findByContent(content).orElse(null);
+        return postKeywordRepository.findByContent(content).orElse(null);
     }
 }

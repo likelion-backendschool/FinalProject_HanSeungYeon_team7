@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import static com.example.mutbooks.app.postHashTag.entity.QPostHashTag.postHashTag;
-import static com.example.mutbooks.app.keyword.entity.QPostKeyword.postKeyword;
+import static com.example.mutbooks.app.postKeyword.entity.QPostKeyword.postKeyword;
 import static com.example.mutbooks.app.post.entity.QPost.post;
 
 @RequiredArgsConstructor

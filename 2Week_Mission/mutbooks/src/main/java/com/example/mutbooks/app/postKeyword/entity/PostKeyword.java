@@ -1,4 +1,4 @@
-package com.example.mutbooks.app.keyword.entity;
+package com.example.mutbooks.app.postKeyword.entity;
 
 import com.example.mutbooks.app.base.entity.BaseEntity;
 import lombok.Getter;
