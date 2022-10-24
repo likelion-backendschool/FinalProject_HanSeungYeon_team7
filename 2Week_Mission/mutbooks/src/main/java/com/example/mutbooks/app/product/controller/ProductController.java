@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ProductController {
     private final ProductService productService;
 
+    // TODO: 작가회원인지 검증
     // 도서 등록폼
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
