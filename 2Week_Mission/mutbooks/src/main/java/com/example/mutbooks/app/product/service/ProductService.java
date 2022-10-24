@@ -69,8 +69,18 @@ public class ProductService {
         }
     }
 
+    @Transactional
+    public void delete(Product product) {
+        productRepository.delete(product);
+    }
+
     // 수정 권한 검사
     public boolean canModify(Member member, Product product) {
         return member.getId().equals(product.getAuthor().getId());
+    }
+
+    // 삭제 권한 검사
+    public boolean canDelete(Member member, Product product) {
+        return canModify(member, product);
     }
 }

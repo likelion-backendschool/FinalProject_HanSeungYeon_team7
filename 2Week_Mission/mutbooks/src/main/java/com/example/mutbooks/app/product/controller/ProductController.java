@@ -113,4 +113,20 @@ public class ProductController {
 
         return "redirect:/product/%d".formatted(product.getId());
     }
+
+    // 도서 삭제
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext) {
+        Member member = memberContext.getMember();
+        Product product = productService.findById(id);
+
+        // 삭제 권한 검사
+        if(productService.canDelete(member, product) == false) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        productService.delete(product);
+
+        return "redirect:/product/list";
+    }
 }
