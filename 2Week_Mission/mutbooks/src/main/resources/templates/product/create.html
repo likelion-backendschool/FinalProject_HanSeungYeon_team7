@@ -41,14 +41,23 @@
                         return;
                     }
 
-                    form.postTagContents.value = form.postTagContents.value.trim();
+                    form.content.value = form.content.value.trim();
 
-                    if (form.postTagContents.value.length == 0) {
-                        warningModal("태그를 입력해주세요.");
-                        form.postTagContents.focus();
+                    if (form.content.value.length == 0) {
+                        warningModal("설명을 입력해주세요.");
+                        form.content.focus();
 
                         return;
                     }
+
+                    // form.productKeywords.value = form.productKeywords.value.trim();
+                    //
+                    // if (form.productKeywords.value.length == 0) {
+                    //     warningModal("도서 해시태그를 입력해주세요.");
+                    //     form.productKeywords.focus();
+                    //
+                    //     return;
+                    // }
 
                     form.submit();
 
@@ -66,9 +75,9 @@
                     </label>
                     <select class="select select-bordered" name="postKeywordId">
                         <option disabled="disabled" selected>- 글 태그 선택 -</option>
-                        <option th:each="postKeyword : ${postKeywords}"
-                                th:value="${postKeyword.id}"
-                                th:text="|${postKeyword.content} : 글 ${@ut.nf(postKeyword.extra_postTagsCount)}건|"></option>
+                        <option th:each="postKeywordDto : ${postKeywords}"
+                                th:value="${postKeywordDto.id}"
+                                th:text="|${postKeywordDto.content} : 글 ${postKeywordDto.postCount}건|"></option>
                     </select>
                 </div>
 
@@ -90,9 +99,14 @@
 
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text">태그</span>
+                        <span class="label-text">설명</span>
                     </label>
-                    <input type="text" name="productTagContents" placeholder="#태그1 #태그2 #태그3 ..."
+                    <textarea autofocus type="text" name="content" placeholder="도서 설명을 입력해주세요.(200자 이하)" class="input input-bordered"
+                              maxlength="200"> </textarea>
+                </div>
+
+                <div class="form-control">
+                    <input type="text" name="productKeywords" placeholder="#태그1 #태그2 #태그3 ..."
                            class="input input-bordered"
                            maxlength="50">
                 </div>
