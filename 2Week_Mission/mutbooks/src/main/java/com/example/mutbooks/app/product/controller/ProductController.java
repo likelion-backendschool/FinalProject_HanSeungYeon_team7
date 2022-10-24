@@ -50,10 +50,19 @@ public class ProductController {
 
     // 도서 상세조회
     @GetMapping("/{id}")
-    public String showDetail(@PathVariable long id, Model model) {
+    public String detail(@PathVariable long id, Model model) {
         Product product = productService.findById(id);
         model.addAttribute("product", product);
 
         return "product/detail";
+    }
+
+    // 도서 리스트 조회
+    @GetMapping("/list")
+    public String list(Model model) {
+        List<Product> products = productService.findAllByOrderByIdDesc();
+        model.addAttribute("products", products);
+
+        return "product/list";
     }
 }

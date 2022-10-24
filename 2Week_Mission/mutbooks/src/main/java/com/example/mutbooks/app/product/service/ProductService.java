@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -47,5 +49,9 @@ public class ProductService {
         return productRepository.findById(id).orElseThrow(() -> {
             throw new ProductNotFoundException("해당 도서는 존재하지 않습니다.");
         });
+    }
+
+    public List<Product> findAllByOrderByIdDesc() {
+        return productRepository.findALlByOrderByIdDesc();
     }
 }
