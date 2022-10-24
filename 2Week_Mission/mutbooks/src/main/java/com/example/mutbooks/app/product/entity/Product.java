@@ -13,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -36,4 +37,18 @@ public class Product extends BaseEntity {
 
     @OneToMany(mappedBy = "product", cascade = {CascadeType.ALL})
     private List<ProductHashTag> productHashTags = new ArrayList<>();   // 도서 해시태그 리스트
+
+    // 해당 도서의 해시태그들을 한 문장으로 반환
+    public String getHashTagString() {
+        if(productHashTags.isEmpty()) {
+            return "";
+        }
+
+        return "#" + productHashTags
+                .stream()
+                .map(hashTag -> hashTag.getProductKeyword().getContent())
+                .sorted()
+                .collect(Collectors.joining(" #"))
+                .trim();
+    }
 }

@@ -8,6 +8,7 @@ import com.example.mutbooks.app.product.entity.Product;
 import com.example.mutbooks.app.product.form.ProductForm;
 import com.example.mutbooks.app.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -64,5 +66,22 @@ public class ProductController {
         model.addAttribute("products", products);
 
         return "product/list";
+    }
+
+    // 도서 수정폼
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}/modify")
+    public String showModify(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext, Model model) {
+        Product product = productService.findById(id);
+        Member member = memberContext.getMember();
+
+        // 수정 권한 검사
+        if(productService.canModify(member, product) == false) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        model.addAttribute("product", product);
+
+        return "/product/modify";
     }
 }

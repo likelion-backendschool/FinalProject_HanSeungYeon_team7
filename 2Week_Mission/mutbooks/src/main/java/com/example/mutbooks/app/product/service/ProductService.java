@@ -6,7 +6,7 @@ import com.example.mutbooks.app.postKeyword.service.PostKeywordService;
 import com.example.mutbooks.app.product.entity.Product;
 import com.example.mutbooks.app.product.form.ProductForm;
 import com.example.mutbooks.app.product.repository.ProductRepository;
-import com.example.mutbooks.app.productHashTag.exception.ProductNotFoundException;
+import com.example.mutbooks.app.product.exception.ProductNotFoundException;
 import com.example.mutbooks.app.productHashTag.service.ProductHashTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -53,5 +53,10 @@ public class ProductService {
 
     public List<Product> findAllByOrderByIdDesc() {
         return productRepository.findALlByOrderByIdDesc();
+    }
+
+    // 수정 권한 검사
+    public boolean canModify(Member member, Product product) {
+        return member.getId().equals(product.getAuthor().getId());
     }
 }

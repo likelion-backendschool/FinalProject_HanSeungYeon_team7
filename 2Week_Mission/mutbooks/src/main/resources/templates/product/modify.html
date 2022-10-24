@@ -2,7 +2,7 @@
 <html layout:decorate="~{layout/layout.html}">
 
 <head>
-    <title>도서 등록</title>
+    <title>도서 정보 수정</title>
 </head>
 
 <body>
@@ -12,7 +12,7 @@
         <div class="px-2 pt-4">
             <h1 class="font-bold text-lg">
                 <i class="fa-solid fa-book-medical"></i>
-                도서 정보 수정
+                도서 등록
             </h1>
 
             <script>
@@ -64,14 +64,9 @@
 
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text">글 태그 선택</span>
+                        <span class="label-text">글 태그</span>
                     </label>
-                    <select class="select select-bordered" name="postKeywordId">
-                        <option disabled="disabled" selected>- 글 태그 선택 -</option>
-                        <option th:each="postKeywordDto : ${postKeywords}"
-                                th:value="${postKeywordDto.id}"
-                                th:text="|${postKeywordDto.content} : 글 ${postKeywordDto.postCount}건|"></option>
-                    </select>
+                    <div class="badge" th:text="${product.postKeyword.content}"></div>
                 </div>
 
                 <div class="form-control">
@@ -79,7 +74,7 @@
                         <span class="label-text">제목</span>
                     </label>
                     <input autofocus type="text" name="subject" placeholder="제목" class="input input-bordered"
-                           maxlength="50">
+                           maxlength="50" th:value="${product.subject}">
                 </div>
 
                 <div class="form-control">
@@ -87,7 +82,7 @@
                         <span class="label-text">가격</span>
                     </label>
                     <input autofocus type="number" name="price" placeholder="가격" class="input input-bordered"
-                           maxlength="50">
+                           maxlength="50" th:value="${product.price}">
                 </div>
 
                 <div class="form-control">
@@ -95,13 +90,13 @@
                         <span class="label-text">설명</span>
                     </label>
                     <textarea autofocus type="text" name="content" placeholder="도서 설명을 입력해주세요.(200자 이하)" class="input input-bordered"
-                              maxlength="200"> </textarea>
+                              maxlength="200" th:text="${product.content}"> </textarea>
                 </div>
 
                 <div class="form-control">
                     <input type="text" name="productKeywords" placeholder="#태그1 #태그2 #태그3 ..."
                            class="input input-bordered"
-                           maxlength="50">
+                           maxlength="50" th:value="${product.getHashTagString()}">
                 </div>
 
                 <div class="grid grid-cols-2 mt-2 gap-2">
@@ -109,7 +104,7 @@
                         <span class="ml-1">취소</span>
                     </button>
                     <button class="btn btn-primary" type="submit">
-                        <span class="ml-1">등록</span>
+                        <span class="ml-1">수정</span>
                     </button>
                 </div>
             </form>
