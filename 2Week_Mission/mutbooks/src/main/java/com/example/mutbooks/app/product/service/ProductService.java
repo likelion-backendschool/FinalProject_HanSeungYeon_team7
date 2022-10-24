@@ -6,6 +6,7 @@ import com.example.mutbooks.app.postKeyword.service.PostKeywordService;
 import com.example.mutbooks.app.product.entity.Product;
 import com.example.mutbooks.app.product.form.ProductForm;
 import com.example.mutbooks.app.product.repository.ProductRepository;
+import com.example.mutbooks.app.productHashTag.service.ProductHashTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final PostKeywordService postKeywordService;
+    private final ProductHashTagService productHashTagService;
 
     @Transactional
     public Product create(Member author, ProductForm productForm) {
@@ -31,7 +33,11 @@ public class ProductService {
 
         productRepository.save(product);
 
-        // TODO : 도서 해시태그 저장
+        // 도서 해시태그 적용
+        String productKeywords = productForm.getProductKeywords();
+        if(productKeywords != null) {
+            productHashTagService.apply(product, productKeywords);
+        }
 
         return product;
     }
