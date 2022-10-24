@@ -1,5 +1,6 @@
 package com.example.mutbooks.app.product.form;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class ProductForm {
     @NotEmpty(message = "도서명을 입력해주세요.")
     private String subject;
