@@ -10,10 +10,7 @@ import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.member.validator.PwdModifyFormValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -101,12 +98,6 @@ public class MemberController {
 
         Member member = memberService.findByUsername(memberContext.getUsername());
         memberService.modifyProfile(member, modifyForm);
-        // 세션에 담긴 회원 기본정보 수정
-        memberContext.setUpdateDate(member.getUpdateDate());
-        memberContext.setNickname(member.getNickname());
-        memberContext.setEmail(member.getEmail());
-        Authentication authentication = new UsernamePasswordAuthenticationToken(memberContext, member.getPassword(), memberContext.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return "redirect:/member/profile";
     }

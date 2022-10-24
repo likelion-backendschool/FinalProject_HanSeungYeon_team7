@@ -31,9 +31,8 @@ public class ProductController {
     private final ProductService productService;
     private final PostKeywordService postKeywordService;
 
-    // TODO: 작가회원인지 검증
     // 도서 등록폼
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasAuthority('AUTHOR')")
     @GetMapping("/create")
     public String showCreate(@AuthenticationPrincipal MemberContext memberContext, Model model) {
         List<PostKeywordDto> postKeywords = postKeywordService.findByMemberId(memberContext.getId());
@@ -43,7 +42,7 @@ public class ProductController {
     }
 
     // 도서 등록
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasAuthority('AUTHOR')")
     @PostMapping("/create")
     public String create(@AuthenticationPrincipal MemberContext memberContext,
                          @Valid ProductForm productForm, BindingResult bindingResult) {
@@ -76,7 +75,7 @@ public class ProductController {
     }
 
     // 도서 수정폼
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasAuthority('AUTHOR')")
     @GetMapping("/{id}/modify")
     public String showModify(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext, Model model) {
         Product product = productService.findById(id);
@@ -93,7 +92,7 @@ public class ProductController {
     }
 
     // 도서 수정
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasAuthority('AUTHOR')")
     @PostMapping("/{id}/modify")
     public String modify(@PathVariable long id,
                          @AuthenticationPrincipal MemberContext memberContext,
@@ -115,7 +114,7 @@ public class ProductController {
     }
 
     // 도서 삭제
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasAuthority('AUTHOR')")
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext) {
         Member member = memberContext.getMember();
