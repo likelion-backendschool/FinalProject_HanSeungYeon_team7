@@ -15,24 +15,32 @@
             <th:block th:each="product : ${products}">
                 <div class="card bg-base-100 border-2 border-slate-100 my-2">
                     <div class="card-body">
-                        <a th:href="|/product/${product.id}|" >
-                            <h2 th:text="${product.subject}" class="font-bold text-2xl"></h2>
-                        </a>
-
                         <div class="flex">
-                            <div th:text="|${product.author.nickname} 저|" class="text-slate-500 mr-5"></div>
-                            <div class="text-slate-500 mr-5">|</div>
-                            <div th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd')}" class="text-slate-500"></div>
-                            <!--                        <div th:text="${#temporals.format(product.updateDate, 'yyyy-MM-dd')}"></div>-->
-                        </div>
-
-                        <div th:text="|${product.price} 원|" class="font-bold text-2xl my-2"></div>
-
-                        <div>
-                            <div th:each="productHash : ${product.productHashTags}" class="badge badge-lg badge-accent mr-1">
-                                <span>#</span>
-                                <span th:text="${productHash.productKeyword.content}"></span>
+                            <div class="mr-5">
+                                <img src="https://source.unsplash.com/random" class="w-28 h-40">
                             </div>
+                            <div>
+                                <a th:href="|/product/${product.id}|" >
+                                    <h2 th:text="${product.subject}" class="font-bold text-2xl"></h2>
+                                </a>
+
+                                <div class="flex">
+                                    <div th:text="|${product.author.nickname} 저|" class="text-slate-500 mr-2"></div>
+                                    <div class="text-slate-500 mr-2">|</div>
+                                    <div th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd')}" class="text-slate-500"></div>
+                                    <!--                        <div th:text="${#temporals.format(product.updateDate, 'yyyy-MM-dd')}"></div>-->
+                                </div>
+
+                                <div th:text="|${product.price} 원|" class="font-bold text-2xl my-2"></div>
+
+                                <div>
+                                    <div th:each="productHash : ${product.productHashTags}" class="badge badge-lg badge-accent mr-1">
+                                        <span>#</span>
+                                        <span th:text="${productHash.productKeyword.content}"></span>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="card-actions justify-end">
