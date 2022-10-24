@@ -27,9 +27,19 @@
 <!--                    <div class="input input-bordered text-" th:text="${post.hashTagString}"></div>-->
                 </div>
 
-                <div class="grid grid-cols-2 mt-2 gap-2">
-                    <a th:href="|/post/${post.id}/modify|" class="btn btn-secondary btn-outline">수정</a>
-                    <a onclick="if(!confirm('해당 글을 삭제하시겠습니까?')) return false;" th:href="|/post/${post.id}/delete|" class="btn btn-secondary btn-outline">삭제</a>
+                <div>
+                    <a
+                            th:href="|/post/${post.id}/modify|"
+                            class="btn btn-secondary btn-sm btn-outline">
+                        <span class="ml-1">수정</span>
+                    </a>
+
+                    <a href="javascript:;"
+                       onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();"
+                       class="btn btn-secondary btn-sm btn-outline">
+                        <span class="ml-1">삭제</span>
+                    </a>
+                    <form th:action="@{|/post/${post.id}/delete|}" method="POST" hidden></form>
                 </div>
             </div>
         </div>

@@ -103,10 +103,9 @@ public class PostController {
         return "redirect:/post/%d".formatted(post.getId());
     }
 
-    // TODO: POST 방식으로 바꾸기
     // 글 삭제
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}/delete")
+    @PostMapping("/{id}/delete")
     public String delete(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext) {
         Member member = memberContext.getMember();
         Post post = postService.findById(id);
