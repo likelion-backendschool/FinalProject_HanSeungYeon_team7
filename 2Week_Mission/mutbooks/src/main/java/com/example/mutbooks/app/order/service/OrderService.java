@@ -66,4 +66,8 @@ public class OrderService {
 
         return order;
     }
+
+    public List<Order> findByBuyer(Member buyer) {
+        return orderRepository.findByBuyerIdOrderByIdDesc(buyer.getId());
+    }
 }
