@@ -1,1 +1,57 @@
-장바구니 임시 페이지
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>장바구니</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+
+        <div class="px-2 pt-4">
+            <h1 class="text-2xl font-bold">eBook</h1>
+            <th:block th:each="cartItem : ${cartItems}">
+                <div class="card bg-base-100 border-2 border-slate-100 my-2">
+                    <div class="card-body" style="padding: 15px">
+                        <div class="flex flex-wrap">
+                            <div class="mr-5">
+                                <a th:href="|/product/${cartItem.product.id}|" >
+                                    <img src="https://source.unsplash.com/random" class="w-28 h-40">
+                                </a>
+                            </div>
+                            <div class="grow">
+                                <h2 th:text="${cartItem.product.subject}" class="font-bold text-2xl"></h2>
+
+                                <div class="flex">
+                                    <div th:text="|${cartItem.product.author.nickname} 저|" class="text-slate-500 mr-2"></div>
+                                    <div class="text-slate-500 mr-2">|</div>
+                                    <div th:text="${#temporals.format(cartItem.product.createDate, 'yyyy년 MM월 dd일')}" class="text-slate-500"></div>
+                                    <!--                        <div th:text="${#temporals.format(product.updateDate, 'yyyy-MM-dd')}"></div>-->
+                                </div>
+
+                                <div th:text="|${cartItem.product.price} 원|" class="font-bold text-2xl my-2"></div>
+                                <div class="text-blue-400 mb-1">무배송. 결제 후 즉시 다운로드</div>
+                                <div>
+                                    <span class="text-lg">수량 : 1</span>
+                                </div>
+                            </div>
+
+                            <div class="card-actions flex flex-col justify-center my-2">
+                                <a href="javascript:;" onclick="$(this).next().submit()" class="btn btn-sm">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span class="ml-2">삭제</span>
+                                </a>
+                                <form th:action="@{|/cart/delete/${cartItem.product.id}|}" method="POST" hidden></form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>
