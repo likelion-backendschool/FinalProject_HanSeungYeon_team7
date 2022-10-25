@@ -47,4 +47,16 @@ public class CartController {
 
         return "cart/list";
     }
+
+    // 장바구니 품목 삭제
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/delete/{productId}")
+    public String deleteCartItem(@PathVariable long productId, @AuthenticationPrincipal MemberContext memberContext) {
+        Member member = memberContext.getMember();
+        Product product = productService.findById(productId);
+
+        cartService.deleteCartItem(member, product);
+
+        return "redirect:/cart/list";
+    }
 }

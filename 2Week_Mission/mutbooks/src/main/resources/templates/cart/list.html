@@ -11,6 +11,13 @@
 
         <div class="px-2 pt-4">
             <h1 class="text-2xl font-bold">eBook</h1>
+            <div th:if="${cartItems.isEmpty()}"
+                 class="card bg-base-100 border-2 border-slate-100 my-2 h-40">
+                <div class="card-body flex-col justify-center" style="padding: 15px">
+                    <div class="font-bold text-xl text-center">장바구니에 담긴 상품이 없습니다.</div>
+                </div>
+            </div>
+
             <th:block th:each="cartItem : ${cartItems}">
                 <div class="card bg-base-100 border-2 border-slate-100 my-2">
                     <div class="card-body" style="padding: 15px">
@@ -38,7 +45,9 @@
                             </div>
 
                             <div class="card-actions flex flex-col justify-center my-2">
-                                <a href="javascript:;" onclick="$(this).next().submit()" class="btn btn-sm">
+                                <a href="javascript:;"
+                                   onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit()"
+                                   class="btn btn-sm">
                                     <i class="fa-solid fa-trash-can"></i>
                                     <span class="ml-2">삭제</span>
                                 </a>
