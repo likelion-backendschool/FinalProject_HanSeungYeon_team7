@@ -34,4 +34,9 @@ public class OrderItem extends BaseEntity {
     private int payPrice;           // 결제 금액
     private int refundPrice;        // 환불 금액
     private Boolean isPaid;         // 결제 여부
+
+    public OrderItem(Product product) {
+        this.product = product;
+        this.price = product.getPrice();
+    }
 }

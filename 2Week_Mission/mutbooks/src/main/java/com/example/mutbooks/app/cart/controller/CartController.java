@@ -29,10 +29,10 @@ public class CartController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/add/{productId}")
     public String addCartItem(@PathVariable long productId, @AuthenticationPrincipal MemberContext memberContext) {
-        Member member = memberContext.getMember();
+        Member buyer = memberContext.getMember();
         Product product = productService.findById(productId);
 
-        cartService.addCartItem(member, product);
+        cartService.addCartItem(buyer, product);
 
         return "redirect:/cart/list";
     }
@@ -41,7 +41,7 @@ public class CartController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String list(@AuthenticationPrincipal MemberContext memberContext, Model model) {
-        List<CartItem> cartItems = cartService.findAllByMemberIdOrderByIdDesc(memberContext.getId());
+        List<CartItem> cartItems = cartService.findAllByBuyerIdOrderByIdDesc(memberContext.getId());
 
         model.addAttribute("cartItems", cartItems);
 
@@ -52,10 +52,10 @@ public class CartController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/delete/{productId}")
     public String deleteCartItem(@PathVariable long productId, @AuthenticationPrincipal MemberContext memberContext) {
-        Member member = memberContext.getMember();
+        Member buyer = memberContext.getMember();
         Product product = productService.findById(productId);
 
-        cartService.deleteCartItem(member, product);
+        cartService.deleteCartItem(buyer, product);
 
         return "redirect:/cart/list";
     }

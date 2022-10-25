@@ -21,7 +21,7 @@ import javax.persistence.ManyToOne;
 @ToString(callSuper = true)
 public class CartItem extends BaseEntity {
     @ManyToOne(fetch= FetchType.LAZY)
-    private Member member;
+    private Member buyer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;

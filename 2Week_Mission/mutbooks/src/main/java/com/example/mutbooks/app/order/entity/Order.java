@@ -31,4 +31,21 @@ public class Order extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();     // 주문 품목 리스트
+
+    // 해당 주문에 주문 품목 추가
+    public void addOrderItem(OrderItem orderItem) {
+        // 주문 품목이 속해있는 주문 지정
+        orderItem.setOrder(this);
+        orderItems.add(orderItem);
+    }
+
+    // 주문명 네이밍
+    public void makeName() {
+        String name = orderItems.get(0).getProduct().getSubject();
+        // 2건 이상일 경우 1번 주문 품목 제목 외 ?건 형식으로
+        if(orderItems.size() > 1) {
+            name += " 외 %d건".formatted(orderItems.size() - 1);
+        }
+        this.name = name;
+    }
 }
