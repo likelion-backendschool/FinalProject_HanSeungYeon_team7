@@ -41,10 +41,11 @@
                             </div>
 
                             <div class="card-actions flex flex-col justify-center my-2">
-                                <a th:href class="btn btn-sm">
+                                <a href="javascript:;" onclick="$(this).next().submit()" class="btn btn-sm">
                                     <i class="fa-solid fa-cart-plus"></i>
                                     <span class="ml-2">장바구니</span>
                                 </a>
+                                <form th:action="@{|/cart/add/${product.id}|}" method="POST" hidden></form>
                             </div>
                         </div>
                     </div>
