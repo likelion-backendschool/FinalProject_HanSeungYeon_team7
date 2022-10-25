@@ -48,4 +48,9 @@ public class Order extends BaseEntity {
         }
         this.name = name;
     }
+
+    // 주문 완료 처리
+    public void setOrderDone() {
+        this.readyStatus = true;
+    }
 }

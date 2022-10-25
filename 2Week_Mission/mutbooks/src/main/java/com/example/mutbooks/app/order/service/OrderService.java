@@ -62,6 +62,7 @@ public class OrderService {
             order.addOrderItem(orderItem);
         }
         order.makeName();
+        order.setOrderDone();
         orderRepository.save(order);
 
         return order;
