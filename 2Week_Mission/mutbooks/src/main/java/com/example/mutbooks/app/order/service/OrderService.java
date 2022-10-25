@@ -5,6 +5,7 @@ import com.example.mutbooks.app.cart.service.CartService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.order.entity.Order;
 import com.example.mutbooks.app.order.entity.OrderItem;
+import com.example.mutbooks.app.order.exception.OrderNotFoundException;
 import com.example.mutbooks.app.order.repository.OrderItemRepository;
 import com.example.mutbooks.app.order.repository.OrderRepository;
 import com.example.mutbooks.app.product.entity.Product;
@@ -70,5 +71,16 @@ public class OrderService {
 
     public List<Order> findByBuyer(Member buyer) {
         return orderRepository.findByBuyerIdOrderByIdDesc(buyer.getId());
+    }
+
+    public Order findById(long id) {
+        return orderRepository.findById(id).orElseThrow(() -> {
+            throw new OrderNotFoundException("해당 주문은 존재하지 않습니다.");
+        });
+    }
+
+    // 주문 정보 조회 권한 검증
+    public boolean canSelect(Member member, Order order) {
+        return member.getId().equals(order.getBuyer().getId());
     }
 }

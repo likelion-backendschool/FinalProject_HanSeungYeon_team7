@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>주문 상세</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+
+        <div class="px-2 pt-4">
+            <h1 class="text-2xl font-bold mb-5">주문 상세</h1>
+            <div class="border-b-2 text-2xl flex mb-5 pb-2 border-slate-200">
+                <div class="font-bold mr-3">주문 상품 : </div>
+                <div>총&nbsp</div>
+                <div class="font-bold" th:text="| ${#lists.size(order.orderItems)}|"></div>
+                <div>&nbsp개</div>
+            </div>
+
+            <div th:each="orderItem : ${order.orderItems}">
+                <div class="card bg-base-100 border-2 border-slate-100 my-2">
+                    <div class="card-body" style="padding: 15px">
+                        <div class="flex flex-wrap">
+                            <div class="mr-5">
+                                <a th:href="|/product/${orderItem.product.id}|" >
+                                    <img src="https://source.unsplash.com/random" class="w-28 h-40">
+                                </a>
+                            </div>
+                            <div class="grow">
+                                <div class="flex">
+                                    <h2 th:text="|${orderItem.product.subject}|" class="font-bold text-2xl"></h2>
+                                </div>
+
+                                <div th:text="|${orderItem.product.price} 원|" class="font-bold text-xl my-2"></div>
+                                <div class="mb-2">
+                                    <span class="text-lg">수량 : 1</span>
+                                </div>
+                                <div class="text-blue-400">무배송. 결제 후 즉시 다운로드</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">주문 정보
+                </div>
+                <div>
+                    <div class="text-lg">
+                        주문고객 [[${order.buyer.username}]] 님
+                    </div>
+                    <div class="text-lg">
+                        총 상품수 [[${order.orderItems.size()}]] 개
+                    </div>
+                    <div class="text-lg">
+                        총 상품금액 [[${order.totalPayPrice}]] 원
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

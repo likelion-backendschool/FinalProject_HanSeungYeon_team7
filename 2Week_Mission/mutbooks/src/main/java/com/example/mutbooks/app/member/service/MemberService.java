@@ -112,4 +112,9 @@ public class MemberService {
         String newPassword = passwordEncoder.encode(pwdModifyForm.getNewPassword());
         member.modifyPassword(newPassword);
     }
+
+    // 회원의 남은 예치금 잔액 조회
+    public long getRestCash(Member member) {
+        return findByUsername(member.getUsername()).getRestCash();
+    }
 }

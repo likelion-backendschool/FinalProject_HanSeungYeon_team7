@@ -53,4 +53,14 @@ public class Order extends BaseEntity {
     public void setOrderDone() {
         this.readyStatus = true;
     }
+
+    // 총 주문(상품) 금액
+    public long getTotalPayPrice() {
+        // 상품들의 실제 판매가의 총합
+        long totalPayPrice = 0;
+        for(OrderItem orderItem : orderItems) {
+            totalPayPrice += orderItem.getSalePrice();
+        }
+        return totalPayPrice;
+    }
 }
