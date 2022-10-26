@@ -59,5 +59,10 @@ public interface InitDataBefore {
         // 3번 회원 2, 3번 주문 생성
         orderService.createOrder(member3, "2,3");
         orderService.createOrder(member3, "4");
+
+        // 1번 회원 캐시 10,000원 충전
+        memberService.addCash(member1, 10000, "충전");
+        // 3번 회원 캐시 50,000원 충전
+        memberService.addCash(member3, 50000, "충전");
     }
 }
