@@ -23,10 +23,10 @@ public class Order extends BaseEntity {
 
     private String name;                // 주문명
     private LocalDateTime payDate;      // 결제 일시
-    private Boolean readyStatus;        // 주문완료 여부
-    private Boolean isPaid;             // 결제완료 여부
-    private Boolean isCanceled;         // 주문취소 여부
-    private Boolean isRefunded;         // 환불 여부
+    private boolean readyStatus;        // 주문완료 여부
+    private boolean isPaid;             // 결제완료 여부
+    private boolean isCanceled;         // 주문취소 여부
+    private boolean isRefunded;         // 환불 여부
 
     @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -44,7 +44,7 @@ public class Order extends BaseEntity {
         String name = orderItems.get(0).getProduct().getSubject();
         // 2건 이상일 경우 1번 주문 품목 제목 외 ?건 형식으로
         if(orderItems.size() > 1) {
-            name += " 외 %d건".formatted(orderItems.size() - 1);
+            name += " 외 %d개".formatted(orderItems.size() - 1);
         }
         this.name = name;
     }
@@ -55,12 +55,12 @@ public class Order extends BaseEntity {
     }
 
     // 총 주문(상품) 금액
-    public long getTotalPayPrice() {
+    public long getPayPrice() {
         // 상품들의 실제 판매가의 총합
-        long totalPayPrice = 0;
+        long payPrice = 0;
         for(OrderItem orderItem : orderItems) {
-            totalPayPrice += orderItem.getSalePrice();
+            payPrice += orderItem.getSalePrice();
         }
-        return totalPayPrice;
+        return payPrice;
     }
 }

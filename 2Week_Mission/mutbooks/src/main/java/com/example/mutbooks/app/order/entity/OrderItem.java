@@ -33,10 +33,13 @@ public class OrderItem extends BaseEntity {
     private int pgFee;              // 결제대행사 수수료
     private int payPrice;           // 결제 금액
     private int refundPrice;        // 환불 금액
-    private Boolean isPaid;         // 결제 여부
+    private boolean isPaid;         // 결제 여부
 
     public OrderItem(Product product) {
+        // product 로 부터 가져온 값
         this.product = product;
         this.price = product.getPrice();
+        this.salePrice = product.getSalePrice();
+        this.wholesalePrice = product.getWholesalePrice();
     }
 }
