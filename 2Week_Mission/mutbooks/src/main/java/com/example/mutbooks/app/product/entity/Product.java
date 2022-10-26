@@ -38,6 +38,16 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", cascade = {CascadeType.ALL})
     private List<ProductHashTag> productHashTags = new ArrayList<>();   // 도서 해시태그 리스트
 
+    // 실제 판매가
+    public int getSalePrice() {
+        return getPrice();
+    }
+
+    // 도매가
+    public int getWholesalePrice() {
+        return (int) Math.ceil(getPrice() * 0.7);
+    }
+
     // 해당 도서의 해시태그들을 한 문장으로 반환
     public String getHashTagString() {
         if(productHashTags.isEmpty()) {
