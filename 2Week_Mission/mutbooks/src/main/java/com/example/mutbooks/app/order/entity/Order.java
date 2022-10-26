@@ -54,6 +54,13 @@ public class Order extends BaseEntity {
         this.readyStatus = true;
     }
 
+    // 주문 취소 처리
+    public void setCancelDone() {
+        this.isCanceled = true;
+        // TODO: 주문완료 여부를 false 로 다시 바꾸는게 맞는지
+        this.readyStatus = false;
+    }
+
     // 총 주문(상품) 금액
     public long getPayPrice() {
         // 상품들의 실제 판매가의 총합
@@ -62,5 +69,22 @@ public class Order extends BaseEntity {
             payPrice += orderItem.getSalePrice();
         }
         return payPrice;
+    }
+
+    // 주문 취소 가능 여부
+    public boolean isCancellable() {
+        if(!readyStatus) return false;
+        if(isPaid) return false;
+
+        return true;
+    }
+
+    // 결제 가능 여부
+    public boolean isPayable() {
+        if(!readyStatus) return false;
+        if(isPaid) return false;
+        if(isCanceled) return false;
+
+        return true;
     }
 }

@@ -65,4 +65,21 @@ public class OrderController {
 
         return "order/detail";
     }
+
+    // 주문 취소
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/cancel")
+    public String cancel(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext) {
+        Order order = orderService.findById(id);
+        Member member = memberContext.getMember();
+
+        // 주문 조회 권한 검사
+        if(orderService.canCancel(member, order) == false) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        orderService.cancel(order);
+
+        // 주문 내역 페이지로 리다이렉트
+        return "redirect:/order/list";
+    }
 }

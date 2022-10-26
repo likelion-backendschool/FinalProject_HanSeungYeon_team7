@@ -79,8 +79,21 @@ public class OrderService {
         });
     }
 
+    // 주문 취소
+    @Transactional
+    public void cancel(Order order) {
+        order.setCancelDone();
+    }
+
     // 주문 정보 조회 권한 검증
     public boolean canSelect(Member member, Order order) {
         return member.getId().equals(order.getBuyer().getId());
+    }
+
+    // 주문 취소 권한 검증
+    public boolean canCancel(Member member, Order order) {
+        // 주문 완료 상태가 아니면 주문 취소 불가
+        if(!order.isCancellable()) return false;
+        return canSelect(member, order);
     }
 }
