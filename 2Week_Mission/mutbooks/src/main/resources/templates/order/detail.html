@@ -17,31 +17,7 @@
         const orderPayPrice = /*[[ ${order.payPrice} ]]*/ null;
     </script>
 
-    <script>
-        const tossPayments = TossPayments("test_ck_jZ61JOxRQVEAQP7NyggVW0X9bAqw");
-
-        function payment() {
-            const method = "카드"; // "카드" 혹은 "가상계좌"
-            const uniqueOrderId = "order__" + orderId + "__" + (Math.random() + "").substring(2);
-            const successUrl = window.location.origin + "/order/" + orderId + "/success";
-            const failUrl = window.location.origin + "/order/" + orderId + "/fail";
-
-            // 결제정보 파라미터
-            var paymentData = {
-                // 필수
-                amount: orderPayPrice,      // 결제 금액
-                orderId: uniqueOrderId,     // 상점에서 주문 건을 구분하기 위해 발급한 고유 ID
-                orderName,                  // 결제에 대한 주문명
-                successUrl: successUrl,     // 결제가 성공하고 나면 리다이렉트(Redirect)되는 URL
-                failUrl: failUrl,            // 결제가 실패하면 리다이렉트되는 URL
-                // 선택
-                customerName: buyerName,    // 고객 이름
-            };
-            // 결제 요청 보내기(결제수단, 결제 정보)
-            tossPayments.requestPayment(method, paymentData);
-        }
-    </script>
-<!--    토스페이먼츠 끝-->
+    <form hidden name="payByRestCashOnlyForm" method="POST" th:action="@{|/order/${order.id}/pay|}"></form>
 
     <section class="section section-write container mx-auto">
 
@@ -103,12 +79,25 @@
             </div>
 
 <!--            에치금-->
-            <div th:if="${order.isPayable()}">
+            <div th:if="${order.isPayable()}"
+                 th:with="maxUseRestCash = ${order.payPrice > restCash ? restCash : order.payPrice}">
                 <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">캐시</div>
                 <div class="text-lg">
                     <span class="mr-3">MUT 캐시</span>
                     <span>[[${restCash}]] 원</span>
                 </div>
+
+                <input type="number" id="PaymentForm__useRestCash"
+                       th:placeholder="|0 ~ ${maxUseRestCash}|"
+                       class="input input-bordered min-w-[300px]" min="0" th:max="${maxUseRestCash}"
+                       onkeydown="PaymentForm__useRestCashFix();"
+                       onkeyup="PaymentForm__useRestCashFix();"
+                >
+                <label class="inline-flex items-center ml-3">
+                    <span>전액사용</span>
+                    <input onchange="PaymentForm__useRestCashAllChanged();" id="PaymentForm__useRestCashAll"
+                           type="checkbox" class="ml-2 checkbox">
+                </label>
             </div>
 
 <!--            주문취소-->
@@ -133,6 +122,93 @@
             </div>
         </div>
     </section>
+
+    <script>
+        const $PaymentForm__useRestCash = $("#PaymentForm__useRestCash");
+        const $PaymentForm__useRestCashAll = $("#PaymentForm__useRestCashAll");
+        const $PaymentForm__pgPayPriceDisplay = $("#PaymentForm__pgPayPriceDisplay");
+
+        const tossPayments = TossPayments("test_ck_jZ61JOxRQVEAQP7NyggVW0X9bAqw");
+
+        function payment() {
+            // 캐시 결제
+            let useRestCash = parseInt($PaymentForm__useRestCash.val());
+
+            if (orderPayPrice == useRestCash) {
+                document.payByRestCashOnlyForm.submit();
+                return;
+            }
+
+            const method = "카드"; // "카드" 혹은 "가상계좌"
+            const uniqueOrderId = "order__" + orderId + "__" + (Math.random() + "").substring(2);
+            const successUrl = window.location.origin + "/order/" + orderId + "/success";
+            const failUrl = window.location.origin + "/order/" + orderId + "/fail";
+
+            // 결제정보 파라미터
+            var paymentData = {
+                // 필수
+                amount: orderPayPrice,      // 결제 금액
+                orderId: uniqueOrderId,     // 상점에서 주문 건을 구분하기 위해 발급한 고유 ID
+                orderName,                  // 결제에 대한 주문명
+                successUrl: successUrl,     // 결제가 성공하고 나면 리다이렉트(Redirect)되는 URL
+                failUrl: failUrl,            // 결제가 실패하면 리다이렉트되는 URL
+                // 선택
+                customerName: buyerName,    // 고객 이름
+            };
+            // 결제 요청 보내기(결제수단, 결제 정보)
+            tossPayments.requestPayment(method, paymentData);
+        }
+    </script>
+    <!--    토스페이먼츠 끝-->
+
+<!--    캐시 입력폼 관련-->
+    <script>
+        // 예치금 입력폼 최솟값(0), 최댓값(보유 예치금 및 결제 금액) 자동 설정
+        function PaymentForm__useRestCashFix() {
+            let useRestCash = parseInt($PaymentForm__useRestCash.val());
+
+            if (isNaN(useRestCash)) {
+                useRestCash = 0;
+            }
+
+            const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max'));
+
+            if (useRestCash < 0) {
+                useRestCash = 0;
+                $PaymentForm__useRestCash.val(0);
+            }
+            else if (useRestCash > maxUseRestCash) {
+                useRestCash = maxUseRestCash;
+                $PaymentForm__useRestCash.val(maxUseRestCash);
+            }
+
+            if ( useRestCash == maxUseRestCash ) {
+                $PaymentForm__useRestCashAll.prop('checked', true);
+            }
+            else {
+                $PaymentForm__useRestCashAll.prop('checked', false);
+            }
+
+            const pgPayPrice = orderPayPrice - useRestCash;
+
+            $PaymentForm__pgPayPriceDisplay.text(pgPayPrice);
+        }
+
+        // 전액 결제 체크에 따른 예치금 입력폼 자동 입력
+        function PaymentForm__useRestCashAllChanged() {
+            if ( $PaymentForm__useRestCashAll.prop('checked') ) {
+                const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max'));
+                $PaymentForm__useRestCash.val(maxUseRestCash);
+            }
+            else {
+                $PaymentForm__useRestCash.val(0);
+            }
+
+            PaymentForm__useRestCashFix();
+        }
+
+        PaymentForm__useRestCashFix();
+    </script>
 </main>
 </body>
 </html>
