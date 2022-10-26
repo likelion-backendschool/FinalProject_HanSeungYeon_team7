@@ -7,6 +7,42 @@
 
 <body>
 <main layout:fragment="main">
+<!--    토스페이먼츠 시작-->
+    <script src="https://js.tosspayments.com/v1"></script>
+
+    <script th:inline="javascript">
+        const orderId = /*[[ ${order.id} ]]*/ null;
+        const buyerName = /*[[ ${order.buyer.username} ]]*/ null;
+        const orderName = /*[[ ${order.name} ]]*/ null;
+        const orderPayPrice = /*[[ ${order.payPrice} ]]*/ null;
+    </script>
+
+    <script>
+        const tossPayments = TossPayments("test_ck_jZ61JOxRQVEAQP7NyggVW0X9bAqw");
+
+        function payment() {
+            const method = "카드"; // "카드" 혹은 "가상계좌"
+            const uniqueOrderId = "order__" + orderId + "__" + (Math.random() + "").substring(2);
+            const successUrl = window.location.origin + "/order/" + orderId + "/success";
+            const failUrl = window.location.origin + "/order/" + orderId + "/fail";
+
+            // 결제정보 파라미터
+            var paymentData = {
+                // 필수
+                amount: orderPayPrice,      // 결제 금액
+                orderId: uniqueOrderId,     // 상점에서 주문 건을 구분하기 위해 발급한 고유 ID
+                orderName,                  // 결제에 대한 주문명
+                successUrl: successUrl,     // 결제가 성공하고 나면 리다이렉트(Redirect)되는 URL
+                failUrl: failUrl,            // 결제가 실패하면 리다이렉트되는 URL
+                // 선택
+                customerName: buyerName,    // 고객 이름
+            };
+            // 결제 요청 보내기(결제수단, 결제 정보)
+            tossPayments.requestPayment(method, paymentData);
+        }
+    </script>
+<!--    토스페이먼츠 끝-->
+
     <section class="section section-write container mx-auto">
 
         <div class="px-2 pt-4">
@@ -88,37 +124,6 @@
             </div>
         </div>
     </section>
-
-<!--    토스 페이먼츠-->
-    <script>
-        const $PaymentForm__useRestCash = $("#PaymentForm__useRestCash");
-        const $PaymentForm__useRestCashAll = $("#PaymentForm__useRestCashAll");
-        const $PaymentForm__pgPayPriceDisplay = $("#PaymentForm__pgPayPriceDisplay");
-
-        const tossPayments = TossPayments("test_ck_jZ61JOxRQVEAQP7NyggVW0X9bAqw");
-
-        function payment() {
-            let useRestCash = parseInt($PaymentForm__useRestCash.val());
-
-            if (orderPayPrice == useRestCash) {
-                document.payByRestCashOnlyForm.submit();
-                return;
-            }
-
-            const method = "카드"; // "카드" 혹은 "가상계좌"
-
-            const paymentData = {
-                amount: orderPayPrice - useRestCash,
-                orderId: "order__" + orderId + "__" + (Math.random() + "").substring(2),
-                orderName,
-                customerName: buyerName,
-                successUrl: window.location.origin + "/order/" + orderId + "/success",
-                failUrl: window.location.origin + "/order/" + orderId + "/fail"
-            };
-
-            tossPayments.requestPayment(method, paymentData);
-        }
-    </script>
 </main>
 </body>
 </html>
