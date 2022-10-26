@@ -125,5 +125,10 @@ public class MemberService {
     @Transactional
     public void addCash(Member member, int price, String eventType) {
         CashLog cashLog = cashService.addCash(member, price, eventType);
+
+        // 예치금 변동 금액 반영
+        int newRestCash = member.getRestCash() + cashLog.getPrice();
+        member.setRestCash(newRestCash);
+        memberRepository.save(member);
     }
 }
