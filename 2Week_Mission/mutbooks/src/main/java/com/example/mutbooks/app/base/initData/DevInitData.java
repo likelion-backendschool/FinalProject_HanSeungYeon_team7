@@ -2,6 +2,7 @@ package com.example.mutbooks.app.base.initData;
 
 import com.example.mutbooks.app.cart.service.CartService;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.app.order.service.OrderService;
 import com.example.mutbooks.app.post.service.PostService;
 import com.example.mutbooks.app.product.service.ProductService;
 import org.springframework.boot.CommandLineRunner;
@@ -17,10 +18,11 @@ public class DevInitData implements InitDataBefore {
             MemberService memberService,
             PostService postService,
             ProductService productService,
-            CartService cartService
+            CartService cartService,
+            OrderService orderService
     ) {
         return args -> {
-            before(memberService, postService, productService, cartService);
+            before(memberService, postService, productService, cartService, orderService);
         };
     }
 }

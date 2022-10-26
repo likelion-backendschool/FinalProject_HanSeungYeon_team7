@@ -4,6 +4,7 @@ import com.example.mutbooks.app.cart.service.CartService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.app.order.service.OrderService;
 import com.example.mutbooks.app.post.form.WriteForm;
 import com.example.mutbooks.app.post.service.PostService;
 import com.example.mutbooks.app.product.entity.Product;
@@ -11,7 +12,13 @@ import com.example.mutbooks.app.product.form.ProductForm;
 import com.example.mutbooks.app.product.service.ProductService;
 
 public interface InitDataBefore {
-    default void before(MemberService memberService, PostService postService, ProductService productService, CartService cartService) {
+    default void before(
+            MemberService memberService,
+            PostService postService,
+            ProductService productService,
+            CartService cartService,
+            OrderService orderService
+    ) {
         // 1번 회원(작가)
         Member member1 = memberService.join(new JoinForm("user1", "1234", "딸기", "user1@test.com"));
         // 2번 회원(작가)
@@ -39,11 +46,18 @@ public interface InitDataBefore {
         // 2번 회원이 2번(로맨스) 글 키워드 선택 -> 4, 5번 글 도서 등록(3번 도서)
         Product product3 = productService.create(member2, new ProductForm("하트모양 크래커", "로맨스 소설입니다.", 15000, 3L, "#로맨스 #소설"));
 
-        // 1번 회원이 3번 도서 장바구니 품목 추가
+        // 1번 회원이 3번 도서 장바구니 품목 추가(1번 CartItem)
         cartService.addCartItem(member1, product3);
 
-        // 3번 회원이 1, 2번 도서 장바구니 품목 추가
+        // 3번 회원이 1, 2, 3번 도서 장바구니 품목 추가(2, 3, 4번 CartItem)
         cartService.addCartItem(member3, product1);
         cartService.addCartItem(member3, product2);
+        cartService.addCartItem(member3, product3);
+
+        // 1번 회원 1번 주문 생성
+        orderService.createOrder(member1, "1");
+        // 3번 회원 2, 3번 주문 생성
+        orderService.createOrder(member3, "2,3");
+        orderService.createOrder(member3, "4");
     }
 }
