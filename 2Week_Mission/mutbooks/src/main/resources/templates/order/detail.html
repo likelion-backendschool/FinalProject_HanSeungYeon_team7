@@ -102,6 +102,15 @@
                 </div>
             </div>
 
+<!--            에치금-->
+            <div th:if="${order.isPayable()}">
+                <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">캐시</div>
+                <div class="text-lg">
+                    <span class="mr-3">MUT 캐시</span>
+                    <span>[[${restCash}]] 원</span>
+                </div>
+            </div>
+
 <!--            주문취소-->
             <div th:if="${order.isCancellable()}">
                 <div class="grid grid-cols-1 mt-2 gap-2">
@@ -118,7 +127,7 @@
             <div th:if="${order.isPayable()}">
                 <div class="grid grid-cols-1 mt-2 gap-2">
                     <a href="javascript:;" onclick="payment();" class="btn btn-primary">
-                        <span class="ml-1">결제하기</span>
+                        <span class="ml-1">카드결제</span>
                     </a>
                 </div>
             </div>

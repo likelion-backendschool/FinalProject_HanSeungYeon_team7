@@ -85,6 +85,12 @@ public class OrderService {
         order.setCancelDone();
     }
 
+    // 에치금 전액 결제
+    @Transactional
+    public void payByRestCashOnly(Order order) {
+
+    }
+
     // 주문 정보 조회 권한 검증
     public boolean canSelect(Member member, Order order) {
         return member.getId().equals(order.getBuyer().getId());
@@ -92,8 +98,14 @@ public class OrderService {
 
     // 주문 취소 권한 검증
     public boolean canCancel(Member member, Order order) {
+        // TODO: 단순히 권한 체크만 할거면 주문 취소 가능 상태 체크는 빼기
         // 주문 완료 상태가 아니면 주문 취소 불가
         if(!order.isCancellable()) return false;
+        return canSelect(member, order);
+    }
+
+    // 결제 권한 검증
+    public boolean canPayment(Member member, Order order) {
         return canSelect(member, order);
     }
 }

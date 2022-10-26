@@ -94,6 +94,22 @@ public class OrderController {
         return "redirect:/order/list";
     }
 
+    // 예치금 전액 결제
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/pay")
+    public String payByRestCashOnly(@AuthenticationPrincipal MemberContext memberContext, @PathVariable long id){
+        Order order = orderService.findById(id);
+        Member member = memberContext.getMember();
+        long restCash = memberService.getRestCash(member);
+
+        if(orderService.canPayment(member, order) == false) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        orderService.payByRestCashOnly(order);
+
+        return "redirect:/order/%d".formatted(order.getId());
+    }
 
     // Toss Payments 시작
     @PostConstruct
