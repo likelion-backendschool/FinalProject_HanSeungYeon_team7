@@ -3,10 +3,10 @@ package com.example.mutbooks.app.order.service;
 import com.example.mutbooks.app.cart.entity.CartItem;
 import com.example.mutbooks.app.cart.service.CartService;
 import com.example.mutbooks.app.member.entity.Member;
+import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.order.entity.Order;
 import com.example.mutbooks.app.order.entity.OrderItem;
 import com.example.mutbooks.app.order.exception.OrderNotFoundException;
-import com.example.mutbooks.app.order.repository.OrderItemRepository;
 import com.example.mutbooks.app.order.repository.OrderRepository;
 import com.example.mutbooks.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class OrderService {
     private final CartService cartService;
-    private final OrderItemRepository orderItemRepository;
+    private final MemberService memberService;
     private final OrderRepository orderRepository;
 
     // 선택한 장바구니 품목으로부터 주문 생성
@@ -88,7 +88,19 @@ public class OrderService {
     // 에치금 전액 결제
     @Transactional
     public void payByRestCashOnly(Order order) {
+        Member buyer = order.getBuyer();       // 구매자
+        int payPrice = order.getPayPrice();    // 결제 금액
+        int restCash = buyer.getRestCash();    // 예치금 잔액
 
+        // 예치금 잔액 < 결제 금액 이면, 결제 거절
+        if(restCash < payPrice) {
+            throw new RuntimeException("예치금이 부족합니다.");
+        }
+        // 예치금 차감 처리
+        memberService.addCash(buyer, payPrice * -1, "상품결제__주문__%d".formatted(order.getId()));
+        // 결제 완료 처리
+        order.setPaymentDone();
+        orderRepository.save(order);
     }
 
     // 주문 정보 조회 권한 검증

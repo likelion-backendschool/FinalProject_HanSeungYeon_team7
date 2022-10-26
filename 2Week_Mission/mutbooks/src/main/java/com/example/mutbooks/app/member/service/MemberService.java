@@ -1,6 +1,8 @@
 package com.example.mutbooks.app.member.service;
 
 import com.example.mutbooks.app.base.security.dto.MemberContext;
+import com.example.mutbooks.app.cash.entity.CashLog;
+import com.example.mutbooks.app.cash.service.CashService;
 import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
@@ -25,6 +27,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
+    private final CashService cashService;
 
     @Transactional
     public Member join(JoinForm joinForm) {
@@ -116,5 +119,11 @@ public class MemberService {
     // 회원의 남은 예치금 잔액 조회
     public long getRestCash(Member member) {
         return findByUsername(member.getUsername()).getRestCash();
+    }
+
+    // 예치금 변동(넣기, 빼기)
+    @Transactional
+    public void addCash(Member member, int price, String eventType) {
+        CashLog cashLog = cashService.addCash(member, price, eventType);
     }
 }

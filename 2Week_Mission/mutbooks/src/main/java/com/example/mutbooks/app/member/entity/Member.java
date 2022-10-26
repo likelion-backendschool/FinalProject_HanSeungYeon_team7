@@ -29,7 +29,7 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String email;
     private Integer authLevel;  // 권한레벨(3 = 일반, 7 = 관리자)
-    private long restCash;      // 예치금
+    private int restCash;      // 예치금
 
     // 비밀번호 수정
     public void modifyPassword(String newPassword) {

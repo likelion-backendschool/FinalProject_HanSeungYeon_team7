@@ -61,10 +61,20 @@ public class Order extends BaseEntity {
         this.readyStatus = false;
     }
 
+    // 결제 완료 처리
+    public void setPaymentDone() {
+        // 주문 품목 결제 완료 처리
+        for(OrderItem orderItem : orderItems) {
+            orderItem.setPaymentDone();
+        }
+        this.isPaid = true;
+        this.payDate = LocalDateTime.now();
+    }
+
     // 총 주문(상품) 금액
-    public long getPayPrice() {
+    public int getPayPrice() {
         // 상품들의 실제 판매가의 총합
-        long payPrice = 0;
+        int payPrice = 0;
         for(OrderItem orderItem : orderItems) {
             payPrice += orderItem.getSalePrice();
         }
