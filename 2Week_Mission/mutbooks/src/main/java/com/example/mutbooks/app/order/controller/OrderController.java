@@ -4,6 +4,7 @@ import com.example.mutbooks.app.base.security.dto.MemberContext;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.order.entity.Order;
+import com.example.mutbooks.app.order.exception.OrderIdNotMatchedException;
 import com.example.mutbooks.app.order.service.OrderService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -131,10 +132,19 @@ public class OrderController {
     // 결제 성공 리다이렉트 URL
     @RequestMapping("/{id}/success")
     public String confirmPayment(
+            @PathVariable long id,              // orderId
             @RequestParam String paymentKey,    // 결제 건에 대한 고유한 키 값
             @RequestParam String orderId,       // 상점에서 주문 건 구분을 위해 발급한 고유ID
             @RequestParam Long amount,          // 실 결제 금액
-            Model model) throws Exception {
+            Model model
+    ) throws Exception {
+        // TODO: id 와 orderId 무결성 검증하는 이유
+        Order order = orderService.findById(id);
+        long realOrderId = Long.parseLong(orderId.split("__")[1]);
+
+        if(id != realOrderId) {
+            throw new OrderIdNotMatchedException("");
+        }
 
         HttpHeaders headers = new HttpHeaders();
         // headers.setBasicAuth(SECRET_KEY, ""); // spring framework 5.2 이상 버전에서 지원
@@ -147,6 +157,7 @@ public class OrderController {
 
         // TODO : 주문 금액 검증 로직
 
+        // 결제 승인 API 요청 -> 승인 결과 응답받기
         HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(payloadMap), headers);
 
         ResponseEntity<JsonNode> responseEntity = restTemplate.postForEntity(
