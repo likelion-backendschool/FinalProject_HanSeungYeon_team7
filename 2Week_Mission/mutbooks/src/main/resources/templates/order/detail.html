@@ -78,7 +78,7 @@
                 </div>
             </div>
 
-<!--            에치금-->
+<!--            캐시-->
             <div th:if="${order.isPayable()}"
                  th:with="maxUseRestCash = ${order.payPrice > restCash ? restCash : order.payPrice}">
                 <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">캐시</div>
@@ -98,6 +98,17 @@
                     <input onchange="PaymentForm__useRestCashAllChanged();" id="PaymentForm__useRestCashAll"
                            type="checkbox" class="ml-2 checkbox">
                 </label>
+            </div>
+
+<!--            결제 정보-->
+            <div th:if="${order.isPayable()}">
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">결제정보</div>
+                    <div class="text-lg">
+                        <span class="mr-3">최종 결제금액</span>
+                        <span id="PaymentForm__pgPayPriceDisplay"></span>
+                    </div>
+                </div>
             </div>
 
 <!--            주문취소-->
@@ -131,14 +142,13 @@
         const tossPayments = TossPayments("test_ck_jZ61JOxRQVEAQP7NyggVW0X9bAqw");
 
         function payment() {
-            // 캐시 결제
-            let useRestCash = parseInt($PaymentForm__useRestCash.val());
-
+            let useRestCash = parseInt($PaymentForm__useRestCash.val());    // 사용할 캐시
+            // 1. 캐시 전액 결제 요청
             if (orderPayPrice == useRestCash) {
                 document.payByRestCashOnlyForm.submit();
                 return;
             }
-
+            // 2. TossPayments 결제 요청
             const method = "카드"; // "카드" 혹은 "가상계좌"
             const uniqueOrderId = "order__" + orderId + "__" + (Math.random() + "").substring(2);
             const successUrl = window.location.origin + "/order/" + orderId + "/success";
@@ -147,7 +157,7 @@
             // 결제정보 파라미터
             var paymentData = {
                 // 필수
-                amount: orderPayPrice,      // 결제 금액
+                amount: orderPayPrice - useRestCash,      // 결제 금액
                 orderId: uniqueOrderId,     // 상점에서 주문 건을 구분하기 위해 발급한 고유 ID
                 orderName,                  // 결제에 대한 주문명
                 successUrl: successUrl,     // 결제가 성공하고 나면 리다이렉트(Redirect)되는 URL
@@ -160,18 +170,18 @@
         }
     </script>
     <!--    토스페이먼츠 끝-->
-
+    
 <!--    캐시 입력폼 관련-->
     <script>
         // 예치금 입력폼 최솟값(0), 최댓값(보유 예치금 및 결제 금액) 자동 설정
         function PaymentForm__useRestCashFix() {
             let useRestCash = parseInt($PaymentForm__useRestCash.val());
-
+            // 숫자가 아닌 값이면 0으로
             if (isNaN(useRestCash)) {
                 useRestCash = 0;
             }
 
-            const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max'));
+            const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max')); // 최대 사용 가능한 캐시
 
             if (useRestCash < 0) {
                 useRestCash = 0;
@@ -189,7 +199,7 @@
                 $PaymentForm__useRestCashAll.prop('checked', false);
             }
 
-            const pgPayPrice = orderPayPrice - useRestCash;
+            const pgPayPrice = orderPayPrice - useRestCash; // pg 결제 금액
 
             $PaymentForm__pgPayPriceDisplay.text(pgPayPrice);
         }
@@ -197,10 +207,12 @@
         // 전액 결제 체크에 따른 예치금 입력폼 자동 입력
         function PaymentForm__useRestCashAllChanged() {
             if ( $PaymentForm__useRestCashAll.prop('checked') ) {
+                // 전액 결체 체크하면 총 상품 금액 입력
                 const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max'));
                 $PaymentForm__useRestCash.val(maxUseRestCash);
             }
             else {
+                // 전액 결체 체크 해제하면 0 입력
                 $PaymentForm__useRestCash.val(0);
             }
 
