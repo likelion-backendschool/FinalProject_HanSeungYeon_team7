@@ -85,7 +85,7 @@ public class OrderService {
         order.setCancelDone();
     }
 
-    // 에치금 전액 결제
+    // 1. 캐시 전액 결제
     @Transactional
     public void payByRestCashOnly(Order order) {
         Member buyer = order.getBuyer();       // 구매자
@@ -97,8 +97,22 @@ public class OrderService {
             throw new RuntimeException("예치금이 부족합니다.");
         }
         // 예치금 차감 처리
-        memberService.addCash(buyer, payPrice * -1, "상품결제__주문__%d".formatted(order.getId()));
+        memberService.addCash(buyer, payPrice * -1, "상품결제__주문__%d__캐시".formatted(order.getId()));
         // 결제 완료 처리
+        order.setPaymentDone();
+        orderRepository.save(order);
+    }
+
+    // 2. TossPayments 결제(TossPayments 전액 결제, 캐시 + TossPayments 혼합 결제)
+    @Transactional
+    public void payByTossPayments(Order order) {
+        Member buyer = order.getBuyer();
+        int payPrice = order.getPayPrice();
+
+        // 카드 결제 내역 CashLog 반영
+        memberService.addCash(buyer, payPrice, "상품결제충전__토스페이먼츠");
+        memberService.addCash(buyer, payPrice * -1, "상품결제__주문__%d__토스페이먼츠".formatted(order.getId()));
+
         order.setPaymentDone();
         orderRepository.save(order);
     }

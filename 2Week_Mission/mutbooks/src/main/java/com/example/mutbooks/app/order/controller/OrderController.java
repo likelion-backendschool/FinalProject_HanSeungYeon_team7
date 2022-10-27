@@ -157,17 +157,19 @@ public class OrderController {
 
         // TODO : 주문 금액 검증 로직
 
-        // 결제 승인 API 요청 -> 승인 결과 응답받기
+        // 1. 결제 승인 API 요청
         HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(payloadMap), headers);
 
         ResponseEntity<JsonNode> responseEntity = restTemplate.postForEntity(
                 "https://api.tosspayments.com/v1/payments/" + paymentKey, request, JsonNode.class);
 
+        // 2. 응답받은 승인 결과가 성공이면 결제완료 처리
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            JsonNode successNode = responseEntity.getBody();
-            model.addAttribute("orderId", successNode.get("orderId").asText());
-            String secret = successNode.get("secret").asText(); // 가상계좌의 경우 입금 callback 검증을 위해서 secret을 저장하기를 권장함
-            return "order/success";
+            // 2-1. 결제 완료 처리(카드 결제 CashLog 기록 남기기)
+            orderService.payByTossPayments(order);
+
+            // 2-2. 주문 상세조회로 리다이렉트
+            return "redirect:/order/%d".formatted(order.getId());
         } else {
             JsonNode failNode = responseEntity.getBody();
             model.addAttribute("message", failNode.get("message").asText());
