@@ -86,7 +86,10 @@ public class OrderController {
         Order order = orderService.findById(id);
         Member member = memberContext.getMember();
 
-        // 주문 조회 권한 검사
+        if(!order.isCancellable()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
         if(orderService.canCancel(member, order) == false) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -96,13 +99,22 @@ public class OrderController {
         return "redirect:/order/list";
     }
 
-    // 예치금 전액 결제
+    // 캐시 전액 결제
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/pay")
     public String payByRestCashOnly(@AuthenticationPrincipal MemberContext memberContext, @PathVariable long id){
         Order order = orderService.findById(id);
         Member member = memberContext.getMember();
-        long restCash = memberService.getRestCash(member);
+        int restCash = memberService.getRestCash(member);
+
+        // 보유 캐시 < 결제 금액, 예외처리
+        if(restCash < order.getPayPrice()) {
+            throw new PaymentFailByInsufficientCashException("보유 캐시 금액보다 사용 캐시 금액이 더 많습니다.");
+        }
+
+        if(!order.isPayable()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
 
         if(orderService.canPayment(member, order) == false) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -112,6 +124,27 @@ public class OrderController {
 
         return "redirect:/order/%d".formatted(order.getId());
     }
+
+    // 전액 환불 처리
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/refund")
+    public String refund(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext) {
+        Order order = orderService.findById(id);
+        Member member = memberContext.getMember();
+
+        if(!order.isRefundable()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if(orderService.canRefund(member, order) == false) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        orderService.refund(order);
+
+        return "redirect:/order/%d".formatted(id);
+    }
+
 
     // Toss Payments 시작
     @PostConstruct

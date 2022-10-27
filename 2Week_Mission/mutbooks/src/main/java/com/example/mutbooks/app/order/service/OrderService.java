@@ -123,6 +123,19 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    // 캐시 전액 환불
+    @Transactional
+    public void refund(Order order) {
+        Member buyer = order.getBuyer();
+        int payPrice = order.getPayPrice();
+
+        // 캐시 환불 처리
+        memberService.addCash(buyer, payPrice, "상품환불충전__캐시");
+
+        order.setRefundDone();
+        orderRepository.save(order);
+    }
+
     // 주문 정보 조회 권한 검증
     public boolean canSelect(Member member, Order order) {
         return member.getId().equals(order.getBuyer().getId());
@@ -138,6 +151,11 @@ public class OrderService {
 
     // 결제 권한 검증
     public boolean canPayment(Member member, Order order) {
+        return canSelect(member, order);
+    }
+
+    // 환불 권한 검증
+    public boolean canRefund(Member member, Order order) {
         return canSelect(member, order);
     }
 }

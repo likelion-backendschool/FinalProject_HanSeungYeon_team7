@@ -106,7 +106,8 @@
                     <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">결제정보</div>
                     <div class="text-lg">
                         <span class="mr-3">최종 결제금액</span>
-                        <span id="PaymentForm__pgPayPriceDisplay"></span>
+                        <span class="PaymentForm__pgPayPriceDisplay"></span>
+                        <span>원</span>
                     </div>
                 </div>
             </div>
@@ -127,7 +128,29 @@
             <div th:if="${order.isPayable()}">
                 <div class="grid grid-cols-1 mt-2 gap-2">
                     <a href="javascript:;" onclick="payment();" class="btn btn-primary">
-                        <span class="ml-1">카드결제</span>
+                        <span class="PaymentForm__pgPayPriceDisplay"></span>
+                        <span class="ml-1">원 결제</span>
+                    </a>
+                </div>
+            </div>
+
+<!--            환불신청-->
+            <div th:if="${order.isRefundable()}">
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <a href="javascript:;"
+                       onclick="if ( confirm('정말로 환불하시겠습니까?') ) $(this).next().submit();"
+                       class="btn btn-secondary btn-outline">
+                        <span class="ml-1">환불 신청</span>
+                    </a>
+                    <form th:action="@{|/order/${order.id}/refund|}" method="POST" hidden></form>
+                </div>
+            </div>
+            <div th:if="${order.isAfterRefundDeadline()}">
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <a href="javascript:;"
+                       onclick="alert('환불 가능한 기간이 지났습니다. 환불은 결제 완료 후 10분 이내에 가능합니다.')"
+                       class="btn btn-secondary btn-outline">
+                        <span class="ml-1">환불 신청</span>
                     </a>
                 </div>
             </div>
@@ -137,7 +160,7 @@
     <script>
         const $PaymentForm__useRestCash = $("#PaymentForm__useRestCash");
         const $PaymentForm__useRestCashAll = $("#PaymentForm__useRestCashAll");
-        const $PaymentForm__pgPayPriceDisplay = $("#PaymentForm__pgPayPriceDisplay");
+        const $PaymentForm__pgPayPriceDisplay = $(".PaymentForm__pgPayPriceDisplay");
 
         const tossPayments = TossPayments("test_ck_jZ61JOxRQVEAQP7NyggVW0X9bAqw");
 

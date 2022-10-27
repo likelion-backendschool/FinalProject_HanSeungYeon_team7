@@ -71,6 +71,15 @@ public class Order extends BaseEntity {
         this.payDate = LocalDateTime.now();
     }
 
+    // 환불 완료 처리
+    public void setRefundDone() {
+        // 주문 품목 결제 완료 처리
+        for(OrderItem orderItem : orderItems) {
+            orderItem.setRefundDone();
+        }
+        this.isRefunded = true;
+    }
+
     // 총 주문(상품) 금액
     public int getPayPrice() {
         // 상품들의 실제 판매가의 총합
@@ -96,6 +105,23 @@ public class Order extends BaseEntity {
         if(isCanceled) return false;
 
         return true;
+    }
+
+    // 환불 가능 여부
+    public boolean isRefundable() {
+        if(!isPaidStatus()) return false;
+        if(isAfterRefundDeadline()) return false;
+        return true;
+    }
+
+    // 환불 기한이 지났는지 여부
+    public boolean isAfterRefundDeadline() {
+        if(payDate != null) {
+            // 현재 일시가 결제 일시보다 10분 이후이면
+            LocalDateTime refundDeadline = payDate.plusMinutes(10); // 환불 마감 기한
+            if(LocalDateTime.now().isAfter(refundDeadline)) return true;
+        }
+        return false;
     }
 
     // 주문 완료 상태
@@ -128,7 +154,7 @@ public class Order extends BaseEntity {
     // 환불 완료 상태
     public boolean isRefundedStatus() {
         if(!readyStatus) return false;
-        if(isPaid) return false;
+        if(!isPaid) return false;
         if(isCanceled) return false;
         if(!isRefunded) return false;
         return true;

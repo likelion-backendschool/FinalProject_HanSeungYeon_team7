@@ -46,8 +46,13 @@ public class OrderItem extends BaseEntity {
     // 결제 완료 처리
     public void setPaymentDone() {
         this.pgFee = 0;
-        this.payPrice = getSalePrice();
+        this.payPrice = salePrice;
         this.isPaid = true;
         this.payDate = LocalDateTime.now();
+    }
+
+    // 주문 품목 환불 처리
+    public void setRefundDone() {
+        this.refundPrice = payPrice;
     }
 }
