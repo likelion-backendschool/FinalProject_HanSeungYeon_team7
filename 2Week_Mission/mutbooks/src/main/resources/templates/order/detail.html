@@ -61,10 +61,10 @@
                 </div>
                 <div>
                     <div class="text-xl text-sky-400">
-                        <div th:if="${order.readyStatus} == true">주문 완료</div>
-                        <div th:if="${order.isPaid} == true">결제 완료</div>
-                        <div th:if="${order.isCanceled} == true">취소 완료</div>
-                        <div th:if="${order.isRefunded} == true">환불 완료</div>
+                        <div th:if="${order.isOrderedStatus()}">주문 완료</div>
+                        <div th:if="${order.isPaidStatus()}">결제 완료</div>
+                        <div th:if="${order.isCanceledStatus()}">취소 완료</div>
+                        <div th:if="${order.isRefundedStatus()}">환불 완료</div>
                     </div>
                     <div class="text-lg">
                         주문고객 [[${order.buyer.username}]] 님
@@ -170,7 +170,7 @@
         }
     </script>
     <!--    토스페이먼츠 끝-->
-    
+
 <!--    캐시 입력폼 관련-->
     <script>
         // 예치금 입력폼 최솟값(0), 최댓값(보유 예치금 및 결제 금액) 자동 설정
