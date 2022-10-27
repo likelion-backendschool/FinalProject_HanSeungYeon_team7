@@ -5,6 +5,7 @@ import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.order.entity.Order;
 import com.example.mutbooks.app.order.exception.OrderIdNotMatchedException;
+import com.example.mutbooks.app.order.exception.PaymentFailByInsufficientCashException;
 import com.example.mutbooks.app.order.service.OrderService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -135,8 +136,9 @@ public class OrderController {
             @PathVariable long id,              // orderId
             @RequestParam String paymentKey,    // 결제 건에 대한 고유한 키 값
             @RequestParam String orderId,       // 상점에서 주문 건 구분을 위해 발급한 고유ID
-            @RequestParam Long amount,          // 실 결제 금액
-            Model model
+            @RequestParam Integer amount,       // 실 결제 금액
+            Model model,
+            @AuthenticationPrincipal MemberContext memberContext
     ) throws Exception {
         // TODO: id 와 orderId 무결성 검증하는 이유
         Order order = orderService.findById(id);
@@ -155,7 +157,15 @@ public class OrderController {
         payloadMap.put("orderId", orderId);
         payloadMap.put("amount", String.valueOf(amount));
 
-        // TODO : 주문 금액 검증 로직
+        // 주문 금액 검증 로직 추가
+        Member member = memberContext.getMember();
+        int restCash = memberService.getRestCash(member);   // 보유 캐시
+        // 캐시 결제 금액 = 결제 금액 - pg 결제 금액
+        int cashPayPrice = order.getPayPrice() - amount;
+        // 캐시 결제 금액 > 보유 캐시 이면, 캐시 부족 예외
+        if(cashPayPrice > restCash) {
+            throw new PaymentFailByInsufficientCashException("보유 캐시 금액보다 사용 캐시 금액이 더 많습니다.");
+        }
 
         // 1. 결제 승인 API 요청
         HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(payloadMap), headers);
@@ -165,8 +175,8 @@ public class OrderController {
 
         // 2. 응답받은 승인 결과가 성공이면 결제완료 처리
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            // 2-1. 결제 완료 처리(카드 결제 CashLog 기록 남기기)
-            orderService.payByTossPayments(order);
+            // 2-1. 결제 완료 처리(캐시, 카드 결제 CashLog 기록 남기기)
+            orderService.payByTossPayments(order, cashPayPrice);
 
             // 2-2. 주문 상세조회로 리다이렉트
             return "redirect:/order/%d".formatted(order.getId());
