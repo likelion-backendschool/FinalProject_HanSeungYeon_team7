@@ -16,13 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class MyBookService {
     private final MyBookRepository myBookRepository;
 
+    // MyBook 추가
     @Transactional
     public void add(Order order) {
         for(OrderItem orderItem : order.getOrderItems()) {
             Product product = orderItem.getProduct();
             Member buyer = order.getBuyer();
 
-            MyBook oldMyBook = myBookRepository.findByOwnerIdAndProductId(product.getId(), buyer.getId())
+            MyBook oldMyBook = myBookRepository.findByProductIdAndOwnerId(product.getId(), buyer.getId())
                     .orElse(null);
             // (ownerId + productId) DB에 없을 때만 저장(중복 저장 막기)
             if(oldMyBook == null) {
@@ -33,6 +34,17 @@ public class MyBookService {
 
                 myBookRepository.save(myBook);
             }
+        }
+    }
+
+    // MyBook 삭제
+    @Transactional
+    public void remove(Order order) {
+        for(OrderItem orderItem : order.getOrderItems()) {
+            Product product = orderItem.getProduct();
+            Member buyer = order.getBuyer();
+
+            myBookRepository.deleteByProductIdAndOwnerId(product.getId(), buyer.getId());
         }
     }
 }

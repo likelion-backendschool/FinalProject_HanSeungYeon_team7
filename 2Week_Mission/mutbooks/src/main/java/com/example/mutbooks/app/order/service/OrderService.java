@@ -145,6 +145,8 @@ public class OrderService {
 
         order.setRefundDone();
         orderRepository.save(order);
+        // 내 도서에서 삭제
+        myBookService.remove(order);
     }
 
     // 주문 정보 조회 권한 검증
