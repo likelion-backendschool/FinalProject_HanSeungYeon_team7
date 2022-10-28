@@ -61,7 +61,7 @@ public class Order extends BaseEntity {
         this.readyStatus = false;
     }
 
-    // 결제 완료 처리
+    // 캐시 전액 결제 완료 처리
     public void setPaymentDone() {
         // 주문 품목 결제 완료 처리
         for(OrderItem orderItem : orderItems) {
