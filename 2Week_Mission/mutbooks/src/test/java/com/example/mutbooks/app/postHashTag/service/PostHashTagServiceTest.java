@@ -1,7 +1,7 @@
 package com.example.mutbooks.app.postHashTag.service;
 
 import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
-import com.example.mutbooks.app.keyword.service.KeywordService;
+import com.example.mutbooks.app.postKeyword.service.PostKeywordService;
 import com.example.mutbooks.app.post.entity.Post;
 import com.example.mutbooks.app.post.service.PostService;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ class PostHashTagServiceTest {
     @Autowired
     private PostHashTagService postHashTagService;
     @Autowired
-    private KeywordService keywordService;
+    private PostKeywordService postKeywordService;
 
     @Test
     @DisplayName("2번 게시글에 해시태그 키워드 2개 등록하기")

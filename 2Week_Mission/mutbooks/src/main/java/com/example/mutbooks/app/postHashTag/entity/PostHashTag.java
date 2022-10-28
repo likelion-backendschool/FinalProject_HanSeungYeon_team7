@@ -1,7 +1,7 @@
 package com.example.mutbooks.app.postHashTag.entity;
 
 import com.example.mutbooks.app.base.entity.BaseEntity;
-import com.example.mutbooks.app.keyword.entity.PostKeyword;
+import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.post.entity.Post;
 import lombok.Getter;

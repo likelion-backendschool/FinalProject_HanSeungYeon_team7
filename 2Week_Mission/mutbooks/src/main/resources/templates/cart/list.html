@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>장바구니</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+
+        <div class="px-2 pt-4">
+            <h1 class="text-2xl font-bold">eBook</h1>
+
+            <div>
+                <input type="checkbox" class="cartItemCheckboxAll checkbox">
+                <span>전체 선택</span>
+            </div>
+
+            <div th:if="${cartItems.isEmpty()}"
+                 class="card bg-base-100 border-2 border-slate-100 my-2 h-40">
+                <div class="card-body flex-col justify-center" style="padding: 15px">
+                    <div class="font-bold text-xl text-center">장바구니에 담긴 상품이 없습니다.</div>
+                </div>
+            </div>
+
+            <ul>
+                <li th:each="cartItem : ${cartItems}">
+                    <div class="card bg-base-100 border-2 border-slate-100 my-2">
+                        <div class="card-body" style="padding: 15px">
+                            <div class="flex flex-wrap">
+                                <div class="mr-5">
+                                    <a th:href="|/product/${cartItem.product.id}|" >
+                                        <img src="https://source.unsplash.com/random" class="w-28 h-40">
+                                    </a>
+                                </div>
+                                <div class="grow">
+                                    <div class="flex">
+                                        <input onchange="CartItemCheckbox__changed();" type="checkbox" class="cartItemCheckbox checkbox" th:value="${cartItem.id}">
+                                        <h2 th:text="${cartItem.product.subject}" class="font-bold text-2xl ml-2"></h2>
+                                    </div>
+
+                                    <div class="flex">
+                                        <div th:text="|${cartItem.product.author.nickname} 저|" class="text-slate-500 mr-2"></div>
+                                        <div class="text-slate-500 mr-2">|</div>
+                                        <div th:text="${#temporals.format(cartItem.product.createDate, 'yyyy년 MM월 dd일')}" class="text-slate-500"></div>
+                                        <!--                        <div th:text="${#temporals.format(product.updateDate, 'yyyy-MM-dd')}"></div>-->
+                                    </div>
+
+                                    <div th:text="|${cartItem.product.price} 원|" class="font-bold text-2xl my-2"></div>
+                                    <div class="text-blue-400 mb-1">무배송. 결제 후 즉시 다운로드</div>
+                                    <div>
+                                        <span class="text-lg">수량 : 1</span>
+                                    </div>
+                                </div>
+
+                                <div class="card-actions flex flex-col justify-center my-2">
+                                    <a href="javascript:;"
+                                       onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit()"
+                                       class="btn btn-sm">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                        <span class="ml-2">삭제</span>
+                                    </a>
+                                    <form th:action="@{|/cart/delete/${cartItem.product.id}|}" method="POST" hidden></form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <a href="javascript:;" onclick="RemoveCartItemsForm__submit();" class="btn btn-warning btn-outline btn-sm">선택삭제</a>
+            <form method="POST" name="removeCartItemsForm" th:action="@{|/cart/removeItems|}" hidden>
+                <input type="hidden" name="ids">
+            </form>
+
+            <div class="grid grid-cols-1 mt-2 gap-2">
+                <a href="javascript:;" onclick="OrderCartItemsForm__submit();" class="btn btn-primary">주문하기</a>
+                <form method="POST" name="orderCartItemsForm" th:action="@{|/order/create|}" hidden>
+                    <input type="hidden" name="ids">
+                </form>
+            </div>
+
+            <script>
+                // 전체선택 체크박스
+                const $cartItemCheckboxAll = $('.cartItemCheckboxAll');
+                // 아이템 체크박스
+                const $cartItemCheckbox = $('.cartItemCheckbox');
+
+                $cartItemCheckboxAll.change(function () {
+                    const allChecked = $(this).prop('checked');
+                    $cartItemCheckbox.prop('checked', allChecked); // 아이템 체크박스들에게 체크상태 동기화
+                });
+
+                function CartItemCheckbox__changed() {
+                    const allChecked = $cartItemCheckbox.length == $('.cartItemCheckbox:checked').length;
+
+                    $cartItemCheckboxAll.prop('checked', allChecked);
+                }
+
+                let RemoveCartItemsForm__submitDone = false;
+
+                function RemoveCartItemsForm__submit() {
+                    if (RemoveCartItemsForm__submitDone) return;
+
+                    const form = document.removeCartItemsForm;
+
+                    const $checked = $('.cartItemCheckbox:checked');
+
+                    if ($checked.length == 0) {
+                        alert('삭제할 장바구니 품목을 선택해주세요.');
+                        return;
+                    }
+
+                    const ids = $checked.map((index, el) => $(el).val()).get();
+                    form.ids.value = ids;
+                    form.submit();
+                    RemoveCartItemsForm__submitDone = true;
+                }
+
+                let OrderCartItemsForm__submitDone = false;
+
+                function OrderCartItemsForm__submit() {
+                    if (OrderCartItemsForm__submitDone) return;
+
+                    const form = document.orderCartItemsForm;
+
+                    const $checked = $('.cartItemCheckbox:checked');
+
+                    if ($checked.length == 0) {
+                        alert('주문할 장바구니 품목을 선택해주세요.');
+                        return;
+                    }
+
+                    const ids = $checked.map((index, el) => $(el).val()).get();
+                    form.ids.value = ids;
+                    form.submit();
+                    OrderCartItemsForm__submitDone = true;
+
+                    document.orderCartItemsForm.submit();
+                }
+            </script>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

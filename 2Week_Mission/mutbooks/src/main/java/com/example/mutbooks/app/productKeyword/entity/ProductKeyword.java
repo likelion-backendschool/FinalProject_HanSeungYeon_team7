@@ -1,4 +1,4 @@
-package com.example.mutbooks.app.keyword.entity;
+package com.example.mutbooks.app.productKeyword.entity;
 
 import com.example.mutbooks.app.base.entity.BaseEntity;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import javax.persistence.Entity;
 @SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class PostKeyword extends BaseEntity {
+public class ProductKeyword extends BaseEntity {
     @Column(unique = true)
     private String content; // 해시태그
 }

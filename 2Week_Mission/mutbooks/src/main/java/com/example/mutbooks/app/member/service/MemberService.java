@@ -1,5 +1,8 @@
 package com.example.mutbooks.app.member.service;
 
+import com.example.mutbooks.app.base.security.dto.MemberContext;
+import com.example.mutbooks.app.cash.entity.CashLog;
+import com.example.mutbooks.app.cash.service.CashService;
 import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
@@ -8,6 +11,9 @@ import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +27,19 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
+    private final CashService cashService;
 
     @Transactional
     public Member join(JoinForm joinForm) {
+        int authLevel = 3;      // 디폴트 일반 권한
+
         // 기본 권한 = 일반
         Member member = Member.builder()
                 .username(joinForm.getUsername())
                 .password(passwordEncoder.encode(joinForm.getPassword()))
                 .email(joinForm.getEmail())
                 .nickname(joinForm.getNickname())
-                .authLevel(3)
+                .authLevel(authLevel)
                 .build();
 
         memberRepository.save(member);
@@ -43,6 +52,23 @@ public class MemberService {
     public void modifyProfile(Member member, ModifyForm modifyForm) {
         // TODO : 작가->일반 회원 될 수 있는지 고민(글 작성자 이름 표시 문제)
         member.modifyInfo(modifyForm.getEmail(), modifyForm.getNickname().trim());
+
+        forceAuthentication(member);
+    }
+
+    // 세션에 담긴 회원 기본정보 강제 수정
+    private void forceAuthentication(Member member) {
+        MemberContext memberContext = new MemberContext(member, member.genAuthorities());
+
+        UsernamePasswordAuthenticationToken authentication =
+                UsernamePasswordAuthenticationToken.authenticated(
+                        memberContext,
+                        member.getPassword(),
+                        memberContext.getAuthorities()
+                );
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
     }
 
     // 이메일로 아이디 조회
@@ -88,5 +114,21 @@ public class MemberService {
 
         String newPassword = passwordEncoder.encode(pwdModifyForm.getNewPassword());
         member.modifyPassword(newPassword);
+    }
+
+    // 회원의 남은 예치금 잔액 조회
+    public long getRestCash(Member member) {
+        return findByUsername(member.getUsername()).getRestCash();
+    }
+
+    // 예치금 변동(넣기, 빼기)
+    @Transactional
+    public void addCash(Member member, int price, String eventType) {
+        CashLog cashLog = cashService.addCash(member, price, eventType);
+
+        // 예치금 변동 금액 반영
+        int newRestCash = member.getRestCash() + cashLog.getPrice();
+        member.setRestCash(newRestCash);
+        memberRepository.save(member);
     }
 }

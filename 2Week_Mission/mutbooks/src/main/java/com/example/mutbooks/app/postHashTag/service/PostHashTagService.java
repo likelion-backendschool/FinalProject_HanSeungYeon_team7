@@ -2,8 +2,8 @@ package com.example.mutbooks.app.postHashTag.service;
 
 import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
 import com.example.mutbooks.app.postHashTag.repository.PostHashTagRepository;
-import com.example.mutbooks.app.keyword.entity.PostKeyword;
-import com.example.mutbooks.app.keyword.service.KeywordService;
+import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
+import com.example.mutbooks.app.postKeyword.service.PostKeywordService;
 import com.example.mutbooks.app.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostHashTagService {
     private final PostHashTagRepository postHashTagRepository;
-    private final KeywordService keywordService;
+    private final PostKeywordService postKeywordService;
 
     // 게시글에 해시태그 반영
     public void apply(Post post, String keywords) {
@@ -54,8 +54,8 @@ public class PostHashTagService {
 
     // 해시태그 저장
     public PostHashTag save(Post post, String keywordContent) {
-        // 1. keyword 가져오기
-        PostKeyword keyword = keywordService.save(keywordContent);
+        // 1. postKeyword 가져오기
+        PostKeyword keyword = postKeywordService.save(keywordContent);
 
         // 2. (postId + keywordId) 가 DB에 있으면 바로 리턴
         PostHashTag hashTag = postHashTagRepository.findByPostIdAndPostKeywordId(post.getId(), keyword.getId()).orElse(null);
