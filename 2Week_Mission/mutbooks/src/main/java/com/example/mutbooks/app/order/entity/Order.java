@@ -23,6 +23,7 @@ public class Order extends BaseEntity {
 
     private String name;                // 주문명
     private LocalDateTime payDate;      // 결제 일시
+    private LocalDateTime cancelDate;   // 주문 취소 일시
     private boolean readyStatus;        // 주문완료 여부
     private boolean isPaid;             // 결제완료 여부
     private boolean isCanceled;         // 주문취소 여부
@@ -56,6 +57,7 @@ public class Order extends BaseEntity {
 
     // 주문 취소 처리
     public void setCancelDone() {
+        this.cancelDate = LocalDateTime.now();
         this.isCanceled = true;
         // TODO: 주문완료 여부를 false 로 다시 바꾸는게 맞는지
         this.readyStatus = false;
@@ -88,6 +90,16 @@ public class Order extends BaseEntity {
             payPrice += orderItem.getSalePrice();
         }
         return payPrice;
+    }
+
+    // 총 pg 결제 금액
+    public int getPgPayPrice() {
+        // 상품들의 실제 판매가의 총합
+        int pgPayPrice = 0;
+        for(OrderItem orderItem : orderItems) {
+            pgPayPrice += orderItem.getPgPayPrice();
+        }
+        return pgPayPrice;
     }
 
     // 주문 취소 가능 여부

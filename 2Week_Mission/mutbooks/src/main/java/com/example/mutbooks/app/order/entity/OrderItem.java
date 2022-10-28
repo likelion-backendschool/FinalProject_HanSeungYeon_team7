@@ -52,8 +52,8 @@ public class OrderItem extends BaseEntity {
     public void setPaymentDone() {
         this.pgFee = 0;
         this.payPrice = salePrice;
-        // 결제 금액 == pg 결제 금액
-        this.pgPayPrice = payPrice;
+        // 결제 금액 == cash 결제 금액
+        this.cashPayPrice = payPrice;
         this.isPaid = true;
         this.payDate = LocalDateTime.now();
     }

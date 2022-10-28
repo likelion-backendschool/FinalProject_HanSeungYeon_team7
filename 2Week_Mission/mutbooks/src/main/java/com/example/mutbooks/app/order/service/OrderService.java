@@ -127,10 +127,15 @@ public class OrderService {
     @Transactional
     public void refund(Order order) {
         Member buyer = order.getBuyer();
-        int payPrice = order.getPayPrice();
+        int payPrice = order.getPayPrice();         // 총 결제 금액
+        int pgPayPrice = order.getPgPayPrice();     // pg 결제 금액
+        int cashPayPrice = payPrice - pgPayPrice;   // 캐시 결제 금액
 
-        // 캐시 환불 처리
-        memberService.addCash(buyer, payPrice, "상품환불충전__캐시");
+        // 1. 전액 캐시 환불인 경우
+        // 2. 캐시 + 카드 환불인 경우
+        if(cashPayPrice > 0) {
+            memberService.addCash(buyer, cashPayPrice, "상품환불충전__캐시");
+        }
 
         order.setRefundDone();
         orderRepository.save(order);
