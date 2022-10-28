@@ -4,6 +4,7 @@ import com.example.mutbooks.app.cart.entity.CartItem;
 import com.example.mutbooks.app.cart.service.CartService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.app.mybook.service.MyBookService;
 import com.example.mutbooks.app.order.entity.Order;
 import com.example.mutbooks.app.order.entity.OrderItem;
 import com.example.mutbooks.app.order.exception.OrderNotFoundException;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final CartService cartService;
     private final MemberService memberService;
+    private final MyBookService myBookService;
     private final OrderRepository orderRepository;
 
     // 선택한 장바구니 품목으로부터 주문 생성
@@ -101,6 +103,8 @@ public class OrderService {
         // 결제 완료 처리
         order.setPaymentDone();
         orderRepository.save(order);
+        // 내 도서에 추가
+        myBookService.add(order);
     }
 
     // 2. TossPayments 결제(TossPayments 전액 결제, 캐시 + TossPayments 혼합 결제)
@@ -118,9 +122,11 @@ public class OrderService {
         // 카드 결제 내역 CashLog 추가
         memberService.addCash(buyer, pgPayPrice, "상품결제충전__토스페이먼츠");
         memberService.addCash(buyer, pgPayPrice * -1, "상품결제__토스페이먼츠__주문__%d".formatted(order.getId()));
-
+        // 결제 완료 처리
         order.setPaymentDone();
         orderRepository.save(order);
+        // 내 도서에 추가
+        myBookService.add(order);
     }
 
     // 캐시 전액 환불
