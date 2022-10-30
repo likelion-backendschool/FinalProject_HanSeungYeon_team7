@@ -15,10 +15,10 @@
                     <div th:text="${#temporals.format(order.createDate, 'yyyy.MM.dd')}"
                          class="text-xl font-bold mr-3"></div>
                     <div class="text-xl text-sky-400">
-                        <div th:if="${order.readyStatus} == true">주문 완료</div>
-                        <div th:if="${order.isPaid} == true">결제 완료</div>
-                        <div th:if="${order.isCanceled} == true">취소 완료</div>
-                        <div th:if="${order.isRefunded} == true">환불 완료</div>
+                        <div th:if="${order.isOrderedStatus()}">주문 완료</div>
+                        <div th:if="${order.isPaidStatus()}">결제 완료</div>
+                        <div th:if="${order.isCanceledStatus()}">취소 완료</div>
+                        <div th:if="${order.isRefundedStatus()}">환불 완료</div>
                     </div>
                     <div class="grow"></div>
                     <a th:href="|/order/${order.id}|">

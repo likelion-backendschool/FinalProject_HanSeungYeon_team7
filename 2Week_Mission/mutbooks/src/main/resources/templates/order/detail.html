@@ -14,7 +14,7 @@
         const orderId = /*[[ ${order.id} ]]*/ null;
         const buyerName = /*[[ ${order.buyer.username} ]]*/ null;
         const orderName = /*[[ ${order.name} ]]*/ null;
-        const orderPayPrice = /*[[ ${order.payPrice} ]]*/ null;
+        const orderPayPrice = /*[[ ${order.calcPayPrice} ]]*/ null;
     </script>
 
     <form hidden name="payByRestCashOnlyForm" method="POST" th:action="@{|/order/${order.id}/pay|}"></form>
@@ -28,6 +28,12 @@
                 <div>총&nbsp</div>
                 <div class="font-bold" th:text="| ${#lists.size(order.orderItems)}|"></div>
                 <div>&nbsp개</div>
+                <div class="text-2xl text-sky-400 ml-2">
+                    <div th:if="${order.isOrderedStatus()}">주문 완료</div>
+                    <div th:if="${order.isPaidStatus()}">결제 완료</div>
+                    <div th:if="${order.isCanceledStatus()}">취소 완료</div>
+                    <div th:if="${order.isRefundedStatus()}">환불 완료</div>
+                </div>
             </div>
 
             <div th:each="orderItem : ${order.orderItems}">
@@ -50,7 +56,6 @@
                                 </div>
                                 <div class="text-blue-400">무배송. 결제 후 즉시 다운로드</div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -60,12 +65,6 @@
                 <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">주문 정보
                 </div>
                 <div>
-                    <div class="text-xl text-sky-400">
-                        <div th:if="${order.readyStatus} == true">주문 완료</div>
-                        <div th:if="${order.isPaid} == true">결제 완료</div>
-                        <div th:if="${order.isCanceled} == true">취소 완료</div>
-                        <div th:if="${order.isRefunded} == true">환불 완료</div>
-                    </div>
                     <div class="text-lg">
                         주문고객 [[${order.buyer.username}]] 님
                     </div>
@@ -73,14 +72,31 @@
                         총 상품수 [[${order.orderItems.size()}]] 개
                     </div>
                     <div class="text-lg">
-                        총 상품금액 [[${order.payPrice}]] 원
+                        총 상품금액 [[${order.calcPayPrice}]] 원
                     </div>
                 </div>
             </div>
 
-<!--            에치금-->
+<!--            결제 정보-->
+            <div th:if="${order.isPaidStatus() or order.isRefundedStatus()}">
+                <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">결제 정보
+                </div>
+                <div>
+                    <div class="text-lg">
+                        총 상품금액 [[${order.calcPayPrice}]] 원
+                    </div>
+                    <div class="text-lg">
+                        캐시 사용금액 [[${order.cashPayPrice}]] 원
+                    </div>
+                    <div class="text-lg">
+                        최종 결제금액 [[${order.pgPayPrice}]] 원
+                    </div>
+                </div>
+            </div>
+
+<!--            캐시-->
             <div th:if="${order.isPayable()}"
-                 th:with="maxUseRestCash = ${order.payPrice > restCash ? restCash : order.payPrice}">
+                 th:with="maxUseRestCash = ${order.calcPayPrice > restCash ? restCash : order.calcPayPrice}">
                 <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">캐시</div>
                 <div class="text-lg">
                     <span class="mr-3">MUT 캐시</span>
@@ -100,6 +116,18 @@
                 </label>
             </div>
 
+<!--            결제 정보-->
+            <div th:if="${order.isPayable()}">
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">결제정보</div>
+                    <div class="text-lg">
+                        <span class="mr-3">최종 결제금액</span>
+                        <span class="PaymentForm__pgPayPriceDisplay"></span>
+                        <span>원</span>
+                    </div>
+                </div>
+            </div>
+
 <!--            주문취소-->
             <div th:if="${order.isCancellable()}">
                 <div class="grid grid-cols-1 mt-2 gap-2">
@@ -116,7 +144,29 @@
             <div th:if="${order.isPayable()}">
                 <div class="grid grid-cols-1 mt-2 gap-2">
                     <a href="javascript:;" onclick="payment();" class="btn btn-primary">
-                        <span class="ml-1">카드결제</span>
+                        <span class="PaymentForm__pgPayPriceDisplay"></span>
+                        <span class="ml-1">원 결제</span>
+                    </a>
+                </div>
+            </div>
+
+<!--            환불신청-->
+            <div th:if="${order.isRefundable()}">
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <a href="javascript:;"
+                       onclick="if ( confirm('정말로 환불하시겠습니까?') ) $(this).next().submit();"
+                       class="btn btn-secondary btn-outline">
+                        <span class="ml-1">환불 신청</span>
+                    </a>
+                    <form th:action="@{|/order/${order.id}/refund|}" method="POST" hidden></form>
+                </div>
+            </div>
+            <div th:if="${order.isAfterRefundDeadline()}">
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <a href="javascript:;"
+                       onclick="alert('환불 가능한 기간이 지났습니다. 환불은 결제 완료 후 10분 이내에 가능합니다.')"
+                       class="btn btn-secondary btn-outline">
+                        <span class="ml-1">환불 신청</span>
                     </a>
                 </div>
             </div>
@@ -126,19 +176,18 @@
     <script>
         const $PaymentForm__useRestCash = $("#PaymentForm__useRestCash");
         const $PaymentForm__useRestCashAll = $("#PaymentForm__useRestCashAll");
-        const $PaymentForm__pgPayPriceDisplay = $("#PaymentForm__pgPayPriceDisplay");
+        const $PaymentForm__pgPayPriceDisplay = $(".PaymentForm__pgPayPriceDisplay");
 
         const tossPayments = TossPayments("test_ck_jZ61JOxRQVEAQP7NyggVW0X9bAqw");
 
         function payment() {
-            // 캐시 결제
-            let useRestCash = parseInt($PaymentForm__useRestCash.val());
-
+            let useRestCash = parseInt($PaymentForm__useRestCash.val());    // 사용할 캐시
+            // 1. 캐시 전액 결제 요청
             if (orderPayPrice == useRestCash) {
                 document.payByRestCashOnlyForm.submit();
                 return;
             }
-
+            // 2. TossPayments 결제 요청
             const method = "카드"; // "카드" 혹은 "가상계좌"
             const uniqueOrderId = "order__" + orderId + "__" + (Math.random() + "").substring(2);
             const successUrl = window.location.origin + "/order/" + orderId + "/success";
@@ -147,7 +196,7 @@
             // 결제정보 파라미터
             var paymentData = {
                 // 필수
-                amount: orderPayPrice,      // 결제 금액
+                amount: orderPayPrice - useRestCash,      // 결제 금액
                 orderId: uniqueOrderId,     // 상점에서 주문 건을 구분하기 위해 발급한 고유 ID
                 orderName,                  // 결제에 대한 주문명
                 successUrl: successUrl,     // 결제가 성공하고 나면 리다이렉트(Redirect)되는 URL
@@ -166,12 +215,12 @@
         // 예치금 입력폼 최솟값(0), 최댓값(보유 예치금 및 결제 금액) 자동 설정
         function PaymentForm__useRestCashFix() {
             let useRestCash = parseInt($PaymentForm__useRestCash.val());
-
+            // 숫자가 아닌 값이면 0으로
             if (isNaN(useRestCash)) {
                 useRestCash = 0;
             }
 
-            const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max'));
+            const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max')); // 최대 사용 가능한 캐시
 
             if (useRestCash < 0) {
                 useRestCash = 0;
@@ -189,7 +238,7 @@
                 $PaymentForm__useRestCashAll.prop('checked', false);
             }
 
-            const pgPayPrice = orderPayPrice - useRestCash;
+            const pgPayPrice = orderPayPrice - useRestCash; // pg 결제 금액
 
             $PaymentForm__pgPayPriceDisplay.text(pgPayPrice);
         }
@@ -197,10 +246,12 @@
         // 전액 결제 체크에 따른 예치금 입력폼 자동 입력
         function PaymentForm__useRestCashAllChanged() {
             if ( $PaymentForm__useRestCashAll.prop('checked') ) {
+                // 전액 결체 체크하면 총 상품 금액 입력
                 const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max'));
                 $PaymentForm__useRestCash.val(maxUseRestCash);
             }
             else {
+                // 전액 결체 체크 해제하면 0 입력
                 $PaymentForm__useRestCash.val(0);
             }
 

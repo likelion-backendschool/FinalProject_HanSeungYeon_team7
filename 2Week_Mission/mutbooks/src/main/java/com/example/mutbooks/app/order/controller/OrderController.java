@@ -4,6 +4,8 @@ import com.example.mutbooks.app.base.security.dto.MemberContext;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.order.entity.Order;
+import com.example.mutbooks.app.order.exception.OrderIdNotMatchedException;
+import com.example.mutbooks.app.order.exception.PaymentFailByInsufficientCashException;
 import com.example.mutbooks.app.order.service.OrderService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,7 +86,10 @@ public class OrderController {
         Order order = orderService.findById(id);
         Member member = memberContext.getMember();
 
-        // 주문 조회 권한 검사
+        if(!order.isCancellable()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
         if(orderService.canCancel(member, order) == false) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -94,13 +99,22 @@ public class OrderController {
         return "redirect:/order/list";
     }
 
-    // 예치금 전액 결제
+    // 캐시 전액 결제
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/pay")
     public String payByRestCashOnly(@AuthenticationPrincipal MemberContext memberContext, @PathVariable long id){
         Order order = orderService.findById(id);
         Member member = memberContext.getMember();
-        long restCash = memberService.getRestCash(member);
+        int restCash = memberService.getRestCash(member);
+
+        // 보유 캐시 < 결제 금액, 예외처리
+        if(restCash < order.calcPayPrice()) {
+            throw new PaymentFailByInsufficientCashException("보유 캐시 금액보다 사용 캐시 금액이 더 많습니다.");
+        }
+
+        if(!order.isPayable()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
 
         if(orderService.canPayment(member, order) == false) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -110,6 +124,23 @@ public class OrderController {
 
         return "redirect:/order/%d".formatted(order.getId());
     }
+
+    // 캐시 전액 환불 처리
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/refund")
+    public String refund(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext) {
+        Order order = orderService.findById(id);
+        Member member = memberContext.getMember();
+
+        if(orderService.canRefund(member, order) == false) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        orderService.refundByRestCashOnly(order);
+
+        return "redirect:/order/%d".formatted(id);
+    }
+
 
     // Toss Payments 시작
     @PostConstruct
@@ -131,10 +162,20 @@ public class OrderController {
     // 결제 성공 리다이렉트 URL
     @RequestMapping("/{id}/success")
     public String confirmPayment(
+            @PathVariable long id,              // orderId
             @RequestParam String paymentKey,    // 결제 건에 대한 고유한 키 값
             @RequestParam String orderId,       // 상점에서 주문 건 구분을 위해 발급한 고유ID
-            @RequestParam Long amount,          // 실 결제 금액
-            Model model) throws Exception {
+            @RequestParam Integer amount,       // 실 결제 금액
+            Model model,
+            @AuthenticationPrincipal MemberContext memberContext
+    ) throws Exception {
+        // TODO: id 와 orderId 무결성 검증하는 이유
+        Order order = orderService.findById(id);
+        long realOrderId = Long.parseLong(orderId.split("__")[1]);
+
+        if(id != realOrderId) {
+            throw new OrderIdNotMatchedException("");
+        }
 
         HttpHeaders headers = new HttpHeaders();
         // headers.setBasicAuth(SECRET_KEY, ""); // spring framework 5.2 이상 버전에서 지원
@@ -145,18 +186,29 @@ public class OrderController {
         payloadMap.put("orderId", orderId);
         payloadMap.put("amount", String.valueOf(amount));
 
-        // TODO : 주문 금액 검증 로직
+        // 주문 금액 검증 로직 추가
+        Member member = memberContext.getMember();
+        int restCash = memberService.getRestCash(member);   // 보유 캐시
+        // 캐시 결제 금액 = 결제 금액 - pg 결제 금액
+        int cashPayPrice = order.calcPayPrice() - amount;
+        // 캐시 결제 금액 > 보유 캐시 이면, 캐시 부족 예외
+        if(cashPayPrice > restCash) {
+            throw new PaymentFailByInsufficientCashException("보유 캐시 금액보다 사용 캐시 금액이 더 많습니다.");
+        }
 
+        // 1. 결제 승인 API 요청
         HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(payloadMap), headers);
 
         ResponseEntity<JsonNode> responseEntity = restTemplate.postForEntity(
                 "https://api.tosspayments.com/v1/payments/" + paymentKey, request, JsonNode.class);
 
+        // 2. 응답받은 승인 결과가 성공이면 결제완료 처리
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            JsonNode successNode = responseEntity.getBody();
-            model.addAttribute("orderId", successNode.get("orderId").asText());
-            String secret = successNode.get("secret").asText(); // 가상계좌의 경우 입금 callback 검증을 위해서 secret을 저장하기를 권장함
-            return "order/success";
+            // 2-1. 결제 완료 처리(캐시, 카드 결제 CashLog 기록 남기기)
+            orderService.payByTossPayments(order, cashPayPrice);
+
+            // 2-2. 주문 상세조회로 리다이렉트
+            return "redirect:/order/%d".formatted(order.getId());
         } else {
             JsonNode failNode = responseEntity.getBody();
             model.addAttribute("message", failNode.get("message").asText());

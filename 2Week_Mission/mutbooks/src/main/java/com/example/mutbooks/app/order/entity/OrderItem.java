@@ -26,14 +26,19 @@ public class OrderItem extends BaseEntity {
     @ManyToOne(fetch =  FetchType.LAZY)
     private Product product;        // 상품번호
 
-    private LocalDateTime payDate;  // 결제 일시
+    private LocalDateTime payDate;      // 결제 일시
+    private LocalDateTime refundDate;   // 환불 일시
+
     private int price;              // 권장 판매가
     private int salePrice;          // 실제 판매가
     private int wholesalePrice;     // 도매가
     private int pgFee;              // 결제대행사 수수료
     private int payPrice;           // 결제 금액
     private int refundPrice;        // 환불 금액
+
     private boolean isPaid;         // 결제 여부
+    private boolean isRefund;       // 환불 여부
+
 
     public OrderItem(Product product) {
         // product 로 부터 가져온 값
@@ -46,8 +51,15 @@ public class OrderItem extends BaseEntity {
     // 결제 완료 처리
     public void setPaymentDone() {
         this.pgFee = 0;
-        this.payPrice = getSalePrice();
-        this.isPaid = true;
+        this.payPrice = salePrice;
         this.payDate = LocalDateTime.now();
+        this.isPaid = true;
+    }
+
+    // 주문 품목 환불 처리
+    public void setRefundDone() {
+        this.refundPrice = payPrice;
+        this.refundDate = LocalDateTime.now();
+        this.isRefund = true;
     }
 }

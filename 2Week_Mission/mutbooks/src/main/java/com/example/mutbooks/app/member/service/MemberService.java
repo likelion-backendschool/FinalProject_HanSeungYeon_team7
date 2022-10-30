@@ -117,7 +117,7 @@ public class MemberService {
     }
 
     // 회원의 남은 예치금 잔액 조회
-    public long getRestCash(Member member) {
+    public int getRestCash(Member member) {
         return findByUsername(member.getUsername()).getRestCash();
     }
 

@@ -4,6 +4,8 @@ import com.example.mutbooks.app.cart.entity.CartItem;
 import com.example.mutbooks.app.cart.service.CartService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.app.mybook.entity.MyBook;
+import com.example.mutbooks.app.mybook.service.MyBookService;
 import com.example.mutbooks.app.order.entity.Order;
 import com.example.mutbooks.app.order.entity.OrderItem;
 import com.example.mutbooks.app.order.exception.OrderNotFoundException;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final CartService cartService;
     private final MemberService memberService;
+    private final MyBookService myBookService;
     private final OrderRepository orderRepository;
 
     // 선택한 장바구니 품목으로부터 주문 생성
@@ -85,22 +88,62 @@ public class OrderService {
         order.setCancelDone();
     }
 
-    // 에치금 전액 결제
+    // 1. 캐시 전액 결제
     @Transactional
     public void payByRestCashOnly(Order order) {
         Member buyer = order.getBuyer();       // 구매자
-        int payPrice = order.getPayPrice();    // 결제 금액
+        int payPrice = order.calcPayPrice();    // 결제 금액
         int restCash = buyer.getRestCash();    // 예치금 잔액
 
         // 예치금 잔액 < 결제 금액 이면, 결제 거절
         if(restCash < payPrice) {
-            throw new RuntimeException("예치금이 부족합니다.");
+            throw new RuntimeException("보유 캐시가 부족합니다.");
         }
         // 예치금 차감 처리
-        memberService.addCash(buyer, payPrice * -1, "상품결제__주문__%d".formatted(order.getId()));
+        memberService.addCash(buyer, payPrice * -1, "상품결제__캐시__주문__%d".formatted(order.getId()));
         // 결제 완료 처리
-        order.setPaymentDone();
+        order.setPaymentDone(payPrice);
         orderRepository.save(order);
+        // 내 도서에 추가
+        myBookService.add(order);
+    }
+
+    // 2. TossPayments 결제(TossPayments 전액 결제, 캐시 + TossPayments 혼합 결제)
+    @Transactional
+    public void payByTossPayments(Order order, int cashPayPrice) {
+        Member buyer = order.getBuyer();
+        int payPrice = order.calcPayPrice();
+        int pgPayPrice = payPrice - cashPayPrice;
+
+        // 캐시 결제 내역 CashLog 추가
+        if(cashPayPrice > 0) {
+            memberService.addCash(buyer, cashPayPrice * -1, "상품결제__캐시__주문__%d".formatted(order.getId()));
+        }
+
+        // 카드 결제 내역 CashLog 추가
+        memberService.addCash(buyer, pgPayPrice, "상품결제충전__토스페이먼츠");
+        memberService.addCash(buyer, pgPayPrice * -1, "상품결제__토스페이먼츠__주문__%d".formatted(order.getId()));
+        // 결제 완료 처리
+        order.setPaymentDone(payPrice, pgPayPrice);
+        orderRepository.save(order);
+        // 내 도서에 추가
+        myBookService.add(order);
+    }
+
+    // 캐시 전액 환불
+    @Transactional
+    public void refundByRestCashOnly(Order order) {
+        Member buyer = order.getBuyer();
+        int payPrice = order.calcPayPrice();         // 총 결제 금액
+//        int pgPayPrice = order.getPgPayPrice();     // pg 결제 금액
+//        int cashPayPrice = payPrice - pgPayPrice;   // 캐시 결제 금액
+
+        memberService.addCash(buyer, payPrice, "상품환불충전__캐시__주문__%d".formatted(order.getId()));
+
+        order.setRefundDone();
+        orderRepository.save(order);
+        // 내 도서에서 삭제
+        myBookService.remove(order);
     }
 
     // 주문 정보 조회 권한 검증
@@ -119,5 +162,29 @@ public class OrderService {
     // 결제 권한 검증
     public boolean canPayment(Member member, Order order) {
         return canSelect(member, order);
+    }
+
+    // 환불 할 수 있는지 검증
+    public boolean canRefund(Member member, Order order) {
+        // 권한 검증
+        if(!canSelect(member, order)) {
+            throw new RuntimeException("환불 권한이 없습니다.");
+        }
+        // 해당 주문 상품들이 결제 후 10분이내이고 모두 읽지 않은 상태일 때만 환불 가능
+        if(!order.isRefundable()) {
+            throw new RuntimeException("환불 기한이 지났습니다.");
+        }
+
+        List<OrderItem> orderItems = order.getOrderItems();
+        for(OrderItem orderItem : orderItems) {
+            Long productId = orderItem.getProduct().getId();
+            Long ownerId = order.getBuyer().getId();
+            MyBook myBook = myBookService.findByProductIdAndOwnerId(productId, ownerId);
+
+            if(myBook.isRead()) {
+                throw new RuntimeException("[%s] 상품이 개봉되어 환불할 수 없습니다.".formatted(orderItem.getProduct().getSubject()));
+            }
+        }
+        return true;
     }
 }
