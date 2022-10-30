@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>주문 내역</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+        <div class="px-2 pt-4">
+            <h1 class="text-2xl font-bold mb-5">주문 내역</h1>
+            <div th:each="order : ${orders}" class="mb-10">
+                <div class="flex border-t-2 pt-3">
+                    <div th:text="${#temporals.format(order.createDate, 'yyyy.MM.dd')}"
+                         class="text-xl font-bold mr-3"></div>
+                    <div class="text-xl text-sky-400">
+                        <div th:if="${order.isOrderedStatus()}">주문 완료</div>
+                        <div th:if="${order.isPaidStatus()}">결제 완료</div>
+                        <div th:if="${order.isCanceledStatus()}">취소 완료</div>
+                        <div th:if="${order.isRefundedStatus()}">환불 완료</div>
+                    </div>
+                    <div class="grow"></div>
+                    <a th:href="|/order/${order.id}|">
+                        <span class="text-lg">상세보기</span>
+                        <i class="fa-solid fa-angle-right"></i>
+                    </a>
+                </div>
+
+                <div>
+                    <div th:each="orderItem : ${order.orderItems}">
+                        <div class="card bg-base-100 border-2 border-slate-100 my-2">
+                            <div class="card-body" style="padding: 15px">
+                                <div class="flex flex-wrap">
+                                    <div class="mr-5">
+                                        <img src="https://source.unsplash.com/random" class="w-28 h-40">
+                                    </div>
+                                    <div class="grow">
+                                        <h2 th:text="${orderItem.product.subject}" class="font-bold text-2xl"></h2>
+                                        <div>수량 : 1</div>
+                                        <div th:text="|${orderItem.product.price} 원|" class="font-bold text-2xl my-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>
