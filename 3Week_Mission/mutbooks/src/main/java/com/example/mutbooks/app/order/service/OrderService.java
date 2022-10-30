@@ -9,12 +9,14 @@ import com.example.mutbooks.app.mybook.service.MyBookService;
 import com.example.mutbooks.app.order.entity.Order;
 import com.example.mutbooks.app.order.entity.OrderItem;
 import com.example.mutbooks.app.order.exception.OrderNotFoundException;
+import com.example.mutbooks.app.order.repository.OrderItemRepository;
 import com.example.mutbooks.app.order.repository.OrderRepository;
 import com.example.mutbooks.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +30,7 @@ public class OrderService {
     private final MemberService memberService;
     private final MyBookService myBookService;
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
     // 선택한 장바구니 품목으로부터 주문 생성
     @Transactional
@@ -186,5 +189,9 @@ public class OrderService {
             }
         }
         return true;
+    }
+
+    public List<OrderItem> findAllByPayDateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return orderItemRepository.findAllByPayDateBetween(startOfDay, endOfDay);
     }
 }
