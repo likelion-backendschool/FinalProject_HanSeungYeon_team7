@@ -24,4 +24,6 @@ public class MyBook extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;        // 상품
+
+    private boolean isRead;         // 읽었는지 여부
 }

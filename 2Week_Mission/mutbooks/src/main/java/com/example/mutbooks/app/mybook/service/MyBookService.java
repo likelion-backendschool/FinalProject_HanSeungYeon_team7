@@ -47,4 +47,8 @@ public class MyBookService {
             myBookRepository.deleteByProductIdAndOwnerId(product.getId(), buyer.getId());
         }
     }
+
+    public MyBook findByProductIdAndOwnerId(long productId, long ownerId) {
+        return myBookRepository.findByProductIdAndOwnerId(productId, ownerId).orElse(null);
+    }
 }

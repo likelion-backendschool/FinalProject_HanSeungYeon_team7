@@ -4,6 +4,7 @@ import com.example.mutbooks.app.cart.entity.CartItem;
 import com.example.mutbooks.app.cart.service.CartService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.app.mybook.entity.MyBook;
 import com.example.mutbooks.app.mybook.service.MyBookService;
 import com.example.mutbooks.app.order.entity.Order;
 import com.example.mutbooks.app.order.entity.OrderItem;
@@ -163,8 +164,27 @@ public class OrderService {
         return canSelect(member, order);
     }
 
-    // 환불 권한 검증
+    // 환불 할 수 있는지 검증
     public boolean canRefund(Member member, Order order) {
-        return canSelect(member, order);
+        // 권한 검증
+        if(!canSelect(member, order)) {
+            throw new RuntimeException("환불 권한이 없습니다.");
+        }
+        // 해당 주문 상품들이 결제 후 10분이내이고 모두 읽지 않은 상태일 때만 환불 가능
+        if(!order.isRefundable()) {
+            throw new RuntimeException("환불 기한이 지났습니다.");
+        }
+
+        List<OrderItem> orderItems = order.getOrderItems();
+        for(OrderItem orderItem : orderItems) {
+            Long productId = orderItem.getProduct().getId();
+            Long ownerId = order.getBuyer().getId();
+            MyBook myBook = myBookService.findByProductIdAndOwnerId(productId, ownerId);
+
+            if(myBook.isRead()) {
+                throw new RuntimeException("[%s] 상품이 개봉되어 환불할 수 없습니다.".formatted(orderItem.getProduct().getSubject()));
+            }
+        }
+        return true;
     }
 }
