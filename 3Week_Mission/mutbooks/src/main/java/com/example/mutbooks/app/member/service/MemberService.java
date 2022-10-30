@@ -32,6 +32,10 @@ public class MemberService {
     @Transactional
     public Member join(JoinForm joinForm) {
         int authLevel = 3;      // 디폴트 일반 권한
+        // TODO: username 이 admin 인 회원을 관리자 회원으로 설정
+        if(joinForm.getUsername().equals("admin")) {
+            authLevel = 7;
+        }
 
         // 기본 권한 = 일반
         Member member = Member.builder()

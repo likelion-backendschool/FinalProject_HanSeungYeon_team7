@@ -157,6 +157,7 @@ public class OrderController {
         });
     }
 
+    // TODO: secret key ignore 처리
     private final String SECRET_KEY = "test_sk_jkYG57Eba3GlOkbXE5lVpWDOxmA1";
 
     // 결제 성공 리다이렉트 URL
