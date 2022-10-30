@@ -22,8 +22,11 @@ public class Order extends BaseEntity {
     private Member buyer;               // 구매자
 
     private String name;                // 주문명
+
     private LocalDateTime payDate;      // 결제 일시
     private LocalDateTime cancelDate;   // 주문 취소 일시
+    private LocalDateTime refundDate;   // 환불 일시
+
     private boolean readyStatus;        // 주문완료 여부
     private boolean isPaid;             // 결제완료 여부
     private boolean isCanceled;         // 주문취소 여부
@@ -80,6 +83,7 @@ public class Order extends BaseEntity {
             orderItem.setRefundDone();
         }
         this.isRefunded = true;
+        this.refundDate = LocalDateTime.now();
     }
 
     // 총 주문(상품) 금액
