@@ -27,10 +27,15 @@ public class Order extends BaseEntity {
     private LocalDateTime cancelDate;   // 주문 취소 일시
     private LocalDateTime refundDate;   // 환불 일시
 
+    private int payPrice;                   // 총 주문 결제 금액
+    private int pgPayPrice;                 // 총 pg 결제 금액
+    private int cashPayPrice;               // 총 캐시 결제 금액
+
     private boolean readyStatus;        // 주문완료 여부
     private boolean isPaid;             // 결제완료 여부
     private boolean isCanceled;         // 주문취소 여부
     private boolean isRefunded;         // 환불 여부
+
 
     @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -67,8 +72,25 @@ public class Order extends BaseEntity {
     }
 
     // 캐시 전액 결제 완료 처리
-    public void setPaymentDone() {
+    public void setPaymentDone(int payPrice) {
         this.payDate = LocalDateTime.now();
+        // 총 결제 금액 == 캐시 결제 금액
+        this.payPrice = payPrice;
+        this.cashPayPrice = payPrice;
+        // 주문 품목 결제 완료 처리
+        for(OrderItem orderItem : orderItems) {
+            orderItem.setPaymentDone();
+        }
+        this.isPaid = true;
+    }
+
+    // TossPayments 결제 완료 처리
+    public void setPaymentDone(int payPrice, int pgPayPrice) {
+        this.payDate = LocalDateTime.now();
+        // 총 결제 금액 == pg 결제 금액 + 캐시 결제 금액
+        this.payPrice = payPrice;
+        this.pgPayPrice = pgPayPrice;
+        this.cashPayPrice = payPrice - pgPayPrice;
         // 주문 품목 결제 완료 처리
         for(OrderItem orderItem : orderItems) {
             orderItem.setPaymentDone();

@@ -101,7 +101,7 @@ public class OrderService {
         // 예치금 차감 처리
         memberService.addCash(buyer, payPrice * -1, "상품결제__캐시__주문__%d".formatted(order.getId()));
         // 결제 완료 처리
-        order.setPaymentDone();
+        order.setPaymentDone(payPrice);
         orderRepository.save(order);
         // 내 도서에 추가
         myBookService.add(order);
@@ -123,7 +123,7 @@ public class OrderService {
         memberService.addCash(buyer, pgPayPrice, "상품결제충전__토스페이먼츠");
         memberService.addCash(buyer, pgPayPrice * -1, "상품결제__토스페이먼츠__주문__%d".formatted(order.getId()));
         // 결제 완료 처리
-        order.setPaymentDone();
+        order.setPaymentDone(payPrice, pgPayPrice);
         orderRepository.save(order);
         // 내 도서에 추가
         myBookService.add(order);
