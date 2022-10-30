@@ -68,22 +68,22 @@ public class Order extends BaseEntity {
 
     // 캐시 전액 결제 완료 처리
     public void setPaymentDone() {
+        this.payDate = LocalDateTime.now();
         // 주문 품목 결제 완료 처리
         for(OrderItem orderItem : orderItems) {
             orderItem.setPaymentDone();
         }
         this.isPaid = true;
-        this.payDate = LocalDateTime.now();
     }
 
     // 환불 완료 처리
     public void setRefundDone() {
-        // 주문 품목 결제 완료 처리
+        this.refundDate = LocalDateTime.now();
+        // 주문 품목 환불 완료 처리
         for(OrderItem orderItem : orderItems) {
             orderItem.setRefundDone();
         }
         this.isRefunded = true;
-        this.refundDate = LocalDateTime.now();
     }
 
     // 총 주문(상품) 금액
@@ -94,16 +94,6 @@ public class Order extends BaseEntity {
             payPrice += orderItem.getSalePrice();
         }
         return payPrice;
-    }
-
-    // 총 pg 결제 금액
-    public int getPgPayPrice() {
-        // 상품들의 실제 판매가의 총합
-        int pgPayPrice = 0;
-        for(OrderItem orderItem : orderItems) {
-            pgPayPrice += orderItem.getPgPayPrice();
-        }
-        return pgPayPrice;
     }
 
     // 주문 취소 가능 여부

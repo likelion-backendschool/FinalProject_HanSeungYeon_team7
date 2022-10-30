@@ -125,7 +125,7 @@ public class OrderController {
         return "redirect:/order/%d".formatted(order.getId());
     }
 
-    // 전액 환불 처리
+    // 캐시 전액 환불 처리
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/refund")
     public String refund(@PathVariable long id, @AuthenticationPrincipal MemberContext memberContext) {
@@ -140,7 +140,7 @@ public class OrderController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        orderService.refund(order);
+        orderService.refundByRestCashOnly(order);
 
         return "redirect:/order/%d".formatted(id);
     }
