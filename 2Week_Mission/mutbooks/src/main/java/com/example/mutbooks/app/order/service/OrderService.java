@@ -91,7 +91,7 @@ public class OrderService {
     @Transactional
     public void payByRestCashOnly(Order order) {
         Member buyer = order.getBuyer();       // 구매자
-        int payPrice = order.getPayPrice();    // 결제 금액
+        int payPrice = order.calcPayPrice();    // 결제 금액
         int restCash = buyer.getRestCash();    // 예치금 잔액
 
         // 예치금 잔액 < 결제 금액 이면, 결제 거절
@@ -111,7 +111,7 @@ public class OrderService {
     @Transactional
     public void payByTossPayments(Order order, int cashPayPrice) {
         Member buyer = order.getBuyer();
-        int payPrice = order.getPayPrice();
+        int payPrice = order.calcPayPrice();
         int pgPayPrice = payPrice - cashPayPrice;
 
         // 캐시 결제 내역 CashLog 추가
@@ -133,7 +133,7 @@ public class OrderService {
     @Transactional
     public void refundByRestCashOnly(Order order) {
         Member buyer = order.getBuyer();
-        int payPrice = order.getPayPrice();         // 총 결제 금액
+        int payPrice = order.calcPayPrice();         // 총 결제 금액
 //        int pgPayPrice = order.getPgPayPrice();     // pg 결제 금액
 //        int cashPayPrice = payPrice - pgPayPrice;   // 캐시 결제 금액
 

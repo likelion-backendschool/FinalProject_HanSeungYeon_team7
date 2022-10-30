@@ -109,7 +109,7 @@ public class Order extends BaseEntity {
     }
 
     // 총 주문(상품) 금액
-    public int getPayPrice() {
+    public int calcPayPrice() {
         // 상품들의 실제 판매가의 총합
         int payPrice = 0;
         for(OrderItem orderItem : orderItems) {

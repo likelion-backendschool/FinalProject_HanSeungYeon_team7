@@ -14,7 +14,7 @@
         const orderId = /*[[ ${order.id} ]]*/ null;
         const buyerName = /*[[ ${order.buyer.username} ]]*/ null;
         const orderName = /*[[ ${order.name} ]]*/ null;
-        const orderPayPrice = /*[[ ${order.payPrice} ]]*/ null;
+        const orderPayPrice = /*[[ ${order.calcPayPrice} ]]*/ null;
     </script>
 
     <form hidden name="payByRestCashOnlyForm" method="POST" th:action="@{|/order/${order.id}/pay|}"></form>
@@ -28,6 +28,12 @@
                 <div>총&nbsp</div>
                 <div class="font-bold" th:text="| ${#lists.size(order.orderItems)}|"></div>
                 <div>&nbsp개</div>
+                <div class="text-2xl text-sky-400 ml-2">
+                    <div th:if="${order.isOrderedStatus()}">주문 완료</div>
+                    <div th:if="${order.isPaidStatus()}">결제 완료</div>
+                    <div th:if="${order.isCanceledStatus()}">취소 완료</div>
+                    <div th:if="${order.isRefundedStatus()}">환불 완료</div>
+                </div>
             </div>
 
             <div th:each="orderItem : ${order.orderItems}">
@@ -50,7 +56,6 @@
                                 </div>
                                 <div class="text-blue-400">무배송. 결제 후 즉시 다운로드</div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -60,12 +65,6 @@
                 <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">주문 정보
                 </div>
                 <div>
-                    <div class="text-xl text-sky-400">
-                        <div th:if="${order.isOrderedStatus()}">주문 완료</div>
-                        <div th:if="${order.isPaidStatus()}">결제 완료</div>
-                        <div th:if="${order.isCanceledStatus()}">취소 완료</div>
-                        <div th:if="${order.isRefundedStatus()}">환불 완료</div>
-                    </div>
                     <div class="text-lg">
                         주문고객 [[${order.buyer.username}]] 님
                     </div>
@@ -73,14 +72,31 @@
                         총 상품수 [[${order.orderItems.size()}]] 개
                     </div>
                     <div class="text-lg">
-                        총 상품금액 [[${order.payPrice}]] 원
+                        총 상품금액 [[${order.calcPayPrice}]] 원
+                    </div>
+                </div>
+            </div>
+
+<!--            결제 정보-->
+            <div th:if="${order.isPaidStatus() or order.isRefundedStatus()}">
+                <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">결제 정보
+                </div>
+                <div>
+                    <div class="text-lg">
+                        총 상품금액 [[${order.calcPayPrice}]] 원
+                    </div>
+                    <div class="text-lg">
+                        캐시 사용금액 [[${order.cashPayPrice}]] 원
+                    </div>
+                    <div class="text-lg">
+                        최종 결제금액 [[${order.pgPayPrice}]] 원
                     </div>
                 </div>
             </div>
 
 <!--            캐시-->
             <div th:if="${order.isPayable()}"
-                 th:with="maxUseRestCash = ${order.payPrice > restCash ? restCash : order.payPrice}">
+                 th:with="maxUseRestCash = ${order.calcPayPrice > restCash ? restCash : order.calcPayPrice}">
                 <div class="border-b-2 text-2xl flex my-5 pb-2 border-slate-200 font-bold mr-3">캐시</div>
                 <div class="text-lg">
                     <span class="mr-3">MUT 캐시</span>

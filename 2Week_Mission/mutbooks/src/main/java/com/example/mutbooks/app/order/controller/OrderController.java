@@ -108,7 +108,7 @@ public class OrderController {
         int restCash = memberService.getRestCash(member);
 
         // 보유 캐시 < 결제 금액, 예외처리
-        if(restCash < order.getPayPrice()) {
+        if(restCash < order.calcPayPrice()) {
             throw new PaymentFailByInsufficientCashException("보유 캐시 금액보다 사용 캐시 금액이 더 많습니다.");
         }
 
@@ -194,7 +194,7 @@ public class OrderController {
         Member member = memberContext.getMember();
         int restCash = memberService.getRestCash(member);   // 보유 캐시
         // 캐시 결제 금액 = 결제 금액 - pg 결제 금액
-        int cashPayPrice = order.getPayPrice() - amount;
+        int cashPayPrice = order.calcPayPrice() - amount;
         // 캐시 결제 금액 > 보유 캐시 이면, 캐시 부족 예외
         if(cashPayPrice > restCash) {
             throw new PaymentFailByInsufficientCashException("보유 캐시 금액보다 사용 캐시 금액이 더 많습니다.");
