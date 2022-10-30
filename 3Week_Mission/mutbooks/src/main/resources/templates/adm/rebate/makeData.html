@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/adm/layout/layout}">
+
+<head>
+    <title>정산데이터 생성</title>
+</head>
+
+<main layout:fragment="main">
+    <div class="container mx-auto flex-grow flex items-center justify-center">
+        <div>
+            <h1>정산데이터 생성</h1>
+            <form>
+                <select class="select select-bordered">
+                    <option value="2022-09">2022-09</option>
+                    <option value="2022-08">2022-08</option>
+                    <option value="2022-07">2022-07</option>
+                    <option value="2022-06">2022-06</option>
+                </select>
+
+                <input class="btn btn-primary" type="submit" value="생성">
+            </form>
+        </div>
+    </div>
+</main>
+
+</html>
