@@ -35,7 +35,8 @@
                     <tbody>
                     <tr th:each="item : ${items}">
                         <td>
-                            <input onchange="OrderItemCheckbox__changed();" th:if="${item.rebateAvailable}" type="checkbox" class="orderItemCheckbox checkbox">
+                            <input onchange="OrderItemCheckbox__changed();" th:if="${item.rebateAvailable}"
+                                   type="checkbox" class="orderItemCheckbox checkbox" th:value="${item.id}">
                         </td>
 
                         <td th:text="${item.orderItem.id}"></td>
@@ -61,7 +62,9 @@
                 </table>
 
                 <a href="javascript:;" onclick="RebateForm__submit();" class="btn btn-primary btn-sm">선택정산</a>
-                <form method="POST" name="rebateForm" th:action="@{|/adm/rebate/rebate|}" hidden></form>
+                <form method="POST" name="rebateForm" th:action="@{|/adm/rebate/rebate|}" hidden>
+                    <input type="hidden" name="ids">
+                </form>
 
                 <script>
                     // 전체선택 체크박스
@@ -94,6 +97,9 @@
                             alert('정산할 주문품목을 선택해주세요.');
                             return;
                         }
+
+                        const ids = $checked.map((index, el) => $(el).val()).get();
+                        form.ids.value = ids;   // [1, 4, 5] -> 1, 4, 5
 
                         form.submit();
                         RebateForm__submitDone = true;

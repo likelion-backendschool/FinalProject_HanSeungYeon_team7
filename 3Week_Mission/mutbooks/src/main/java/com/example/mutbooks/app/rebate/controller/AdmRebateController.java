@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -68,6 +69,23 @@ public class AdmRebateController {
     @PostMapping("/rebateOne/{rebateOrderItemId}")
     public String rebateOne(@PathVariable long rebateOrderItemId) {
         rebateService.rebate(rebateOrderItemId);
+
+        // 정산 데이터 리스트 조회 페이지로 리다이렉트
+        return "redirect:/adm/rebate/rebateOrderItemList";
+    }
+
+    // 선택 정산
+    @PreAuthorize("isAuthenticated() and hasAuthority('ADMIN')")
+    @PostMapping("/rebate")
+    public String rebateAll(String ids) {
+        // TODO: 서비스단으로 옮겨야하는지 고민해보기
+        // 정산 처리해야하는 rebateOrderItem id 리스트
+        String[] idsArr = ids.split(",");
+        Arrays.stream(idsArr)
+                .mapToLong(Long::parseLong)
+                .forEach(id -> {
+                    rebateService.rebate(id);
+                });
 
         // 정산 데이터 리스트 조회 페이지로 리다이렉트
         return "redirect:/adm/rebate/rebateOrderItemList";
