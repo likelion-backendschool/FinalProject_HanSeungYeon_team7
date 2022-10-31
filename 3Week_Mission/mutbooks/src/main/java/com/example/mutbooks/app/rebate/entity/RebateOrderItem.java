@@ -79,6 +79,7 @@ public class RebateOrderItem extends BaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CashLog rebateCashLog;      // 정산금액 지급 내역
     private LocalDateTime rebateDate;   // 정산금액 지급 일시
+    private boolean isRebated;          // 정산 여부
 
     public RebateOrderItem(OrderItem orderItem) {
         this.orderItem = orderItem;
@@ -113,7 +114,7 @@ public class RebateOrderItem extends BaseEntity {
 
     // 예상 정산 금액 계산
     public int calculateRebatePrice() {
-        if(!isRebateAvailable()) {
+        if(isRefunded) {
             return 0;
         }
         return payPrice - pgFee - wholesalePrice;
@@ -121,10 +122,17 @@ public class RebateOrderItem extends BaseEntity {
 
     // 정산 가능 여부
     public boolean isRebateAvailable() {
-        // 환불된 주문 품목은 정산 처리x
-        if(isRefunded) {
+        // 전액 환불건 or 정산 완료건은 정산 불가
+        if(isRefunded || isRebated) {
             return false;
         }
         return true;
+    }
+
+    // 정산 완료 처리
+    public void setRebateDone(CashLog cashLog) {
+        rebateDate = LocalDateTime.now();
+        rebateCashLog = cashLog;
+        isRebated = true;
     }
 }

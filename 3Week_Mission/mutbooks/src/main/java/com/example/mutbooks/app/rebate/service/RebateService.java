@@ -1,8 +1,11 @@
 package com.example.mutbooks.app.rebate.service;
 
+import com.example.mutbooks.app.cash.entity.CashLog;
+import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.order.entity.OrderItem;
 import com.example.mutbooks.app.order.service.OrderService;
 import com.example.mutbooks.app.rebate.entity.RebateOrderItem;
+import com.example.mutbooks.app.rebate.exception.RebateOrderItemNotFoundException;
 import com.example.mutbooks.app.rebate.repository.RebateOrderItemRepository;
 import com.example.mutbooks.util.Ut;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class RebateService {
     private final OrderService orderService;
+    private final MemberService memberService;
     private final RebateOrderItemRepository rebateOrderItemRepository;
 
     // 정산 데이터 생성
@@ -85,5 +89,32 @@ public class RebateService {
         LocalDateTime endOfDay = Ut.date.getEndOfDay(year, month, endDay);       // 해당일자의 종료일시
 
         return rebateOrderItemRepository.findAllByPayDateBetweenOrderByIdAsc(startOfDay, endOfDay);
+    }
+
+    public List<RebateOrderItem> findRebateOrderItems() {
+        return rebateOrderItemRepository.findAllByOrderById();
+    }
+
+    // 단건 정산 처리
+    @Transactional
+    public void rebate(long rebateOrderItemId) {
+        RebateOrderItem rebateOrderItem = findById(rebateOrderItemId);
+        // 1. 정산 가능 상태인지 검증
+        if(!rebateOrderItem.isRebateAvailable()) {
+            throw new RuntimeException("정산 처리가 가능한 상태가 아닙니다.");
+        }
+        // 2. 판매자에게 예치금으로 정산금액 지급
+        CashLog cashLog = memberService.addCash(
+                rebateOrderItem.getSeller(),
+                rebateOrderItem.calculateRebatePrice(),
+                "정산금액지급__캐시__정산__%d".formatted(rebateOrderItem.getOrderItem().getId()));
+        // 3. 정산 완료 처리
+        rebateOrderItem.setRebateDone(cashLog);
+    }
+
+    public RebateOrderItem findById(long rebateOrderItemId) {
+        return rebateOrderItemRepository.findById(rebateOrderItemId).orElseThrow(() -> {
+            throw new RebateOrderItemNotFoundException("정산 데이터가 존재하지않습니다.");
+        });
     }
 }

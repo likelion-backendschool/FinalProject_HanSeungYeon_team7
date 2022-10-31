@@ -29,7 +29,7 @@ public class AdmRebateController {
     @PreAuthorize("isAuthenticated() and hasAuthority('ADMIN')")
     @PostMapping("/makeData")
     public String makeData(RebateDataForm rebateDataForm, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "/adm/rebate/makeData";
         }
 
@@ -44,10 +44,32 @@ public class AdmRebateController {
     // 정산 데이터 리스트 조회
     @PreAuthorize("isAuthenticated() and hasAuthority('ADMIN')")
     @GetMapping("/rebateOrderItemList")
-    public String showRebateOrderItemList(@RequestParam int year, @RequestParam int month, Model model) {
-        List<RebateOrderItem> items = rebateService.findRebateOrderItemsByPayDateIn(year, month);
+    public String showRebateOrderItemList(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month,
+            Model model
+    ) {
+        List<RebateOrderItem> items = null;
+
+        if(year == null || month == null) {
+            // 전체 조회
+            items = rebateService.findRebateOrderItems();
+        } else {
+            // 월별 조회
+            items = rebateService.findRebateOrderItemsByPayDateIn(year, month);
+        }
         model.addAttribute("items", items);
 
         return "/adm/rebate/rebateOrderItemList";
+    }
+
+    // 건별 정산
+    @PreAuthorize("isAuthenticated() and hasAuthority('ADMIN')")
+    @PostMapping("/rebateOne/{rebateOrderItemId}")
+    public String rebateOne(@PathVariable long rebateOrderItemId) {
+        rebateService.rebate(rebateOrderItemId);
+
+        // 정산 데이터 리스트 조회 페이지로 리다이렉트
+        return "redirect:/adm/rebate/rebateOrderItemList";
     }
 }
