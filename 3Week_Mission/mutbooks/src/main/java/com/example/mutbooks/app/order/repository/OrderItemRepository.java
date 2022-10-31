@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
-    List<OrderItem> findAllByPayDateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
+    List<OrderItem> findAllByPayDateBetweenOrderByIdAsc(LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

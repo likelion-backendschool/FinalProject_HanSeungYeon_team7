@@ -110,4 +110,21 @@ public class RebateOrderItem extends BaseEntity {
         seller = orderItem.getProduct().getAuthor();
         sellerName = orderItem.getProduct().getAuthor().getUsername();
     }
+
+    // 예상 정산 금액 계산
+    public int calculateRebatePrice() {
+        if(!isRebateAvailable()) {
+            return 0;
+        }
+        return payPrice - pgFee - wholesalePrice;
+    }
+
+    // 정산 가능 여부
+    public boolean isRebateAvailable() {
+        // 환불된 주문 품목은 정산 처리x
+        if(isRefunded) {
+            return false;
+        }
+        return true;
+    }
 }

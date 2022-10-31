@@ -26,23 +26,26 @@ public class RebateService {
     public void makeData(int year, int month) {
         int endDay = Ut.date.getEndDay(year, month);
 
+        // TODO: 테스트를 위해 잠시 주석 처리
         // 해당 달 정산 데이터는 다음 달 15일 새벽 4시 이후에 가능
-        if(canMakeData(year, month)) {
-            // 1. 정산 데이터를 생성할 날짜 범위 구하기
-            LocalDateTime startOfDay = Ut.date.getStartOfDay(year, month, 1);   // 해당일자의 시작일시
-            LocalDateTime endOfDay = Ut.date.getEndOfDay(year, month, endDay);       // 해당일자의 종료일시
+//        if(!canMakeData(year, month)) {
+//
+//        }
 
-            // 2. 해당 범위의 모든 주문 품목 조회
-            List<OrderItem> orderItems = orderService.findAllByPayDateBetween(startOfDay, endOfDay);
+        // 1. 정산 데이터를 생성할 날짜 범위 구하기
+        LocalDateTime startOfDay = Ut.date.getStartOfDay(year, month, 1);   // 해당일자의 시작일시
+        LocalDateTime endOfDay = Ut.date.getEndOfDay(year, month, endDay);       // 해당일자의 종료일시
 
-            // 3. 주문 데이터 -> 정산 데이터 변환
-            List<RebateOrderItem> rebateOrderItems = orderItems.stream()
-                    .map(this::toRebateOrderItem)
-                    .collect(Collectors.toList());
+        // 2. 해당 범위의 모든 주문 품목 조회
+        List<OrderItem> orderItems = orderService.findAllByPayDateBetweenOrderByIdAsc(startOfDay, endOfDay);
 
-            // 4. 정산 데이터 생성
-            rebateOrderItems.forEach(this::makeRebateOrderItem);
-        }
+        // 3. 주문 데이터 -> 정산 데이터 변환
+        List<RebateOrderItem> rebateOrderItems = orderItems.stream()
+                .map(this::toRebateOrderItem)
+                .collect(Collectors.toList());
+
+        // 4. 정산 데이터 생성
+        rebateOrderItems.forEach(this::makeRebateOrderItem);
     }
 
     // RebateOrderItem 생성
@@ -73,5 +76,14 @@ public class RebateService {
             ));
         }
         return true;
+    }
+
+    // 해당 년월의 정산 데이터 조회
+    public List<RebateOrderItem> findRebateOrderItemsByPayDateIn(int year, int month) {
+        int endDay = Ut.date.getEndDay(year, month);
+        LocalDateTime startOfDay = Ut.date.getStartOfDay(year, month, 1);   // 해당일자의 시작일시
+        LocalDateTime endOfDay = Ut.date.getEndOfDay(year, month, endDay);       // 해당일자의 종료일시
+
+        return rebateOrderItemRepository.findAllByPayDateBetweenOrderByIdAsc(startOfDay, endOfDay);
     }
 }

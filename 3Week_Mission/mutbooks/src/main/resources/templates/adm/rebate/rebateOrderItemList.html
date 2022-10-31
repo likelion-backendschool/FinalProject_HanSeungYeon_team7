@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/adm/layout/layout}">
+
+<head>
+    <title>정산데이터 목록</title>
+</head>
+
+<main layout:fragment="main">
+    <div class="container mx-auto">
+        <div>
+            <h1>정산데이터 목록</h1>
+
+            <div class="overflow-x-auto">
+                <table class="table table-compact w-full">
+                    <thead>
+                    <tr>
+                        <th>품목번호</th>
+                        <th>상품명</th>
+                        <th>결제일시</th>
+                        <th>결제금액</th>
+                        <th>PG 수수료</th>
+                        <th>도매가</th>
+                        <th>환불일시</th>
+                        <th>환불금액</th>
+                        <th>판매자</th>
+                        <th>예상정산금액</th>
+                        <th>정산내역번호</th>
+                        <th>비고</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="item : ${items}">
+                        <td th:text="${item.orderItem.id}"></td>
+                        <td th:text="${item.productSubject}"></td>
+                        <td th:text="${#temporals.format(item.payDate, 'yyyy-MM-dd hh:mm:ss.SSS')}"></td>
+                        <td th:text="${item.payPrice}"></td>
+                        <td th:text="${item.pgFee}"></td>
+                        <td th:text="${item.wholesalePrice}" ></td>
+                        <td th:text="${#temporals.format(item.refundDate, 'yyyy-MM-dd hh:mm:ss.SSS')}"></td>
+                        <td th:text="${item.refundPrice}"></td>
+                        <td th:text="${item.sellerName}"></td>
+                        <td th:text="${item.calculateRebatePrice}"></td>
+                        <td th:text="${item.rebateCashLog?.id}"></td>
+                        <td>
+                            <a th:if="${item.rebateAvailable}" href="javascript:;" onclick="$(this).next().submit();" class="btn btn-xs">건별정산</a>
+                            <form method="POST" th:action="@{|/adm/rebate/rebateOne/${item.orderItem.id}|}" target="_blank" hidden>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+</html>

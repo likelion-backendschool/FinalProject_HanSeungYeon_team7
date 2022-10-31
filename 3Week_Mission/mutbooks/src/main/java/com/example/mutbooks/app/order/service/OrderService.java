@@ -191,7 +191,7 @@ public class OrderService {
         return true;
     }
 
-    public List<OrderItem> findAllByPayDateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay) {
-        return orderItemRepository.findAllByPayDateBetween(startOfDay, endOfDay);
+    public List<OrderItem> findAllByPayDateBetweenOrderByIdAsc(LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return orderItemRepository.findAllByPayDateBetweenOrderByIdAsc(startOfDay, endOfDay);
     }
 }

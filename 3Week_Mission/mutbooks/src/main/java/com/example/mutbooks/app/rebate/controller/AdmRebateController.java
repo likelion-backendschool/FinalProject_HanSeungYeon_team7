@@ -1,15 +1,16 @@
 package com.example.mutbooks.app.rebate.controller;
 
+import com.example.mutbooks.app.rebate.entity.RebateOrderItem;
 import com.example.mutbooks.app.rebate.form.RebateDataForm;
 import com.example.mutbooks.app.rebate.service.RebateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -38,5 +39,15 @@ public class AdmRebateController {
         rebateService.makeData(year, month);
 
         return "성공";
+    }
+
+    // 정산 데이터 리스트 조회
+    @PreAuthorize("isAuthenticated() and hasAuthority('ADMIN')")
+    @GetMapping("/rebateOrderItemList")
+    public String showRebateOrderItemList(@RequestParam int year, @RequestParam int month, Model model) {
+        List<RebateOrderItem> items = rebateService.findRebateOrderItemsByPayDateIn(year, month);
+        model.addAttribute("items", items);
+
+        return "/adm/rebate/rebateOrderItemList";
     }
 }
