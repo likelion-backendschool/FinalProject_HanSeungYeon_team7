@@ -28,7 +28,6 @@ public class AdmRebateController {
     // 정산 데이터 생성
     @PreAuthorize("isAuthenticated() and hasAuthority('ADMIN')")
     @PostMapping("/makeData")
-    @ResponseBody
     public String makeData(RebateDataForm rebateDataForm, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             return "/adm/rebate/makeData";
@@ -38,7 +37,8 @@ public class AdmRebateController {
         int month = rebateDataForm.getMonth();
         rebateService.makeData(year, month);
 
-        return "성공";
+        // 정산 데이터 리스트 조회 페이지로 리다이렉트
+        return "redirect:/adm/rebate/rebateOrderItemList?year=%d&month=%d".formatted(year, month);
     }
 
     // 정산 데이터 리스트 조회
