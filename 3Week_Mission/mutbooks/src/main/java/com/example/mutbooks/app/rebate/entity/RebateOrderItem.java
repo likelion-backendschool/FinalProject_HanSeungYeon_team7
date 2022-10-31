@@ -117,7 +117,8 @@ public class RebateOrderItem extends BaseEntity {
         if(isRefunded) {
             return 0;
         }
-        return payPrice - pgFee - wholesalePrice;
+        // 정산금액 = 도매가 - PG 수수료
+        return wholesalePrice - pgFee;
     }
 
     // 정산 가능 여부
