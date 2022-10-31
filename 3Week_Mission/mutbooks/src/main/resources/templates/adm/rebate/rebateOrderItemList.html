@@ -17,6 +17,7 @@
                         <th>
                             <input type="checkbox" class="orderItemCheckboxAll checkbox">
                         </th>
+                        <th>정산번호</th>
                         <th>주문품목번호</th>
                         <th>상품명</th>
                         <th>결제일시</th>
@@ -39,6 +40,7 @@
                                    type="checkbox" class="orderItemCheckbox checkbox" th:value="${item.id}">
                         </td>
 
+                        <td th:text="${item.id}"></td>
                         <td th:text="${item.orderItem.id}"></td>
                         <td th:text="${item.productSubject}"></td>
                         <td th:text="${#temporals.format(item.payDate, 'yyyy-MM-dd hh:mm:ss.SSS')}"></td>
