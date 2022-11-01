@@ -34,7 +34,7 @@ import java.util.Map;
 public class OrderController {
     private final OrderService orderService;
     private final MemberService memberService;
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;    // Ut
 
     // 주문 생성
