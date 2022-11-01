@@ -4,6 +4,7 @@ import com.example.mutbooks.app.base.security.dto.MemberContext;
 import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
+import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
 import com.example.mutbooks.app.member.service.MemberService;
@@ -180,5 +181,12 @@ public class MemberController {
         model.addAttribute("member", member);
 
         return "member/confirm_password";
+    }
+
+    // 출금 계좌 등록폼
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/registerWithdrawAccount")
+    public String showRegisterWithdrawAccount(WithdrawAccountForm withDrawAccountForm) {
+        return "member/register_withdraw_account";
     }
 }
