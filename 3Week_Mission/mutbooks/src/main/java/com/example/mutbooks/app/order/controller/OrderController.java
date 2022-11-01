@@ -10,6 +10,7 @@ import com.example.mutbooks.app.order.service.OrderService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -157,8 +158,8 @@ public class OrderController {
         });
     }
 
-    // TODO: secret key ignore 처리
-    private final String SECRET_KEY = "test_sk_jkYG57Eba3GlOkbXE5lVpWDOxmA1";
+    @Value("${custom.tossPayments.secretKey}")
+    private String SECRET_KEY;
 
     // 결제 성공 리다이렉트 URL
     @RequestMapping("/{id}/success")
