@@ -37,6 +37,13 @@
                     <span class="input input-bordered" style="display: flex; align-items: center" th:text="${member.nickname}"></span>
                 </div>
 
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">MUT 캐시</span>
+                    </label>
+                    <span class="input input-bordered" style="display: flex; align-items: center" th:text="|${member.restCash} 원|"></span>
+                </div>
+
                 <div class="grid grid-cols-2 mt-2 gap-2">
                     <a href="/member/modify" class="btn btn-secondary btn-outline">기본정보 수정</a>
                     <a href="/member/modifyPassword" class="btn btn-secondary btn-outline">비밀번호 수정</a>

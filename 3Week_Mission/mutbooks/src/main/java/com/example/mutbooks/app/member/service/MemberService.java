@@ -135,6 +135,8 @@ public class MemberService {
         int newRestCash = member.getRestCash() + cashLog.getPrice();
         member.setRestCash(newRestCash);
         memberRepository.save(member);
+        // 세션값 강제 수정
+        forceAuthentication(member);
 
         return cashLog;
     }
