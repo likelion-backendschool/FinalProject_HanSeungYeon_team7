@@ -9,6 +9,7 @@ import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
+import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -136,5 +137,12 @@ public class MemberService {
         memberRepository.save(member);
 
         return cashLog;
+    }
+
+    // 계좌 등록
+    @Transactional
+    public void modifyBankAccount(Member member, WithdrawAccountForm withDrawAccountForm) {
+        member.modifyBankAccount(withDrawAccountForm.getBankName(), withDrawAccountForm.getBankAccountNo());
+        forceAuthentication(member);
     }
 }

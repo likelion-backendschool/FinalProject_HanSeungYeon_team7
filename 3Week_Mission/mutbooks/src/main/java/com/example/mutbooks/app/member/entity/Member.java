@@ -31,6 +31,9 @@ public class Member extends BaseEntity {
     private Integer authLevel;  // 권한레벨(3 = 일반, 7 = 관리자)
     private int restCash;      // 예치금
 
+    private String bankName;        // 출금 은행명
+    private String bankAccountNo;   // 출금 계좌번호
+
     // 비밀번호 수정
     public void modifyPassword(String newPassword) {
         this.password = newPassword;
@@ -40,6 +43,12 @@ public class Member extends BaseEntity {
     public void modifyInfo(String email, String nickname) {
         this.email = email;
         this.nickname = nickname;
+    }
+
+    // 은행정보 수정
+    public void modifyBankAccount(String bankName, String bankAccountNo) {
+        this.bankName = bankName;
+        this.bankAccountNo = bankAccountNo;
     }
 
     // 권한 부여

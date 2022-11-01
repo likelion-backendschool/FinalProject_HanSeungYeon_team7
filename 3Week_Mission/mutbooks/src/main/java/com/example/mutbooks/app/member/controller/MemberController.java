@@ -189,4 +189,21 @@ public class MemberController {
     public String showRegisterWithdrawAccount(WithdrawAccountForm withDrawAccountForm) {
         return "member/register_withdraw_account";
     }
+
+    // 출금 계좌 등록
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/registerWithdrawAccount")
+    public String registerWithdrawAccount(
+            @AuthenticationPrincipal MemberContext memberContext,
+            @Valid WithdrawAccountForm withDrawAccountForm, BindingResult bindingResult
+    ) {
+        if(bindingResult.hasErrors()) {
+            return "member/register_withdraw_account";
+        }
+        Member member = memberService.findByUsername(memberContext.getUsername());
+        memberService.modifyBankAccount(member, withDrawAccountForm);
+
+        // TODO: 출금 계좌 관리로 리다이렉트 하는 것으로 변경
+        return "redirect:/member/profile";
+    }
 }
