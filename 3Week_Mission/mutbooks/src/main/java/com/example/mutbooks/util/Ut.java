@@ -3,6 +3,7 @@ package com.example.mutbooks.util;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 public class Ut {
@@ -26,6 +27,26 @@ public class Ut {
         public static LocalDateTime getEndOfDay(int year, int month, int day) {
             LocalDate date = LocalDate.of(year, month, day);
             return date.atTime(LocalTime.MAX);
+        }
+
+        // 날짜 문자열 -> 해당 패턴의 LocalDateTime 변환
+        public static LocalDateTime parse(String pattern, String dateText) {
+            return LocalDateTime.parse(dateText, DateTimeFormatter.ofPattern(pattern));
+        }
+
+        // 날짜 문자열 -> 디폴트 패턴의 LocalDateTime 변환
+        public static LocalDateTime parse(String dateText) {
+            return parse("yyyy-MM-dd HH:mm:ss.SSSSSS", dateText);
+        }
+
+        // 해당 패턴의 LocalDateTime -> 날짜 문자열 변환
+        public static String format(String pattern, LocalDateTime datetime) {
+            return datetime.format(DateTimeFormatter.ofPattern(pattern));
+        }
+
+        // 디폴트 패턴의 LocalDateTime -> 날짜 문자열 변환
+        public static String format(LocalDateTime datetime) {
+            return format("yyyy-MM-dd HH:mm:ss.SSSSSS", datetime);
         }
     }
 }
