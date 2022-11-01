@@ -1,4 +1,9 @@
 spring:
+  batch:
+    jdbc:
+      initialize-schema: ALWAYS # batch 테이블 생성
+    job:
+      enabled: false            # 자동 Job 실행 막기
   profiles:
     active: dev
     include:
