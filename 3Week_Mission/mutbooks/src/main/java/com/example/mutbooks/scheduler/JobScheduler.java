@@ -1,6 +1,7 @@
 package com.example.mutbooks.scheduler;
 
 import com.example.mutbooks.job.makeRebateOrderItem.MakeRebateOrderItemJobConfig;
+import com.example.mutbooks.util.Ut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobParameter;
@@ -27,16 +28,18 @@ public class JobScheduler {
     private final MakeRebateOrderItemJobConfig makeRebateOrderItemJobConfig;
     private final Step makeRebateOrderItemStep1;
 
-    // 매 분 00초마다 실행
-    @Scheduled(cron = "0 * * * * *")
+    //매 분 00초마다 실행
+//    @Scheduled(cron = "0 * * * * *")
 
     // 매달 15일 오전 4시 0분 0초마다 Job 실행
-//    @Scheduled(cron = "0 0 4 15 * *")
+    @Scheduled(cron = "0 0 4 15 * *")
     public void runJob() {
-        log.info(String.valueOf(LocalDateTime.now()));
+        log.info("scheduler 실행 " + String.valueOf(LocalDateTime.now()));
 
+        // 현재 일시 LocalDateTime -> String 변환한 값을 Job Parameter 에 담기
         Map<String, JobParameter> confMap = new HashMap<>();
-        confMap.put("time", new JobParameter(System.currentTimeMillis()));
+        String createDateStr = Ut.date.format(LocalDateTime.now());
+        confMap.put("createDate", new JobParameter(createDateStr));
         JobParameters jobParameters = new JobParameters(confMap);
 
         try {

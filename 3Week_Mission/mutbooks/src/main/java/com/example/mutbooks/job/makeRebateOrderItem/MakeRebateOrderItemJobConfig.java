@@ -18,11 +18,11 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,7 +40,7 @@ public class MakeRebateOrderItemJobConfig {
     // 매월 15일 오전 4시 0분 0초에 이전 달(1일~말일) 정산 데이터 생성
     @Bean
     public Job makeRebateOrderItemJob(Step makeRebateOrderItemStep1) {
-        log.info("Job 실행");
+        log.info("makeRebateOrderItemJob 실행");
         return jobBuilderFactory.get("makeRebateOrderItemJob")
                 .start(makeRebateOrderItemStep1)
                 .build();
@@ -53,6 +53,7 @@ public class MakeRebateOrderItemJobConfig {
             ItemProcessor orderItemToRebateOrderItemProcessor,
             ItemWriter RebateOrderItemWriter
     ) {
+        log.info("makeRebateOrderItemStep1 실행");
         return stepBuilderFactory.get("makeRebateOrderItemStep1")
                 .<OrderItem, RebateOrderItem>chunk(100) // 100개씩 처리
                 .reader(orderItemReader)
@@ -63,11 +64,17 @@ public class MakeRebateOrderItemJobConfig {
 
     @StepScope
     @Bean
-    public RepositoryItemReader<OrderItem> orderItemReader() {
+    public RepositoryItemReader<OrderItem> orderItemReader(
+            @Value("#{jobParameters[createDate]}") String createDateStr
+    ) {
         // 1. 정산 데이터를 생성할 날짜 범위 구하기
         // 이번 달 15일에 생성해야하는 정산 데이터 날짜 범위 = 저번 달 1일 ~ 말일
-        LocalDate targetDate = LocalDate.now().minusMonths(1);
-//        LocalDate targetDate = LocalDate.now();
+        LocalDateTime createDate = Ut.date.parse(createDateStr);
+        LocalDateTime targetDate = createDate.minusMonths(1);
+
+        log.info(String.valueOf(createDate));
+        log.info(String.valueOf(targetDate));
+
         int year = targetDate.getYear();
         int month = targetDate.getMonthValue();
         int endDay = Ut.date.getEndDay(year, month);
