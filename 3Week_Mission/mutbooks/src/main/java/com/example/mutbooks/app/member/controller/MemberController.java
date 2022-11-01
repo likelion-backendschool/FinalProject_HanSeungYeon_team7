@@ -183,6 +183,16 @@ public class MemberController {
         return "member/confirm_password";
     }
 
+    // 출금 계좌 관리
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/manageWithdrawAccount")
+    public String manageWithdrawAccount(@AuthenticationPrincipal MemberContext memberContext, Model model) {
+        Member member = memberContext.getMember();
+        model.addAttribute("member", member);
+
+        return "member/manage_withdraw_account";
+    }
+
     // 출금 계좌 등록폼
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/registerWithdrawAccount")
@@ -203,7 +213,7 @@ public class MemberController {
         Member member = memberService.findByUsername(memberContext.getUsername());
         memberService.modifyBankAccount(member, withDrawAccountForm);
 
-        // TODO: 출금 계좌 관리로 리다이렉트 하는 것으로 변경
-        return "redirect:/member/profile";
+        // 출금 게좌 관리 페이지로 리다이렉트
+        return "redirect:/member/manageWithdrawAccount";
     }
 }
