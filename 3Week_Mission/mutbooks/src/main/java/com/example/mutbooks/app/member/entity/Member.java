@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,10 @@ public class Member extends BaseEntity {
     private String nickname;
     @Column(unique = true)
     private String email;
-    private Integer authLevel;  // 권한레벨(3 = 일반, 7 = 관리자)
+
+    @Convert(converter = AuthLevelConverter.class)
+    private AuthLevel authLevel;    // 권한레벨(3 = 일반, 7 = 관리자)
+
     private int restCash;      // 예치금
 
     private String bankName;        // 출금 은행명
@@ -54,16 +58,17 @@ public class Member extends BaseEntity {
     // 권한 부여
     public List<GrantedAuthority> genAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("MEMBER"));      // 일반 회원
+        // 모든 로그인한 회원에게는 USER 권한 부여
+        authorities.add(new SimpleGrantedAuthority(AuthLevel.USER.getValue()));      // 일반 회원
 
-        // nickname 이 있으면 작가 권한
+        // nickname 이 있으면 AUTHOR 권한 부여
         if (StringUtils.hasText(nickname)) {
             authorities.add(new SimpleGrantedAuthority("AUTHOR"));  // 작가 회원
         }
 
-        // authLevel 이 7이면 관리자 권한
-        if (this.authLevel == 7) {
-            authorities.add(new SimpleGrantedAuthority("ADMIN"));  // 관리자 회원
+        // authLevel 이 7이면 ADMIN 권한 부여
+        if (this.authLevel == AuthLevel.ADMIN) {
+            authorities.add(new SimpleGrantedAuthority(AuthLevel.ADMIN.getValue()));  // 관리자 회원
         }
 
         return authorities;

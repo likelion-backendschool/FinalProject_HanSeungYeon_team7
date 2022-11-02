@@ -4,6 +4,7 @@ import com.example.mutbooks.app.base.security.dto.MemberContext;
 import com.example.mutbooks.app.cash.entity.CashLog;
 import com.example.mutbooks.app.cash.service.CashService;
 import com.example.mutbooks.app.mail.service.MailService;
+import com.example.mutbooks.app.member.entity.AuthLevel;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
 import com.example.mutbooks.app.member.form.JoinForm;
@@ -32,10 +33,10 @@ public class MemberService {
 
     @Transactional
     public Member join(JoinForm joinForm) {
-        int authLevel = 3;      // 디폴트 일반 권한
-        // TODO: username 이 admin 인 회원을 관리자 회원으로 설정
+        AuthLevel authLevel = AuthLevel.USER;      // 디폴트 USER 권한
+        // username 이 admin 인 회원을 관리자 회원으로 설정
         if(joinForm.getUsername().equals("admin")) {
-            authLevel = 7;
+            authLevel = AuthLevel.ADMIN;
         }
 
         // 기본 권한 = 일반
