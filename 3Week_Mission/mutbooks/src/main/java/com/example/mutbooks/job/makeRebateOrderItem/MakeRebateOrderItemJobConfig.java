@@ -19,6 +19,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
@@ -39,8 +40,10 @@ public class MakeRebateOrderItemJobConfig {
 
     // 매월 15일 오전 4시 0분 0초에 이전 달(1일~말일) 정산 데이터 생성
     @Bean
-    public Job makeRebateOrderItemJob(Step makeRebateOrderItemStep1) {
+    public Job makeRebateOrderItemJob(Step makeRebateOrderItemStep1, CommandLineRunner initData) throws Exception {
         log.info("makeRebateOrderItemJob 실행");
+        initData.run();
+
         return jobBuilderFactory.get("makeRebateOrderItemJob")
                 .start(makeRebateOrderItemStep1)
                 .build();
@@ -55,7 +58,7 @@ public class MakeRebateOrderItemJobConfig {
     ) {
         log.info("makeRebateOrderItemStep1 실행");
         return stepBuilderFactory.get("makeRebateOrderItemStep1")
-                .<OrderItem, RebateOrderItem>chunk(100) // 100개씩 처리
+                .<OrderItem, RebateOrderItem>chunk(2) // 100개씩 처리
                 .reader(orderItemReader)
                 .processor(orderItemToRebateOrderItemProcessor)
                 .writer(RebateOrderItemWriter)
@@ -67,10 +70,12 @@ public class MakeRebateOrderItemJobConfig {
     public RepositoryItemReader<OrderItem> orderItemReader(
             @Value("#{jobParameters[createDate]}") String createDateStr
     ) {
+        log.info("orderItemReader 실행");
         // 1. 정산 데이터를 생성할 날짜 범위 구하기
         // 이번 달 15일에 생성해야하는 정산 데이터 날짜 범위 = 저번 달 1일 ~ 말일
         LocalDateTime createDate = Ut.date.parse(createDateStr);
-        LocalDateTime targetDate = createDate.minusMonths(1);
+//        LocalDateTime targetDate = createDate.minusMonths(1);
+        LocalDateTime targetDate = createDate;
 
         log.info(String.valueOf(createDate));
         log.info(String.valueOf(targetDate));
@@ -85,7 +90,7 @@ public class MakeRebateOrderItemJobConfig {
                 .name("orderItemReader")
                 .repository(orderItemRepository)
                 .methodName("findAllByPayDateBetween")
-                .pageSize(100)
+                .pageSize(2)
                 .arguments(Arrays.asList(startOfDay, endOfDay))   // 메서드 인자
                 .sorts(Collections.singletonMap("id", Sort.Direction.ASC))
                 .build();
@@ -94,6 +99,7 @@ public class MakeRebateOrderItemJobConfig {
     @StepScope
     @Bean
     public ItemProcessor<OrderItem, RebateOrderItem> orderItemToRebateOrderItemProcessor() {
+        log.info("orderItemToRebateOrderItemProcessor 실행");
         // 3. 주문 데이터 -> 정산 데이터 변환
         return orderItem -> new RebateOrderItem(orderItem);
     }
@@ -101,6 +107,7 @@ public class MakeRebateOrderItemJobConfig {
     @StepScope
     @Bean
     public ItemWriter<RebateOrderItem> RebateOrderItemWriter() {
+        log.info("RebateOrderItemWriter 실행");
         // 4. 정산 데이터 생성
         return items -> items.forEach(item -> {
             RebateOrderItem oldRebateOrderItem = rebateOrderItemRepository.findByOrderItemId(item.getOrderItem().getId())
