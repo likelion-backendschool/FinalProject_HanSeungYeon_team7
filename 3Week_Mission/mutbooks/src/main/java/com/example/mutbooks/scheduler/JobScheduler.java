@@ -12,6 +12,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class JobScheduler {
     private final Job makeRebateOrderItemJob;   // 빈으로 등록한 Job 을 주입받아 사용
 
     //매 분 00초마다 실행
-//    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
 
     // 매달 15일 오전 4시 0분 0초마다 Job 실행
 //    @Scheduled(cron = "0 0 4 15 * *")

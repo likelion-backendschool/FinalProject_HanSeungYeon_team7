@@ -15,6 +15,9 @@ import org.springframework.context.annotation.Profile;
 @Profile("dev")
 @Slf4j
 public class DevInitData implements InitDataBefore {
+    // initData 실행 여부(2번 생성되는 것을 막기 위함)
+    private boolean initDataDone = false;
+
     @Bean
     CommandLineRunner initData(
             MemberService memberService,
@@ -24,6 +27,9 @@ public class DevInitData implements InitDataBefore {
             OrderService orderService
     ) {
         return args -> {
+            if(initDataDone) return;
+            initDataDone = true;
+
             log.info("DevInitData 실행");
             before(memberService, postService, productService, cartService, orderService);
         };
