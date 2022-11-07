@@ -13,42 +13,31 @@
             <h1 class="font-bold text-lg">출금신청</h1>
 
             <script>
-                let MemberJoin__submitDone = false;
+                let WithdrawApply__submitDone = false;
 
-                function MemberJoin__submit(form) {
-                    if (MemberJoin__submitDone) {
+                function WithdrawApply__submit(form) {
+                    if (WithdrawApply__submitDone) {
                         return;
                     }
 
-                    form.username.value = form.username.value.trim();
+                    form.price.value = form.price.value.trim();
 
-                    if (form.username.value.length == 0) {
-                        warningModal("로그인아이디를 입력해주세요.");
-                        form.username.focus();
-
-                        return;
-                    }
-
-                    form.password.value = form.password.value.trim();
-
-                    if (form.password.value.length == 0) {
-                        warningModal("로그인비밀번호를 입력해주세요.");
-                        form.password.focus();
+                    if (form.price.value.length == 0) {
+                        warningModal("출금 신청 금액을 입력해주세요.");
+                        form.price.focus();
 
                         return;
                     }
 
-                    form.email.value = form.email.value.trim();
-
-                    if (form.email.value.length == 0) {
-                        warningModal("이메일을 입력해주세요.");
-                        form.email.focus();
+                    if (form.price.value < 1000) {
+                        warningModal("1회 최소 출금 가능한 금액은 1천원입니다.");
+                        form.price.focus();
 
                         return;
                     }
 
                     form.submit();
-                    MemberJoin__submitDone = true;
+                    WithdrawApply__submitDone = true;
                 }
             </script>
 
@@ -66,8 +55,8 @@
                 </div>
             </div>
 
-            <form th:action method="POST" class="flex flex-col gap-3"
-                  onsubmit="MemberJoin__submit(this); return false;" th:object="${withdrawApplyForm}" >
+            <form method="POST" class="flex flex-col gap-3"
+                  onsubmit="WithdrawApply__submit(this); return false;" th:object="${withdrawApplyForm}" >
 
 <!--                <div class="form-control">-->
 <!--                    <label class="label">-->
@@ -91,9 +80,9 @@
                     <div class="text-lg">
                         <span class="mr-3">출금 금액</span>
                     </div>
-                    <input type="number" id="PaymentForm__useRestCash"
-                           th:placeholder="|0 ~ ${maxuseRestCash}|"
-                           class="input input-bordered min-w-[300px]" min="0" th:max="${maxuseRestCash}"
+                    <input type="number" id="PaymentForm__useRestCash" name="price"
+                           th:placeholder="|1000 ~ ${maxuseRestCash}|"
+                           class="input input-bordered min-w-[300px]" min="1000" th:max="${maxuseRestCash}"
                            onkeydown="PaymentForm__useRestCashFix();"
                            onkeyup="PaymentForm__useRestCashFix();"
                     >
