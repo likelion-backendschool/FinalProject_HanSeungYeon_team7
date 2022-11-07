@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -64,5 +65,17 @@ public class WithdrawController {
         model.addAttribute("withdrawApplies", withdrawApplies);
 
         return "withdraw/apply_list";
+    }
+
+    // 출금 취소
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/cancel/{withdrawApplyId}")
+    public String cancel(
+            @PathVariable long withdrawApplyId,
+            @AuthenticationPrincipal MemberContext memberContext
+    ) {
+        withdrawService.cancel(memberContext.getUsername(), withdrawApplyId);
+        // 출금 신청 내역 페이지로 리다이렉트
+        return "redirect:/withdraw/applyList";
     }
 }

@@ -34,6 +34,7 @@ public class WithdrawApply extends BaseEntity {
     private LocalDateTime cancelDate;   // 출금 취소 일시
     private boolean isWithdrawn;       // 출금 여부
     private boolean isCancelled;       // 출금 신청 취소 여부
+    private String cancelType;          // 취소 사유
 
     // 신청 완료 여부
     public boolean isAppliedStatus() {
@@ -63,5 +64,12 @@ public class WithdrawApply extends BaseEntity {
     public void setWithdrawDone() {
         isWithdrawn = true;
         withdrawDate = LocalDateTime.now();
+    }
+
+    // 출금 취소 처리
+    public void setCancelDone(String cancelType) {
+        this.cancelType = cancelType;
+        this.isCancelled = true;
+        this.cancelDate = LocalDateTime.now();
     }
 }

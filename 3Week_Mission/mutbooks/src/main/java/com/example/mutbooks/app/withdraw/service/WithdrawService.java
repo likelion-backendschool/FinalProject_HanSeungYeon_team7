@@ -70,4 +70,13 @@ public class WithdrawService {
         // TODO: 해당 계좌로 입금 요청 API 호출
         withdrawApply.setWithdrawDone();
     }
+
+    @Transactional
+    public void cancel(String username, long id) {
+        WithdrawApply withdrawApply = findById(id);
+        Member member = memberService.findByUsername(username);
+        // 예치금 환불
+        memberService.addCash(member, withdrawApply.getPrice(), "출금취소__캐시");
+        withdrawApply.setCancelDone("사용자 취소");
+    }
 }

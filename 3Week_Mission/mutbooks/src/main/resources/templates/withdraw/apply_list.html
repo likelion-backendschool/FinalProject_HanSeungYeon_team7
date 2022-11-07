@@ -23,6 +23,7 @@
                         <th>출금일시</th>
                         <th>취소일시</th>
                         <th>처리 상태</th>
+                        <th>비고</th>
                     </tr>
                     </thead>
 
@@ -40,6 +41,11 @@
                             <td th:if="${withdrawApply.isWithdrawnStatus}" class="text-blue-600">출금완료</td>
                             <td th:if="${withdrawApply.isCancelledStatus}" class="text-red-600">취소완료</td>
                         </th:block>
+                        <td th:if="${withdrawApply.isAppliedStatus}">
+                            <a href="javascript:;" onclick="$(this).next().submit();" class="btn btn-xs">취소</a>
+                            <form method="POST" th:action="@{|/withdraw/cancel/${withdrawApply.id}|}" hidden>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
