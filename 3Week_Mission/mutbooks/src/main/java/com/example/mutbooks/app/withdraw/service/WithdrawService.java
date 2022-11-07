@@ -4,6 +4,7 @@ import com.example.mutbooks.app.cash.entity.CashLog;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.withdraw.entity.WithdrawApply;
+import com.example.mutbooks.app.withdraw.exception.WithdrawApplyNotFoundException;
 import com.example.mutbooks.app.withdraw.form.WithdrawApplyForm;
 import com.example.mutbooks.app.withdraw.repository.WithdrawApplyRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +56,18 @@ public class WithdrawService {
 
     public List<WithdrawApply> findAll() {
         return withdrawApplyRepository.findAll();
+    }
+
+    public WithdrawApply findById(long id) {
+        return withdrawApplyRepository.findById(id).orElseThrow(() -> {
+            throw new WithdrawApplyNotFoundException("출금 신청 내역이 존재하지 않습니다.");
+        });
+    }
+
+    @Transactional
+    public void withdraw(long id) {
+        WithdrawApply withdrawApply = findById(id);
+        // TODO: 해당 계좌로 입금 요청 API 호출
+        withdrawApply.setWithdrawDone();
     }
 }

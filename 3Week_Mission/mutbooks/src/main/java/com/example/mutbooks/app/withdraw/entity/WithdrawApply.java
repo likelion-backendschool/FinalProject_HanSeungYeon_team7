@@ -58,4 +58,10 @@ public class WithdrawApply extends BaseEntity {
         }
         return false;
     }
+
+    // 출금 완료 처리
+    public void setWithdrawDone() {
+        isWithdrawn = true;
+        withdrawDate = LocalDateTime.now();
+    }
 }
