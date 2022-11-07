@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>글 상세(임시)</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-write container mx-auto">
+
+        <div class="px-2 pt-4">
+            <div class="flex flex-col gap-3 mt-4">
+                <div class="border-b-2 border-zinc-200 pb-3">
+                    <h1 class="text-2xl" th:text="${post.subject}"></h1>
+                </div>
+
+                <div class="mt-4">
+                    <div id="content"></div>
+                </div>
+
+                <div class="my-4">
+                    <div th:each="hashTag : ${post.hashTags}" class="badge badge-lg badge-accent mx-1">
+                        <span>#</span>
+                        <span th:text="${hashTag.postKeyword.content}"></span>
+                    </div>
+<!--                    <div class="input input-bordered text-" th:text="${post.hashTagString}"></div>-->
+                </div>
+
+                <div>
+                    <a
+                            th:href="|/post/${post.id}/modify|"
+                            class="btn btn-secondary btn-sm btn-outline">
+                        <span class="ml-1">수정</span>
+                    </a>
+
+                    <a href="javascript:;"
+                       onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();"
+                       class="btn btn-secondary btn-sm btn-outline">
+                        <span class="ml-1">삭제</span>
+                    </a>
+                    <form th:action="@{|/post/${post.id}/delete|}" method="POST" hidden></form>
+                </div>
+            </div>
+        </div>
+
+        <!--Toast UI Viewer 적용-->
+        <script th:inline="javascript">
+            const Editor = toastui.Editor.factory;
+
+            /*<![CDATA[*/
+            const contentMarkdown = [[${post.content}]];
+            /*]]>*/
+
+            const content = new Editor({
+                el: document.querySelector('#content'),
+                height: '500px',
+                viewer: true,
+                initialValue: contentMarkdown
+            });
+        </script>
+    </section>
+</main>
+</body>
+</html>
