@@ -187,7 +187,7 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/manageWithdrawAccount")
     public String manageWithdrawAccount(@AuthenticationPrincipal MemberContext memberContext, Model model) {
-        Member member = memberContext.getMember();
+        Member member = memberService.findByUsername(memberContext.getUsername());
         model.addAttribute("member", member);
 
         return "member/manage_withdraw_account";
@@ -211,7 +211,7 @@ public class MemberController {
             return "member/register_withdraw_account";
         }
         Member member = memberService.findByUsername(memberContext.getUsername());
-        memberService.modifyBankAccount(member, withDrawAccountForm);
+        memberService.createBankInfo(member, withDrawAccountForm);
 
         // 출금 게좌 관리 페이지로 리다이렉트
         return "redirect:/member/manageWithdrawAccount";
