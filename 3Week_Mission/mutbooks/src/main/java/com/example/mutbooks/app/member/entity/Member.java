@@ -8,9 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +33,9 @@ public class Member extends BaseEntity {
 
     private int restCash;      // 예치금
 
-    private String bankName;        // 출금 은행명
-    private String bankAccountNo;   // 출금 계좌번호
+    // Member 의 memberExtra 에 값이 저장될 때, MemberExtra 도 같이 저장되도록
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private MemberExtra memberExtra;
 
     // 비밀번호 수정
     public void modifyPassword(String newPassword) {
@@ -49,10 +48,17 @@ public class Member extends BaseEntity {
         this.nickname = nickname;
     }
 
-    // 은행정보 수정
-    public void modifyBankAccount(String bankName, String bankAccountNo) {
-        this.bankName = bankName;
-        this.bankAccountNo = bankAccountNo;
+    // 추가정보 수정
+    public void modifyMemberExtra(MemberExtra memberExtra) {
+        this.memberExtra = memberExtra;
+    }
+
+    // 출금 계좌 정보 등록 여부
+    public boolean hasBankInfo() {
+        if(memberExtra == null) return false;
+        if(memberExtra.getBankName() == null) return false;
+        if(memberExtra.getBankAccountNo() == null) return false;
+        return true;
     }
 
     // 권한 부여
