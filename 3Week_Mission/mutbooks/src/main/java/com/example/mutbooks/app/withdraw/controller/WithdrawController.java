@@ -3,6 +3,7 @@ package com.example.mutbooks.app.withdraw.controller;
 import com.example.mutbooks.app.base.security.dto.MemberContext;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.app.withdraw.entity.WithdrawApply;
 import com.example.mutbooks.app.withdraw.form.WithdrawApplyForm;
 import com.example.mutbooks.app.withdraw.service.WithdrawService;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -42,7 +43,6 @@ public class WithdrawController {
     // 출금 신청
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/apply")
-    @ResponseBody
     public String apply(
             @AuthenticationPrincipal MemberContext memberContext,
             @Valid WithdrawApplyForm withdrawApplyForm, BindingResult bindingResult
@@ -53,6 +53,16 @@ public class WithdrawController {
 
         withdrawService.apply(memberContext.getUsername(), withdrawApplyForm);
         // 출금 신청 내역 페이지로 리다이렉트
-        return "%d".formatted(withdrawApplyForm.getPrice());
+        return "redirect:/withdraw/applyList";
+    }
+
+    // 출금 신청 내역 조회
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/applyList")
+    public String showApplyList(@AuthenticationPrincipal MemberContext memberContext, Model model) {
+        List<WithdrawApply> withdrawApplies = withdrawService.findByApplicantIdOrderByIdDesc(memberContext.getId());
+        model.addAttribute("withdrawApplies", withdrawApplies);
+
+        return "withdraw/apply_list";
     }
 }

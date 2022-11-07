@@ -31,6 +31,31 @@ public class WithdrawApply extends BaseEntity {
     private String bankAccountNo;       // 출금 신청 계좌번호
     private int price;                  // 출금 신청 금액
     private LocalDateTime withdrawDate; // 출금 일시
-    private boolean is_withdrawn;       // 출금 여부
-    private boolean is_cancelled;       // 출금 신청 취소 여부
+    private LocalDateTime cancelDate;   // 출금 취소 일시
+    private boolean isWithdrawn;       // 출금 여부
+    private boolean isCancelled;       // 출금 신청 취소 여부
+
+    // 신청 완료 여부
+    public boolean isAppliedStatus() {
+        if(!isWithdrawn && !isCancelled) {
+            return true;
+        }
+        return false;
+    }
+
+    // 출금 완료
+    public boolean isWithdrawnStatus() {
+        if(isWithdrawn) {
+            return true;
+        }
+        return false;
+    }
+
+    // 취소 완료
+    public boolean isCancelledStatus() {
+        if(isCancelled) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -45,5 +47,9 @@ public class WithdrawService {
             throw new RuntimeException("출금 신청 금액이 보유 금액보다 많습니다.");
         }
         return true;
+    }
+
+    public List<WithdrawApply> findByApplicantIdOrderByIdDesc(Long applicantId) {
+        return withdrawApplyRepository.findByApplicantIdOrderByIdDesc(applicantId);
     }
 }

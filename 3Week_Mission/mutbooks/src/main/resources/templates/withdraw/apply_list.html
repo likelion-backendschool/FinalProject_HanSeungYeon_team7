@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>출금신청 내역</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <div class="container mx-auto">
+        <div>
+            <h1>출금신청 내역</h1>
+
+            <div class="overflow-x-auto">
+                <table class="table table-compact w-full">
+                    <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>은행명</th>
+                        <th>계좌번호</th>
+                        <th>금액</th>
+                        <th>신청일시</th>
+                        <th>출금일시</th>
+                        <th>취소일시</th>
+                        <th>처리 상태</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="withdrawApply : ${withdrawApplies}">
+                        <td th:text="${withdrawApply.id}"></td>
+                        <td th:text="${withdrawApply.bankName}"></td>
+                        <td th:text="${withdrawApply.bankAccountNo}"></td>
+                        <td th:text="|${withdrawApply.price} 원|"></td>
+                        <td th:text="${#temporals.format(withdrawApply.createDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
+                        <td th:text="${#temporals.format(withdrawApply.withdrawDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
+                        <td th:text="${#temporals.format(withdrawApply.cancelDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
+                        <th:block>
+                            <td th:if="${withdrawApply.isAppliedStatus}">신청완료</td>
+                            <td th:if="${withdrawApply.isWithdrawnStatus}" class="text-blue-600">출금완료</td>
+                            <td th:if="${withdrawApply.isCancelledStatus}" class="text-red-600">취소완료</td>
+                        </th:block>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
