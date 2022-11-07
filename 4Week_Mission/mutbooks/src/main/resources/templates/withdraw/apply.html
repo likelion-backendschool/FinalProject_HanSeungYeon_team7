@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>출금신청</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-join flex-grow flex flex-col items-center justify-center">
+
+        <div class="max-w-md w-full px-2 pt-4">
+            <h1 class="font-bold text-lg">출금신청</h1>
+
+            <script>
+                let WithdrawApply__submitDone = false;
+
+                function WithdrawApply__submit(form) {
+                    if (WithdrawApply__submitDone) {
+                        return;
+                    }
+
+                    form.price.value = form.price.value.trim();
+
+                    if (form.price.value.length == 0) {
+                        warningModal("출금 신청 금액을 입력해주세요.");
+                        form.price.focus();
+
+                        return;
+                    }
+
+                    if (form.price.value < 1000) {
+                        warningModal("1회 최소 출금 가능한 금액은 1천원입니다.");
+                        form.price.focus();
+
+                        return;
+                    }
+
+                    form.submit();
+                    WithdrawApply__submitDone = true;
+                }
+            </script>
+
+            <div class="my-2">
+                <div class="border-b-2 text-xl flex my-5 pb-2 border-slate-200 font-bold">출금 계좌 정보</div>
+                <div class="text-lg">
+<!--                    <div>입금 받을 은행계좌 정보입니다.</div>-->
+                    <span>은행 : </span>
+                    <span th:text="${member.memberExtra.bankName}"></span>
+                </div>
+
+                <div class="text-lg">
+                    <span>계좌번호 : </span>
+                    <span th:text="${member.memberExtra.bankAccountNo}"></span>
+                </div>
+            </div>
+
+            <form method="POST" class="flex flex-col gap-3"
+                  onsubmit="WithdrawApply__submit(this); return false;" th:object="${withdrawApplyForm}" >
+
+<!--                <div class="form-control">-->
+<!--                    <label class="label">-->
+<!--                        <span class="label-text">출금 금액</span>-->
+<!--                    </label>-->
+<!--                    <input type="text" name="price" placeholder="" th:value="${withdrawApplyForm.price}"-->
+<!--                           class="input input-bordered">-->
+<!--                </div>-->
+<!--                <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('price')}" >-->
+<!--                    <span>*</span>-->
+<!--                    <span th:errors="*{price}"></span>-->
+<!--                </div>-->
+
+                <div th:with="maxuseRestCash = ${member.restCash}">
+                    <div class="border-b-2 text-xl flex mb-5 pb-2 border-slate-200 font-bold"></div>
+                    <div class="text-lg">
+                        <span class="mr-3">MUT 캐시 잔액</span>
+                        <span class="font-bold">[[${member.restCash}]] 원</span>
+                    </div>
+
+                    <div class="text-lg">
+                        <span class="mr-3">출금 금액</span>
+                    </div>
+                    <input type="number" id="PaymentForm__useRestCash" name="price"
+                           th:placeholder="|1000 ~ ${maxuseRestCash}|"
+                           class="input input-bordered min-w-[300px]" min="1000" th:max="${maxuseRestCash}"
+                           onkeydown="PaymentForm__useRestCashFix();"
+                           onkeyup="PaymentForm__useRestCashFix();"
+                    >
+                    <label class="inline-flex items-center ml-3">
+                        <span>전액</span>
+                        <input onchange="PaymentForm__useRestCashAllChanged();" id="PaymentForm__useRestCashAll"
+                               type="checkbox" class="ml-2 checkbox">
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <input class="btn btn-primary" type="submit" value="출금 신청">
+                </div>
+            </form>
+        </div>
+
+        </div>
+    </section>
+
+
+    <!--    캐시 입력폼 관련-->
+    <script>
+        const $PaymentForm__useRestCash = $("#PaymentForm__useRestCash");
+        const $PaymentForm__useRestCashAll = $("#PaymentForm__useRestCashAll");
+
+        // 예치금 입력폼 최솟값(0), 최댓값(보유 예치금 및 결제 금액) 자동 설정
+        function PaymentForm__useRestCashFix() {
+            let useRestCash = parseInt($PaymentForm__useRestCash.val());
+            // 숫자가 아닌 값이면 0으로
+            if (isNaN(useRestCash)) {
+                useRestCash = 0;
+            }
+
+            const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max')); // 최대 사용 가능한 캐시
+
+            if (useRestCash < 0) {
+                useRestCash = 0;
+                $PaymentForm__useRestCash.val(0);
+            }
+            else if (useRestCash > maxUseRestCash) {
+                useRestCash = maxUseRestCash;
+                $PaymentForm__useRestCash.val(maxUseRestCash);
+            }
+
+            if ( useRestCash == maxUseRestCash ) {
+                $PaymentForm__useRestCashAll.prop('checked', true);
+            }
+            else {
+                $PaymentForm__useRestCashAll.prop('checked', false);
+            }
+        }
+
+        // 전액 결제 체크에 따른 예치금 입력폼 자동 입력
+        function PaymentForm__useRestCashAllChanged() {
+            if ( $PaymentForm__useRestCashAll.prop('checked') ) {
+                // 전액 결체 체크하면 총 상품 금액 입력
+                const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max'));
+                $PaymentForm__useRestCash.val(maxUseRestCash);
+            }
+            else {
+                // 전액 결체 체크 해제하면 0 입력
+                $PaymentForm__useRestCash.val(0);
+            }
+
+            PaymentForm__useRestCashFix();
+        }
+
+        PaymentForm__useRestCashFix();
+    </script>
+</main>
+</body>
+</html>
