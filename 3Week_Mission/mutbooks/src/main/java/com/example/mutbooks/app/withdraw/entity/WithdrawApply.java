@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -34,7 +35,8 @@ public class WithdrawApply extends BaseEntity {
     private LocalDateTime cancelDate;   // 출금 취소 일시
     private boolean isWithdrawn;       // 출금 여부
     private boolean isCancelled;       // 출금 신청 취소 여부
-    private String cancelType;          // 취소 사유
+    @Convert(converter = CancelTypeConverter.class)
+    private CancelType cancelType;          // 취소 사유
 
     // 신청 완료 여부
     public boolean isAppliedStatus() {
@@ -67,7 +69,7 @@ public class WithdrawApply extends BaseEntity {
     }
 
     // 출금 취소 처리
-    public void setCancelDone(String cancelType) {
+    public void setCancelDone(CancelType cancelType) {
         this.cancelType = cancelType;
         this.isCancelled = true;
         this.cancelDate = LocalDateTime.now();

@@ -3,6 +3,7 @@ package com.example.mutbooks.app.withdraw.service;
 import com.example.mutbooks.app.cash.entity.CashLog;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.app.withdraw.entity.CancelType;
 import com.example.mutbooks.app.withdraw.entity.WithdrawApply;
 import com.example.mutbooks.app.withdraw.exception.WithdrawApplyNotFoundException;
 import com.example.mutbooks.app.withdraw.form.WithdrawApplyForm;
@@ -79,7 +80,7 @@ public class WithdrawService {
 
         if(canCancel(member, withdrawApply)) {
             memberService.addCash(member, withdrawApply.getPrice(), "출금취소__캐시");
-            withdrawApply.setCancelDone("사용자 취소");
+            withdrawApply.setCancelDone(CancelType.USER_REQUEST);
         }
     }
 
@@ -90,7 +91,7 @@ public class WithdrawService {
         Member member = memberService.findByUsername(username);
 
         memberService.addCash(member, withdrawApply.getPrice(), "출금취소__캐시");
-        withdrawApply.setCancelDone("관리자 취소");
+        withdrawApply.setCancelDone(CancelType.ADMIN_REQUEST);
     }
 
     // 취소 권한 검증
