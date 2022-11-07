@@ -23,6 +23,7 @@
                         <th>출금일시</th>
                         <th>취소일시</th>
                         <th>처리 상태</th>
+                        <th>비고</th>
                     </tr>
                     </thead>
 
@@ -33,17 +34,30 @@
                         <td th:text="${withdrawApply.bankAccountNo}"></td>
                         <td th:text="|${withdrawApply.price} 원|"></td>
                         <td th:text="${#temporals.format(withdrawApply.createDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
-                        <td th:text="${#temporals.format(withdrawApply.withdrawDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
-                        <td th:text="${#temporals.format(withdrawApply.cancelDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
+                        <td>
+                            <div th:if="${withdrawApply.withdrawDate == null}">-</div>
+                            <div th:unless="${withdrawApply.withdrawDate == null}"
+                                 th:text="${#temporals.format(withdrawApply.withdrawDate, 'yyyy-MM-dd hh:mm:ss')}"></div>
+                        </td>
+                        <td>
+                            <div th:if="${withdrawApply.cancelDate == null}">-</div>
+                            <div th:unless="${withdrawApply.cancelDate == null}"
+                                 th:text="${#temporals.format(withdrawApply.cancelDate, 'yyyy-MM-dd hh:mm:ss')}"></div>
+                        </td>
                         <th:block>
-                            <td th:if="${withdrawApply.isAppliedStatus}">
-                                <a href="javascript:;" onclick="$(this).next().submit();" class="btn btn-xs">출금 처리</a>
-                                <form method="POST" th:action="@{|/adm/withdraw/${withdrawApply.id}|}" hidden>
-                                </form>
-                            </td>
+                            <td th:if="${withdrawApply.isAppliedStatus}">신청완료</td>
                             <td th:if="${withdrawApply.isWithdrawnStatus}" class="text-blue-600">출금완료</td>
                             <td th:if="${withdrawApply.isCancelledStatus}" class="text-red-600">취소완료</td>
                         </th:block>
+                        <td th:if="${withdrawApply.isAppliedStatus}">
+                            <a href="javascript:;" onclick="$(this).next().submit();" class="btn btn-xs">출금 처리</a>
+                            <form method="POST" th:action="@{|/adm/withdraw/${withdrawApply.id}|}" hidden>
+                            </form>
+                            <a href="javascript:;" onclick="if(confirm('정말로 취소하시겠습니가?')) $(this).next().submit();"
+                               class="btn btn-xs">취소</a>
+                            <form method="POST" th:action="@{|/adm/withdraw/cancel/${withdrawApply.id}|}" hidden>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

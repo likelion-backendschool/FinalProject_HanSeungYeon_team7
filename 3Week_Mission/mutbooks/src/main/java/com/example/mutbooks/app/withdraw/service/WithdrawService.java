@@ -71,12 +71,33 @@ public class WithdrawService {
         withdrawApply.setWithdrawDone();
     }
 
+    // 사용자 본인 출금 취소
     @Transactional
     public void cancel(String username, long id) {
         WithdrawApply withdrawApply = findById(id);
         Member member = memberService.findByUsername(username);
-        // 예치금 환불
+
+        if(canCancel(member, withdrawApply)) {
+            memberService.addCash(member, withdrawApply.getPrice(), "출금취소__캐시");
+            withdrawApply.setCancelDone("사용자 취소");
+        }
+    }
+
+    // 관리자에 의한 출금 취소
+    @Transactional
+    public void cancelByAdmin(String username, long id) {
+        WithdrawApply withdrawApply = findById(id);
+        Member member = memberService.findByUsername(username);
+
         memberService.addCash(member, withdrawApply.getPrice(), "출금취소__캐시");
-        withdrawApply.setCancelDone("사용자 취소");
+        withdrawApply.setCancelDone("관리자 취소");
+    }
+
+    // 취소 권한 검증
+    public boolean canCancel(Member member, WithdrawApply withdrawApply) {
+        if(!member.getId().equals(withdrawApply.getApplicant().getId())) {
+            throw new RuntimeException("해당 출금 신청 내역의 취소 권한이 없습니다.");
+        }
+        return true;
     }
 }
