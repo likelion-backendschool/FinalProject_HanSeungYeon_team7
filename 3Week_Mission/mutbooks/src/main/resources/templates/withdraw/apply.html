@@ -57,12 +57,12 @@
                 <div class="text-lg">
 <!--                    <div>입금 받을 은행계좌 정보입니다.</div>-->
                     <span>은행 : </span>
-                    <span th:text="${member.bankName}"></span>
+                    <span th:text="${member.memberExtra.bankName}"></span>
                 </div>
 
                 <div class="text-lg">
                     <span>계좌번호 : </span>
-                    <span th:text="${member.bankAccountNo}"></span>
+                    <span th:text="${member.memberExtra.bankAccountNo}"></span>
                 </div>
             </div>
 

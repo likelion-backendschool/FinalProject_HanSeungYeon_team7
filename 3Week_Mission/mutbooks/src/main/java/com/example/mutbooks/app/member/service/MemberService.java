@@ -6,6 +6,7 @@ import com.example.mutbooks.app.cash.service.CashService;
 import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.AuthLevel;
 import com.example.mutbooks.app.member.entity.Member;
+import com.example.mutbooks.app.member.entity.MemberExtra;
 import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
@@ -146,8 +147,14 @@ public class MemberService {
 
     // 계좌 등록
     @Transactional
-    public void modifyBankAccount(Member member, WithdrawAccountForm withDrawAccountForm) {
-        member.modifyBankAccount(withDrawAccountForm.getBankName(), withDrawAccountForm.getBankAccountNo());
-        forceAuthentication(member);
+    public void createBankInfo(Member member, WithdrawAccountForm withDrawAccountForm) {
+        MemberExtra memberExtra = MemberExtra.builder()
+                .member(member)
+                .bankName(withDrawAccountForm.getBankName())
+                .bankAccountNo(withDrawAccountForm.getBankAccountNo())
+                .build();
+        member.modifyMemberExtra(memberExtra);
+        // TODO: 계좌 정보는 memberContext 값에 담겨있지 않으므로 세션값 강제 수정할 필요X
+        //forceAuthentication(member);
     }
 }
