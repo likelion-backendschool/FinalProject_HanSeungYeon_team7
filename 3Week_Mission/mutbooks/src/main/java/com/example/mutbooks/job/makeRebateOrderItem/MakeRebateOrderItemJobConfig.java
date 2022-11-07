@@ -68,20 +68,12 @@ public class MakeRebateOrderItemJobConfig {
     @StepScope
     @Bean
     public RepositoryItemReader<OrderItem> orderItemReader(
-            @Value("#{jobParameters[createDate]}") String createDateStr
+            @Value("#{jobParameters[year]}") int year,
+            @Value("#{jobParameters[month]}") int month
     ) {
         log.info("orderItemReader 실행");
+        log.info("%d-%d".formatted(year, month));
         // 1. 정산 데이터를 생성할 날짜 범위 구하기
-        // 이번 달 15일에 생성해야하는 정산 데이터 날짜 범위 = 저번 달 1일 ~ 말일
-        LocalDateTime createDate = Ut.date.parse(createDateStr);
-//        LocalDateTime targetDate = createDate.minusMonths(1);
-        LocalDateTime targetDate = createDate;
-
-        log.info(String.valueOf(createDate));
-        log.info(String.valueOf(targetDate));
-
-        int year = targetDate.getYear();
-        int month = targetDate.getMonthValue();
         int endDay = Ut.date.getEndDay(year, month);
         LocalDateTime startOfDay = Ut.date.getStartOfDay(year, month, 1);   // 해당일자의 시작일시
         LocalDateTime endOfDay = Ut.date.getEndOfDay(year, month, endDay);       // 해당일자의 종료일시
