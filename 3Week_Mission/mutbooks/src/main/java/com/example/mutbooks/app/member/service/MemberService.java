@@ -63,7 +63,7 @@ public class MemberService {
     }
 
     // 세션에 담긴 회원 기본정보 강제 수정
-    private void forceAuthentication(Member member) {
+    public void forceAuthentication(Member member) {
         MemberContext memberContext = new MemberContext(member, member.genAuthorities());
 
         UsernamePasswordAuthenticationToken authentication =
@@ -136,8 +136,10 @@ public class MemberService {
         int newRestCash = member.getRestCash() + cashLog.getPrice();
         member.setRestCash(newRestCash);
         memberRepository.save(member);
+        // TODO: 관리자 회원이 정산 처리를 할 경우, 정산 대상 회원으로 강제 로그인 되는 문제때문에 잠시 주석 처리
+        // addCash() 를 사용하는 메서드 내에서 forceAuthentication()을 호출해야하는지 고민해보기
         // 세션값 강제 수정
-        forceAuthentication(member);
+        //forceAuthentication(member);
 
         return cashLog;
     }
