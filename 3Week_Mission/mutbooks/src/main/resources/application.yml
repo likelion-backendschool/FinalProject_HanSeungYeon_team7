@@ -3,6 +3,12 @@ spring:
     active: dev
     include:
       - base-addi
+  batch:
+    job:
+      names: ${job.name:NONE}
+      enabled: false            # 자동 Job 실행 막기
+    jdbc:
+      initialize-schema: ALWAYS # batch 테이블 생성
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:

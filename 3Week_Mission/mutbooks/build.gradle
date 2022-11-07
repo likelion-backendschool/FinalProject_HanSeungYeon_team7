@@ -50,6 +50,12 @@ dependencies {
 	//querydsl 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+	// spring batch
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	testImplementation 'org.springframework.batch:spring-batch-test'
+	// apache httpclient
+	implementation 'org.apache.httpcomponents:httpclient:4.5'
 }
 
 tasks.named('test') {

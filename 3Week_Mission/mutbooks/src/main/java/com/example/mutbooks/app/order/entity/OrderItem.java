@@ -37,7 +37,7 @@ public class OrderItem extends BaseEntity {
     private int refundPrice;        // 환불 금액
 
     private boolean isPaid;         // 결제 여부
-    private boolean isRefund;       // 환불 여부
+    private boolean isRefunded;       // 환불 여부
 
 
     public OrderItem(Product product) {
@@ -60,6 +60,6 @@ public class OrderItem extends BaseEntity {
     public void setRefundDone() {
         this.refundPrice = payPrice;
         this.refundDate = LocalDateTime.now();
-        this.isRefund = true;
+        this.isRefunded = true;
     }
 }

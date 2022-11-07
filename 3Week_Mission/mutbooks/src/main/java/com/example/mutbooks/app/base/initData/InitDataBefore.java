@@ -20,12 +20,14 @@ public interface InitDataBefore {
             CartService cartService,
             OrderService orderService
     ) {
-        // 1번 회원(작가)
+        // 1번 회원(일반, 작가)
         Member member1 = memberService.join(new JoinForm("user1", "1234", "딸기", "user1@test.com"));
-        // 2번 회원(작가)
+        // 2번 회원(일반, 작가)
         Member member2 = memberService.join(new JoinForm("user2", "1234", "초코", "user2@test.com"));
         // 3번 회원(일반)
         Member member3 = memberService.join(new JoinForm("user3", "1234", null, "user3@test.com"));
+        // 4번 회원(일반, 관리자)
+        Member member4 = memberService.join(new JoinForm("admin", "1234", null, "admin@test.com"));
 
         // 1번 회원 캐시 50,000원 충전
         memberService.addCash(member1, 50_000, "충전");

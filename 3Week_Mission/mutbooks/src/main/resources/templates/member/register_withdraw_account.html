@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>출금계좌 등록</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <section class="section section-join flex-grow flex flex-col items-center justify-center">
+
+        <div class="max-w-md w-full px-2 pt-4">
+            <h1 class="font-bold text-lg">출금계좌 등록</h1>
+
+            <script>
+                let RegisterWithdrawAccount__submitDone = false;
+
+                function RegisterWithdrawAccount__submit(form) {
+                    if (RegisterWithdrawAccount__submitDone) {
+                        return;
+                    }
+
+                    form.bankName.value = form.bankName.value.trim();
+
+                    if (form.bankName.value.length == 0) {
+                        warningModal("은행을 선택해주세요.");
+                        form.bankName.focus();
+
+                        return;
+                    }
+
+                    form.bankAccountNo.value = form.bankAccountNo.value.trim();
+
+                    if (form.bankAccountNo.value.length == 0) {
+                        warningModal("계좌번호를 입력해주세요.");
+                        form.bankAccountNo.focus();
+
+                        return;
+                    }
+
+                    form.submit();
+                    RegisterWithdrawAccount__submitDone = true;
+                }
+            </script>
+
+            <form th:action method="POST" class="flex flex-col gap-3"
+                  onsubmit="RegisterWithdrawAccount__submit(this); return false;" th:object="${withdrawAccountForm}" >
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">은행</span>
+                    </label>
+                    <select class="select select-bordered" name="bankName">
+                        <option selected disabled hidden>은행 선택</option>
+                        <option th:value="신한" th:text="신한"></option>
+                        <option th:value="국민" th:text="국민"></option>
+                        <option th:value="농협" th:text="농협"></option>
+                    </select>
+                </div>
+                <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('bankName')}" >
+                    <span>*</span>
+                    <span th:errors="*{bankName}"></span>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">계좌번호</span>
+                    </label>
+                    <input type="text" name="bankAccountNo" placeholder="계좌번호" th:value="${withdrawAccountForm.bankAccountNo}"
+                           class="input input-bordered">
+                </div>
+                <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('bankAccountNo')}" >
+                    <span>*</span>
+                    <span th:errors="*{bankAccountNo}"></span>
+                </div>
+
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <input class="btn btn-primary" type="submit" value="등록">
+                </div>
+            </form>
+        </div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

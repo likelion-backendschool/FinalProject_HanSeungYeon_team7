@@ -21,6 +21,16 @@ public class MemberContext extends User {
     @Setter
     private String nickname;
 
+    // 예치금
+    @Setter
+    private int restCash;
+
+    // 임시 추가 필드
+    @Setter
+    private String bankName;
+    @Setter
+    private String bankAccountNo;
+
     public MemberContext(Member member, List<GrantedAuthority> authorities) {
         super(member.getUsername(), member.getPassword(), authorities);
         this.id = member.getId();
@@ -29,6 +39,11 @@ public class MemberContext extends User {
         this.username = member.getUsername();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
+        // 예치금 추가
+        this.restCash = member.getRestCash();
+        // 임시 추가
+        this.bankName = member.getBankName();
+        this.bankAccountNo = member.getBankAccountNo();
     }
 
     public Member getMember() {
@@ -40,6 +55,11 @@ public class MemberContext extends User {
                 .username(username)
                 .email(email)
                 .nickname(nickname)
+                // 예치금 추가
+                .restCash(restCash)
+                // 임시 추가
+                .bankName(bankName)
+                .bankAccountNo(bankAccountNo)
                 .build();
     }
 

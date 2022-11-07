@@ -4,11 +4,13 @@ import com.example.mutbooks.app.base.security.dto.MemberContext;
 import com.example.mutbooks.app.cash.entity.CashLog;
 import com.example.mutbooks.app.cash.service.CashService;
 import com.example.mutbooks.app.mail.service.MailService;
+import com.example.mutbooks.app.member.entity.AuthLevel;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
+import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +33,11 @@ public class MemberService {
 
     @Transactional
     public Member join(JoinForm joinForm) {
-        int authLevel = 3;      // 디폴트 일반 권한
+        AuthLevel authLevel = AuthLevel.USER;      // 디폴트 USER 권한
+        // username 이 admin 인 회원을 관리자 회원으로 설정
+        if(joinForm.getUsername().equals("admin")) {
+            authLevel = AuthLevel.ADMIN;
+        }
 
         // 기본 권한 = 일반
         Member member = Member.builder()
@@ -123,12 +129,23 @@ public class MemberService {
 
     // 예치금 변동(넣기, 빼기)
     @Transactional
-    public void addCash(Member member, int price, String eventType) {
+    public CashLog addCash(Member member, int price, String eventType) {
         CashLog cashLog = cashService.addCash(member, price, eventType);
 
         // 예치금 변동 금액 반영
         int newRestCash = member.getRestCash() + cashLog.getPrice();
         member.setRestCash(newRestCash);
         memberRepository.save(member);
+        // 세션값 강제 수정
+        forceAuthentication(member);
+
+        return cashLog;
+    }
+
+    // 계좌 등록
+    @Transactional
+    public void modifyBankAccount(Member member, WithdrawAccountForm withDrawAccountForm) {
+        member.modifyBankAccount(withDrawAccountForm.getBankName(), withDrawAccountForm.getBankAccountNo());
+        forceAuthentication(member);
     }
 }

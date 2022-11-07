@@ -4,6 +4,7 @@ import com.example.mutbooks.app.base.security.dto.MemberContext;
 import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
+import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
 import com.example.mutbooks.app.member.service.MemberService;
@@ -180,5 +181,39 @@ public class MemberController {
         model.addAttribute("member", member);
 
         return "member/confirm_password";
+    }
+
+    // 출금 계좌 관리
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/manageWithdrawAccount")
+    public String manageWithdrawAccount(@AuthenticationPrincipal MemberContext memberContext, Model model) {
+        Member member = memberContext.getMember();
+        model.addAttribute("member", member);
+
+        return "member/manage_withdraw_account";
+    }
+
+    // 출금 계좌 등록폼
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/registerWithdrawAccount")
+    public String showRegisterWithdrawAccount(WithdrawAccountForm withDrawAccountForm) {
+        return "member/register_withdraw_account";
+    }
+
+    // 출금 계좌 등록
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/registerWithdrawAccount")
+    public String registerWithdrawAccount(
+            @AuthenticationPrincipal MemberContext memberContext,
+            @Valid WithdrawAccountForm withDrawAccountForm, BindingResult bindingResult
+    ) {
+        if(bindingResult.hasErrors()) {
+            return "member/register_withdraw_account";
+        }
+        Member member = memberService.findByUsername(memberContext.getUsername());
+        memberService.modifyBankAccount(member, withDrawAccountForm);
+
+        // 출금 게좌 관리 페이지로 리다이렉트
+        return "redirect:/member/manageWithdrawAccount";
     }
 }
