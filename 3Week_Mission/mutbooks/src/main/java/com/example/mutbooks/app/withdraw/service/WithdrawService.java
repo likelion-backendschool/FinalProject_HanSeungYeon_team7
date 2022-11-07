@@ -52,4 +52,8 @@ public class WithdrawService {
     public List<WithdrawApply> findByApplicantIdOrderByIdDesc(Long applicantId) {
         return withdrawApplyRepository.findByApplicantIdOrderByIdDesc(applicantId);
     }
+
+    public List<WithdrawApply> findAll() {
+        return withdrawApplyRepository.findAll();
+    }
 }
