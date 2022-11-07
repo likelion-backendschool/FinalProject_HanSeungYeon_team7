@@ -9,7 +9,7 @@
 <main layout:fragment="main">
     <section class="section section-join flex-grow flex flex-col items-center justify-center">
 
-        <div class="max-w-md w-full px-2 pt-4">
+        <div class="max-w-md w-full px-2 pt-4" sec:authorize="isAuthenticated()">
             <h1 class="font-bold text-lg">내 프로필</h1>
             <div sec:authorize="hasAuthority('AUTHOR')" class="badge badge-lg badge-primary mx-1">작가 회원</div>
             <div sec:authorize="hasAuthority('ADMIN')" class="badge badge-lg badge-primary mx-1">관리자 회원</div>
@@ -48,7 +48,11 @@
                     <a href="/member/modify" class="btn btn-secondary btn-outline">기본정보 수정</a>
                     <a href="/member/modifyPassword" class="btn btn-secondary btn-outline">비밀번호 수정</a>
                 </div>
-                <a href="/member/manageWithdrawAccount" class="btn btn-secondary btn-outline">출금계좌 관리</a>
+
+                <div class="grid grid-cols-2 mt-2 gap-2">
+                    <a href="/member/manageWithdrawAccount" class="btn btn-secondary btn-outline">출금계좌 관리</a>
+                    <a href="/withdraw/apply" class="btn btn-secondary btn-outline">출금신청</a>
+                </div>
             </div>
         </div>
 
