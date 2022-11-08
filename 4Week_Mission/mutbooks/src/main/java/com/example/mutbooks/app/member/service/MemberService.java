@@ -13,6 +13,7 @@ import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
 import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
+import com.example.mutbooks.app.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -31,6 +33,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final CashService cashService;
+    private final JwtProvider jwtProvider;
 
     @Transactional
     public Member join(JoinForm joinForm) {
@@ -156,5 +159,12 @@ public class MemberService {
         member.modifyMemberExtra(memberExtra);
         // TODO: 계좌 정보는 memberContext 값에 담겨있지 않으므로 세션값 강제 수정할 필요X
         //forceAuthentication(member);
+    }
+
+    public String genAccessToken(Member member) {
+        Map<String, Object> claims = member.getAccessTokenClaims();
+        String accessToken = jwtProvider.generateAccessToken(claims, 60 * 60 * 24 * 90);  // 유효기간 90일
+
+        return accessToken;
     }
 }

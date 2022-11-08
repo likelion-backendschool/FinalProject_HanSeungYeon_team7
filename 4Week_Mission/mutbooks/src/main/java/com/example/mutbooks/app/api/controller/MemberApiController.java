@@ -6,6 +6,7 @@ import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.util.Ut;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/member")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberApiController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
@@ -38,7 +40,9 @@ public class MemberApiController {
             return Ut.spring.responseEntityOf(RsData.of("F-3", "비밀번호가 일치하지 않습니다."));
         }
 
-        String accessToken = "JWT Access Token";
+        log.debug("Ut.json.toStr(member.getAccessTokenClaims()) : " + Ut.json.toStr(member.getAccessTokenClaims()));
+        // accessToken 발급
+        String accessToken = memberService.genAccessToken(member);
         // 응답 헤더, 바디에 accessToken 담기
         return Ut.spring.responseEntityOf(
                 RsData.of(

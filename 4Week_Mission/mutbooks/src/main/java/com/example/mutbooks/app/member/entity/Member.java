@@ -1,6 +1,7 @@
 package com.example.mutbooks.app.member.entity;
 
 import com.example.mutbooks.app.base.entity.BaseEntity;
+import com.example.mutbooks.util.Ut;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -11,6 +12,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -78,5 +80,17 @@ public class Member extends BaseEntity {
         }
 
         return authorities;
+    }
+
+    // AccessToken 발급을 위해 회원 정보를 바탕으로 claim map 객체 만들어 반환
+    public Map<String, Object> getAccessTokenClaims() {
+        return Ut.mapOf(
+                "id", getId(),
+                "createDate", getCreateDate(),
+                "updateDate", getUpdateDate(),
+                "username", getUsername(),
+                "email", getEmail(),
+                "authorities", genAuthorities()
+        );
     }
 }
