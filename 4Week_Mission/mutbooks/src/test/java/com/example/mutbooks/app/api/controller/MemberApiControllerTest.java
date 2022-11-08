@@ -130,7 +130,7 @@ class MemberApiControllerTest {
                         post("/api/v1/member/login")
                                 .content("""
                                         {
-                                            "username": "user3",
+                                            "username": "user4",
                                             "password": "1234"
                                         }
                                         """.stripIndent())
