@@ -81,4 +81,43 @@ class MemberApiControllerTest {
 
         assertThat(authentication).isNotEmpty();
     }
+
+    @Test
+    @DisplayName("POST /api/v1/member/login 호출할 때 username 이나 password 를 누락하면 400")
+    void t3() throws Exception {
+        // When
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "username": "",
+                                            "password": "1234"
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+
+        // Then
+        resultActions
+                .andExpect(status().is4xxClientError());
+
+        resultActions = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "username": "user1",
+                                            "password": " "
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+
+        // Then
+        resultActions
+                .andExpect(status().is4xxClientError());
+    }
 }
