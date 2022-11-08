@@ -42,6 +42,21 @@ public class Ut {
             // body, header, httpStatus
             return new ResponseEntity<>(rsData, headers, httpStatus);
         }
+
+        // 들어온 인자를 (key, value) 형태의 HttpHeaders 로 반환
+        public static HttpHeaders httpHeadersOf(String... args) {
+            HttpHeaders headers = new HttpHeaders();
+
+            // (key, value)
+            Map<String, String> map = Ut.mapOf(args);
+
+            for(String key : map.keySet()) {
+                String value = map.get(key);
+                headers.set(key, value);
+            }
+
+            return headers;
+        }
     }
 
     public static class date {
