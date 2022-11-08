@@ -37,3 +37,5 @@ custom:
   site:
     name: MUTBooks
     baseUrl: "http://localhost:8010"
+  jwt:
+    secretKey: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
