@@ -1,11 +1,17 @@
 package com.example.mutbooks.app.mybook.service;
 
 import com.example.mutbooks.app.member.entity.Member;
+import com.example.mutbooks.app.mybook.dto.response.MyBookDetailDto;
 import com.example.mutbooks.app.mybook.dto.response.MyBookDto;
 import com.example.mutbooks.app.mybook.entity.MyBook;
+import com.example.mutbooks.app.mybook.exception.MyBookNotFoundException;
 import com.example.mutbooks.app.mybook.repository.MyBookRepository;
 import com.example.mutbooks.app.order.entity.Order;
 import com.example.mutbooks.app.order.entity.OrderItem;
+import com.example.mutbooks.app.post.entity.Post;
+import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
+import com.example.mutbooks.app.postHashTag.service.PostHashTagService;
+import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
 import com.example.mutbooks.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +25,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MyBookService {
     private final MyBookRepository myBookRepository;
+    private final PostHashTagService postHashTagService;
 
     // MyBook 추가
     @Transactional
@@ -64,5 +71,25 @@ public class MyBookService {
                 .collect(Collectors.toList());
 
         return myBookDtos;
+    }
+
+    public MyBook findById(long id) {
+        return myBookRepository.findById(id).orElseThrow(() -> {
+            throw new MyBookNotFoundException("");
+        });
+    }
+
+    public MyBookDetailDto findByIdForDetail(long id) {
+        MyBook myBook = findById(id);
+
+        PostKeyword postKeyword = myBook.getProduct().getPostKeyword();
+        List<PostHashTag> postHashTags = postHashTagService.findByPostKeyword(postKeyword);
+
+        List<Post> posts = postHashTags.stream()
+                .map(postHashTag -> postHashTag.getPost())
+                .collect(Collectors.toList());
+
+        // 본인이 소유한 도서인지 검증
+        return MyBookDetailDto.toDto(myBook, posts);
     }
 }

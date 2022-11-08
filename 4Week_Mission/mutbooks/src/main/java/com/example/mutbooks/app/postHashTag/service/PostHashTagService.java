@@ -77,4 +77,8 @@ public class PostHashTagService {
     public List<PostHashTag> findByPostId(long postId) {
         return postHashTagRepository.findByPostId(postId);
     }
+
+    public List<PostHashTag> findByPostKeyword(PostKeyword postKeyword) {
+        return postHashTagRepository.findByPostKeyword(postKeyword);
+    }
 }
