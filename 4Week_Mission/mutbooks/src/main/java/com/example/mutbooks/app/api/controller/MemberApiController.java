@@ -1,11 +1,12 @@
 package com.example.mutbooks.app.api.controller;
 
+import com.example.mutbooks.app.base.dto.RsData;
 import com.example.mutbooks.app.member.dto.LoginDto;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.util.Ut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,21 +22,21 @@ public class MemberApiController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<RsData> login(@RequestBody LoginDto loginDto) {
         // 입력 데이터 유효성 검증
         if(loginDto.isNotValid()) {
-            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+            return Ut.spring.responseEntityOf(RsData.of("F-1", "로그인 정보가 올바르지 않습니다.."));
         }
 
         Member member = memberService.findByUsername(loginDto.getUsername());
         // 1. 존재하지 않는 회원
         if(member == null) {
-            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+            return Ut.spring.responseEntityOf(RsData.of("F-2", "일치하는 회원이 존재하지 않습니다."));
         }
         // 2. 올바르지 않은 비밀번호
         // matches(비밀번호 원문, 암호화된 비밀번호)
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
-            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+            return Ut.spring.responseEntityOf(RsData.of("F-3", "비밀번호가 일치하지 않습니다."));
         }
 
         // 헤더(Authentication) 에 JWT 토큰 & 바디에 username, password
@@ -44,6 +45,6 @@ public class MemberApiController {
 
         String body = "username : %s, password : %s".formatted(loginDto.getUsername(), loginDto.getPassword());
 
-        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+        return Ut.spring.responseEntityOf(RsData.of("S-1", "로그인 성공, JWT AccessToken 을 발급합니다."), headers);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.mutbooks.util;
 
+import com.example.mutbooks.app.base.dto.RsData;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,14 @@ import java.util.Calendar;
 
 public class Ut {
     public static class spring {
-        public static <T> ResponseEntity<T> responseEntityOf(HttpHeaders headers) {
-            return new ResponseEntity<>(null, headers, HttpStatus.OK);
+        public static <T> ResponseEntity<RsData> responseEntityOf(RsData<T> rsData) {
+            return responseEntityOf(rsData, null);
+        }
+
+        public static <T> ResponseEntity<RsData> responseEntityOf(RsData<T> rsData, HttpHeaders headers) {
+            HttpStatus httpStatus = rsData.isSuccess() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+            // body, header, httpStatus
+            return new ResponseEntity<>(rsData, headers, httpStatus);
         }
     }
 
