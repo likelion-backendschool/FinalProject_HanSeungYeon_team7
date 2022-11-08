@@ -15,6 +15,11 @@ public class MemberApiController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+        // 입력 데이터 유효성 검증
+        if(loginDto.isNotValid()) {
+            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+        }
+
         // 헤더(Authentication) 에 JWT 토큰 & 바디에 username, password
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authentication", "JWT Token");
