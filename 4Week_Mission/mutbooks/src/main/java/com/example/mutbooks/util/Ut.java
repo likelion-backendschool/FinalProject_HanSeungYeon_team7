@@ -1,5 +1,9 @@
 package com.example.mutbooks.util;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -7,6 +11,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 public class Ut {
+    public static class spring {
+        public static <T> ResponseEntity<T> responseEntityOf(HttpHeaders headers) {
+            return new ResponseEntity<>(null, headers, HttpStatus.OK);
+        }
+    }
+
     public static class date {
 
         // 해당 년, 월의 마지막 일자 구하기
