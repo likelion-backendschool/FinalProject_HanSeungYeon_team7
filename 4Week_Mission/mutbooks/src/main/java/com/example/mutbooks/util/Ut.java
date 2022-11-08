@@ -1,6 +1,9 @@
 package com.example.mutbooks.util;
 
+import com.example.mutbooks.app.AppConfig;
 import com.example.mutbooks.app.base.dto.RsData;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,34 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Ut {
+    // jwt 관련
+    private static ObjectMapper getObjectMapper() {
+        return (ObjectMapper) AppConfig.getContext().getBean("objectMapper");
+    }
+
+    public static class json {
+
+        // map(json) -> String 변환
+        public static Object toStr(Map<String, Object> map) {
+            try {
+                return getObjectMapper().writeValueAsString(map);
+            } catch (JsonProcessingException e) {
+                return null;
+            }
+        }
+
+        // String -> map(json) 변환
+        public static Map<String, Object> toMap(String jsonStr) {
+            try {
+                return getObjectMapper().readValue(jsonStr, LinkedHashMap.class);
+            } catch (JsonProcessingException e) {
+                return null;
+            }
+        }
+    }
+    // 추가 끝
+
+
     // 인자 값들을 map 형태로 반환
     public static<K, V> Map<K, V> mapOf(Object... args) {
         Map<K, V> map = new LinkedHashMap<>();
