@@ -1,7 +1,8 @@
-package com.example.mutbooks.app.api.controller;
+package com.example.mutbooks.app.api.member.controller;
 
+import com.example.mutbooks.app.api.member.dto.response.MemberDto;
 import com.example.mutbooks.app.base.dto.RsData;
-import com.example.mutbooks.app.member.dto.LoginDto;
+import com.example.mutbooks.app.api.member.dto.request.LoginDto;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.security.dto.MemberContext;
@@ -59,7 +60,8 @@ public class MemberApiController {
         if(memberContext == null) {
             return Ut.spring.responseEntityOf(RsData.failOf(null));
         }
-        
-        return Ut.spring.responseEntityOf(RsData.successOf(memberContext));
+        MemberDto memberDto = MemberDto.toDto(memberContext.getMember());
+
+        return Ut.spring.responseEntityOf(RsData.successOf(Ut.mapOf("member", memberDto)));
     }
 }
