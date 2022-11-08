@@ -6,7 +6,6 @@ import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.util.Ut;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,12 +38,15 @@ public class MemberApiController {
             return Ut.spring.responseEntityOf(RsData.of("F-3", "비밀번호가 일치하지 않습니다."));
         }
 
-        // 헤더(Authentication) 에 JWT 토큰 & 바디에 username, password
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authentication", "JWT Token");
-
-        String body = "username : %s, password : %s".formatted(loginDto.getUsername(), loginDto.getPassword());
-
-        return Ut.spring.responseEntityOf(RsData.of("S-1", "로그인 성공, JWT AccessToken 을 발급합니다."), headers);
+        String accessToken = "JWT Access Token";
+        // 응답 헤더, 바디에 accessToken 담기
+        return Ut.spring.responseEntityOf(
+                RsData.of(
+                        "S-1",
+                        "로그인 성공, JWT AccessToken 을 발급합니다.",
+                        Ut.mapOf("Authentication", accessToken)
+                ),
+                Ut.spring.httpHeadersOf("Authentication", accessToken)
+        );
     }
 }
