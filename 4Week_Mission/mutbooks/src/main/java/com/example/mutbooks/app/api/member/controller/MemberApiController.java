@@ -24,6 +24,7 @@ public class MemberApiController {
 
     @PostMapping("/login")
     public ResponseEntity<RsData> login(@RequestBody LoginDto loginDto) {
+        log.info("로그인");
         // 입력 데이터 유효성 검증
         if(loginDto.isNotValid()) {
             return Ut.spring.responseEntityOf(RsData.of("F-1", "로그인 정보가 올바르지 않습니다.."));
@@ -32,11 +33,13 @@ public class MemberApiController {
         Member member = memberService.findByUsername(loginDto.getUsername());
         // 1. 존재하지 않는 회원
         if(member == null) {
+            log.info("존재하지 않는 회원");
             return Ut.spring.responseEntityOf(RsData.of("F-2", "일치하는 회원이 존재하지 않습니다."));
         }
         // 2. 올바르지 않은 비밀번호
         // matches(비밀번호 원문, 암호화된 비밀번호)
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
+            log.info("비밀번호 틀림");
             return Ut.spring.responseEntityOf(RsData.of("F-3", "비밀번호가 일치하지 않습니다."));
         }
 
@@ -48,7 +51,7 @@ public class MemberApiController {
                 RsData.of(
                         "S-1",
                         "로그인 성공, Access Token을 발급합니다.",
-                        Ut.mapOf("Authentication", accessToken)
+                        Ut.mapOf("accessToken", accessToken)
                 ),
                 Ut.spring.httpHeadersOf("Authentication", accessToken)
         );
