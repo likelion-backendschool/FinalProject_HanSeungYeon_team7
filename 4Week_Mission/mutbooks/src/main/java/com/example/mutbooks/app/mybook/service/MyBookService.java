@@ -1,6 +1,7 @@
 package com.example.mutbooks.app.mybook.service;
 
 import com.example.mutbooks.app.member.entity.Member;
+import com.example.mutbooks.app.mybook.dto.response.MyBookDto;
 import com.example.mutbooks.app.mybook.entity.MyBook;
 import com.example.mutbooks.app.mybook.repository.MyBookRepository;
 import com.example.mutbooks.app.order.entity.Order;
@@ -9,6 +10,9 @@ import com.example.mutbooks.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,5 +54,15 @@ public class MyBookService {
 
     public MyBook findByProductIdAndOwnerId(long productId, long ownerId) {
         return myBookRepository.findByProductIdAndOwnerId(productId, ownerId).orElse(null);
+    }
+
+    public List<MyBookDto> findAllByOwner(Member owner) {
+        List<MyBook> myBooks = myBookRepository.findByOwner(owner);
+
+        List<MyBookDto> myBookDtos = myBooks.stream()
+                .map(myBook -> MyBookDto.toDto(myBook))
+                .collect(Collectors.toList());
+
+        return myBookDtos;
     }
 }
