@@ -1,4 +1,4 @@
-package com.example.mutbooks.app.base.security;
+package com.example.mutbooks.app.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

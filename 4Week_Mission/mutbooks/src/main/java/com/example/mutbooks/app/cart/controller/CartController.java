@@ -1,6 +1,6 @@
 package com.example.mutbooks.app.cart.controller;
 
-import com.example.mutbooks.app.base.security.dto.MemberContext;
+import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.app.cart.entity.CartItem;
 import com.example.mutbooks.app.cart.service.CartService;
 import com.example.mutbooks.app.member.entity.Member;

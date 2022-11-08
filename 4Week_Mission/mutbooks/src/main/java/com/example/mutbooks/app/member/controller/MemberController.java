@@ -1,6 +1,6 @@
 package com.example.mutbooks.app.member.controller;
 
-import com.example.mutbooks.app.base.security.dto.MemberContext;
+import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;

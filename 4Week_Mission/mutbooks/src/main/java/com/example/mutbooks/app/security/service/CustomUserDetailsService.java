@@ -1,6 +1,6 @@
-package com.example.mutbooks.app.base.security.service;
+package com.example.mutbooks.app.security.service;
 
-import com.example.mutbooks.app.base.security.dto.MemberContext;
+import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

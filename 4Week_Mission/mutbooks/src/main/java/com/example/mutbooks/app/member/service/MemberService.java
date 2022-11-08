@@ -1,6 +1,6 @@
 package com.example.mutbooks.app.member.service;
 
-import com.example.mutbooks.app.base.security.dto.MemberContext;
+import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.app.cash.entity.CashLog;
 import com.example.mutbooks.app.cash.service.CashService;
 import com.example.mutbooks.app.mail.service.MailService;

@@ -1,4 +1,4 @@
-package com.example.mutbooks.app.base.security.dto;
+package com.example.mutbooks.app.security.dto;
 
 import com.example.mutbooks.app.member.entity.Member;
 import lombok.Getter;

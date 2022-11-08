@@ -1,6 +1,6 @@
 package com.example.mutbooks.app.withdraw.controller;
 
-import com.example.mutbooks.app.base.security.dto.MemberContext;
+import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.app.withdraw.entity.WithdrawApply;
 import com.example.mutbooks.app.withdraw.service.WithdrawService;
 import lombok.RequiredArgsConstructor;

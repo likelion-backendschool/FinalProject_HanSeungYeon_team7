@@ -68,6 +68,7 @@ public class AppConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
+        // LocalDateTime 관련 직렬화/역직렬화 오류시, new JavaTimeModule() 추가
         return new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
