@@ -68,7 +68,7 @@ public class MemberService {
 
     // 세션에 담긴 회원 기본정보 강제 수정
     public void forceAuthentication(Member member) {
-        MemberContext memberContext = new MemberContext(member, member.genAuthorities());
+        MemberContext memberContext = new MemberContext(member, member.getAuthorities());
 
         UsernamePasswordAuthenticationToken authentication =
                 UsernamePasswordAuthenticationToken.authenticated(

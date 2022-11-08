@@ -64,7 +64,7 @@ public class Member extends BaseEntity {
     }
 
     // 권한 부여
-    public List<GrantedAuthority> genAuthorities() {
+    public List<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         // 모든 로그인한 회원에게는 USER 권한 부여
         authorities.add(new SimpleGrantedAuthority(AuthLevel.USER.getValue()));      // 일반 회원
@@ -90,7 +90,7 @@ public class Member extends BaseEntity {
                 "updateDate", getUpdateDate(),
                 "username", getUsername(),
                 "email", getEmail(),
-                "authorities", genAuthorities()
+                "authorities", getAuthorities()
         );
     }
 }

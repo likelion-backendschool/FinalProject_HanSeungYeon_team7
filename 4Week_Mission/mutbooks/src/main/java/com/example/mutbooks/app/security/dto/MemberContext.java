@@ -63,6 +63,17 @@ public class MemberContext extends User {
                 .build();
     }
 
+    public MemberContext(Member member) {
+        super(member.getUsername(), "", member.getAuthorities());
+
+        id = member.getId();
+        createDate = member.getCreateDate();
+        updateDate = member.getUpdateDate();
+        username = member.getUsername();
+        email = member.getEmail();
+//        authorities = member.getAuthorities().stream().collect(Collectors.toSet());
+    }
+
     public String getName() {
         return getUsername();
     }
