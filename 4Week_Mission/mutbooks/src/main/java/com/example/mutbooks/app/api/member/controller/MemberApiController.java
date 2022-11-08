@@ -4,15 +4,14 @@ import com.example.mutbooks.app.base.dto.RsData;
 import com.example.mutbooks.app.member.dto.LoginDto;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
+import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.util.Ut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/member")
@@ -47,10 +46,20 @@ public class MemberApiController {
         return Ut.spring.responseEntityOf(
                 RsData.of(
                         "S-1",
-                        "로그인 성공, JWT AccessToken 을 발급합니다.",
+                        "로그인 성공, Access Token을 발급합니다.",
                         Ut.mapOf("Authentication", accessToken)
                 ),
                 Ut.spring.httpHeadersOf("Authentication", accessToken)
         );
+    }
+
+    // 회원 정보
+    @GetMapping("/me")
+    public ResponseEntity<RsData> test(@AuthenticationPrincipal MemberContext memberContext) {
+        if(memberContext == null) {
+            return Ut.spring.responseEntityOf(RsData.failOf(null));
+        }
+        
+        return Ut.spring.responseEntityOf(RsData.successOf(memberContext));
     }
 }
