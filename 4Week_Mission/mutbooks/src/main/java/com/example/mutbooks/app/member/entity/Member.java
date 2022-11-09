@@ -35,6 +35,10 @@ public class Member extends BaseEntity {
 
     private int restCash;      // 예치금
 
+    // accessToken
+    @Column(columnDefinition = "TEXT")
+    private String accessToken;
+
     // Member 의 memberExtra 에 값이 저장될 때, MemberExtra 도 같이 저장되도록
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private MemberExtra memberExtra;

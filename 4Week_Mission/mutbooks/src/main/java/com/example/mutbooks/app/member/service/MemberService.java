@@ -1,6 +1,5 @@
 package com.example.mutbooks.app.member.service;
 
-import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.app.cash.entity.CashLog;
 import com.example.mutbooks.app.cash.service.CashService;
 import com.example.mutbooks.app.mail.service.MailService;
@@ -13,6 +12,7 @@ import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
 import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
+import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.app.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.UUID;
@@ -161,10 +162,24 @@ public class MemberService {
         //forceAuthentication(member);
     }
 
+    // AccessToken 발급(발급된게 있으면 바로 리턴)
+    @Transactional
     public String genAccessToken(Member member) {
-        Map<String, Object> claims = member.getAccessTokenClaims();
-        String accessToken = jwtProvider.generateAccessToken(claims, 60 * 60 * 24 * 90);  // 유효기간 90일
+        // 1. DB에서 AccessToken 조회
+        String accessToken = member.getAccessToken();
+        // 2. 만료시, 토큰 새로 발급
+        if (StringUtils.hasLength(accessToken) == false) {
+            // 지금으로부터 100년간의 유효기간을 가지는 토큰을 생성, DB에 토큰 저장
+            Map<String, Object> claims = member.getAccessTokenClaims();
+            accessToken = jwtProvider.generateAccessToken(claims, 60L * 60 * 24 * 365 * 100);
+            member.setAccessToken(accessToken);
+        }
 
         return accessToken;
+    }
+
+    // 해당 토큰이 화이트 리스트에 있는지 검증
+    public boolean verifyWithWhiteList(Member member, String token) {
+        return member.getAccessToken().equals(token);
     }
 }
