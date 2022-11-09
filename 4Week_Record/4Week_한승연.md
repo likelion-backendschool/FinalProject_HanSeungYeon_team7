@@ -43,7 +43,7 @@
     </div>
     </details>
 
-- [ ] 엑세스 토큰 화이트리스트 구현(Member 엔티티에 accessToken 필드 추가)
+- [x] 엑세스 토큰 화이트리스트 구현(Member 엔티티에 accessToken 필드 추가)
 - [x] 리액트 코드 작동 확인
     <details>
     <summary>로그인 성공 메인화면</summary>
@@ -208,53 +208,57 @@ public Map<String, Object> getClaims(String accessToken) {
 **7. jwtAuthorizationFilter 추가**
 - REST API 요청이 Controller 에 도달하기 이전에 앞 단(Filter 혹은 Interceptor)에서 인증/인가를 수행한다.
 ```java
-@Slf4j  
-@Component  
-@RequiredArgsConstructor  
-public class JwtAuthorizationFilter extends OncePerRequestFilter {  
-    private final JwtProvider jwtProvider;  
- private final MemberService memberService;  
-  
-  @Override  
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {  
-        String barerToken = request.getHeader("Authorization");  
-  // 토큰 유효성 검증  
-  if(barerToken != null) {  
-            String token = barerToken.substring("Barer ".length());  
-  // 토큰이 유효하면 회원 정보 얻어서 강제 로그인 처리  
-  if(jwtProvider.verify(token)) {  
-                Map<String, Object> claims = jwtProvider.getClaims(token);  
-  String username = (String) claims.get("username");  
-  Member member = memberService.findByUsername(username);  
-  
- if(member != null) {  
-                    forceAuthentication(member);  
-  }  
-            }  
-        }  
-        filterChain.doFilter(request, response);  
-  }  
-  
-    // 강제 로그인 처리  
-  private void forceAuthentication(Member member) {  
-        MemberContext memberContext = new MemberContext(member);  
-  
-  UsernamePasswordAuthenticationToken authentication =  
-                UsernamePasswordAuthenticationToken.authenticated(  
-                        memberContext,  
- null,  member.getAuthorities()  
-                );  
-  
-  // 이후 컨트롤러 단에서 MemberContext 객체 사용O  
-  SecurityContext context = SecurityContextHolder.createEmptyContext();  
-  context.setAuthentication(authentication);  
-  SecurityContextHolder.setContext(context);  
-  }  
-}
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
+    private final JwtProvider jwtProvider;
+    private final MemberService memberService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String barerToken = request.getHeader("Authorization");
+        // 1. 1차 체크(정보가 변조되지 않았는지 검증)
+        if(barerToken != null) {
+            // accessToken에서 회원 정보 가져오려면 Authentication에서 Bearer 제거 필요
+            String token = barerToken.substring("Bearer ".length());
+            // 토큰이 유효하면 회원 정보 얻어서 강제 로그인 처리
+            if(jwtProvider.verify(token)) {
+                Map<String, Object> claims = jwtProvider.getClaims(token);
+                String username = (String) claims.get("username");
+                Member member = memberService.findByUsername(username);
+
+                // 2. 2차 체크(해당 엑세스 토큰이 화이트 리스트에 포함되는지 검증)
+                if (memberService.verifyWithWhiteList(member, token)) {
+                    // 강제 로그인 처리
+                    forceAuthentication(member);
+                }
+            }
+        }
+        filterChain.doFilter(request, response);
+    }
+
+    // 강제 로그인 처리
+    private void forceAuthentication(Member member) {
+        MemberContext memberContext = new MemberContext(member);
+
+        UsernamePasswordAuthenticationToken authentication =
+                UsernamePasswordAuthenticationToken.authenticated(
+                        memberContext,
+                        null,
+                        member.getAuthorities()
+                );
+
+        // 이후 컨트롤러 단에서 MemberContext 객체 사용O
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+    }
 ```
 1. 요청 헤더의 `Access Token` 을 검증한다.
 2. 토큰으로부터 `claim(회원 정보)` 를 얻어 DB에서 Member 객체 조회한다.  
-3. 해당 회원 강제 로그인 처리한다.(`MemberContext` 세션 등록)
+3. 해당 AccessToken 이 화이트 리스트에 포함되는지 검증한다.
+4. 해당 회원 강제 로그인 처리한다.(`MemberContext` 세션 등록)
 ---
 ### Spring Doc API 문서화
 1. spring doc dependency 추가(build.gradle)
