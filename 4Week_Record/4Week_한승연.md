@@ -33,11 +33,46 @@
 - [x] Srping Doc 으로 API 문서화(/swagger-ui/index.html )
     - [x] SpringDocConfig 추가
     - [x] 관리자 회원만 spring doc 접근가능하도록 SecurityConfig 설정
-
+    
 ### 👍🏻 4Week 추가과제 👍🏻
 - [x] ERD 완성*
+    <details>
+    <summary>ERD 설계</summary>
+    <div markdown="1">
+    <img src="https://user-images.githubusercontent.com/48237976/200752261-5dd5f21a-05fb-4d71-85a4-657e81b64aca.png">
+    </div>
+    </details>
+
 - [ ] 엑세스 토큰 화이트리스트 구현(Member 엔티티에 accessToken 필드 추가)
 - [x] 리액트 코드 작동 확인
+    <details>
+    <summary>로그인 성공 메인화면</summary>
+    <div markdown="1">
+    <img width="838" alt="스크린샷 2022-11-08 오후 10 56 03" src="https://user-images.githubusercontent.com/48237976/200752923-e89ec956-70ea-42d5-a65c-c13327f71f83.png">
+    </div>
+    </details>
+    
+    <details>
+    <summary>회원 정보</summary>
+    <div markdown="1">
+    <img width="833" alt="스크린샷 2022-11-08 오후 10 57 45" src="https://user-images.githubusercontent.com/48237976/200753680-7a222e01-0703-48ff-a952-6ab28f51885b.png">
+    </div>
+    </details>
+    
+    <details>
+    <summary>내 도서 리스트</summary>
+    <div markdown="1">
+    <img width="823" alt="스크린샷 2022-11-08 오후 10 58 35" src="https://user-images.githubusercontent.com/48237976/200753788-fb58146a-db15-4bdb-beec-38d18fa1fe93.png">
+    </div>
+    </details>
+    
+    <details>
+    <summary>내 도서 상세정보</summary>
+    <div markdown="1">
+    <img width="830" alt="스크린샷 2022-11-08 오후 10 58 54" src="https://user-images.githubusercontent.com/48237976/200753722-8266c0b8-9318-4674-b029-aad982aeeab7.png">
+    </div>
+    </details>
+        
 
 ### 🙈 요구사항 및 접근방법 정리 🙈
 ### JWT 프로세스
@@ -47,11 +82,11 @@
 4. 클라이언트는 API를 요청할 때 `Authorization Header` 에 `Access Token` 을 담아 요청을 보낸다.
 5. 서버에서는 `Access Token` 을 검증하고 사용자를 인증한다.
 6. 서버가 요청에 대한 응답을 클라이언트에게 전달한다.
-- https://velog.io/@junghyeonsu/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%90%EC%84%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8%EC%9D%84-%EC%B2%98%EB%A6%AC%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95
+[참고](https://velog.io/@junghyeonsu/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%90%EC%84%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8%EC%9D%84-%EC%B2%98%EB%A6%AC%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
 
 ---
 ### Spring Security + JWT 로그인 구현
-- https://samtao.tistory.com/65
+[참고](https://samtao.tistory.com/65)
 
 **1. JWT dependency 추가**
 - `build.gradle` 파일에 jwt 구현을 위해 필요한 의존성을 추가한다.
