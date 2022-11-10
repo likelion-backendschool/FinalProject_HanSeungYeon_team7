@@ -34,11 +34,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String barerToken = request.getHeader("Authorization");
+        String bearerToken = request.getHeader("Authorization");
         // 1. 1차 체크(정보가 변조되지 않았는지 검증)
-        if(barerToken != null) {
-            // accessToken에서 회원 정보 가져오려면 Authentication에서 Bearer 제거 필요
-            String token = barerToken.substring("Bearer ".length());
+        if(bearerToken != null) {
+            // accessToken 에서 회원 정보 가져오려면 Authorization 에서 Bearer 제거 필요
+            String token = bearerToken.split(" ")[1];
             // 토큰이 유효하면 회원 정보 얻어서 강제 로그인 처리
             if(jwtProvider.verify(token)) {
                 Map<String, Object> claims = jwtProvider.getClaims(token);

@@ -19,15 +19,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtProvider {
     private final SecretKey jwtSecretKey;   // 비밀키
+    private long ACCESS_TOKEN_VALIDATION_SECOND = 60 * 60 * 24 * 365 * 100L;    // accessToken 유효시간(100년)
 
     private SecretKey getSecretKey() {
         return jwtSecretKey;
     }
 
     // JWT Access Token 발급
-    public String generateAccessToken(Map<String, Object> claims, long seconds) {
+    public String generateAccessToken(Map<String, Object> claims) {
         long now = new Date().getTime();
-        Date accessTokenExpiresIn = new Date(now + 1000L * seconds);
+        Date accessTokenExpiresIn = new Date(now + 1000L * ACCESS_TOKEN_VALIDATION_SECOND);
 
         return Jwts.builder()
                 .claim("body", Ut.json.toStr(claims))         // Claims 정보 설정

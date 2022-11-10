@@ -171,7 +171,7 @@ public class MemberService {
         if (StringUtils.hasLength(accessToken) == false) {
             // 지금으로부터 100년간의 유효기간을 가지는 토큰을 생성, DB에 토큰 저장
             Map<String, Object> claims = member.getAccessTokenClaims();
-            accessToken = jwtProvider.generateAccessToken(claims, 60L * 60 * 24 * 365 * 100);
+            accessToken = jwtProvider.generateAccessToken(claims);
             member.setAccessToken(accessToken);
         }
 
