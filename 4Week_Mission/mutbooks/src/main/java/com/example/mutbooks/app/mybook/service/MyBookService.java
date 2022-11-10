@@ -83,7 +83,10 @@ public class MyBookService {
         MyBook myBook = findById(id);
 
         PostKeyword postKeyword = myBook.getProduct().getPostKeyword();
-        List<PostHashTag> postHashTags = postHashTagService.findByPostKeyword(postKeyword);
+        Member author = myBook.getProduct().getAuthor();
+
+        // 해당 작가, 키워드와 관련된 글만 조회
+        List<PostHashTag> postHashTags = postHashTagService.findByPostKeywordAndMember(postKeyword, author);
 
         List<Post> posts = postHashTags.stream()
                 .map(postHashTag -> postHashTag.getPost())

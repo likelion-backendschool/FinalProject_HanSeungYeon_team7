@@ -1,5 +1,6 @@
 package com.example.mutbooks.app.postHashTag.repository;
 
+import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
 import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,5 @@ public interface PostHashTagRepository extends JpaRepository<PostHashTag, Long> 
 
     List<PostHashTag> findByPostId(Long postId);
 
-    List<PostHashTag> findByPostKeyword(PostKeyword postKeyword);
+    List<PostHashTag> findByPostKeywordAndMember(PostKeyword postKeyword, Member member);
 }

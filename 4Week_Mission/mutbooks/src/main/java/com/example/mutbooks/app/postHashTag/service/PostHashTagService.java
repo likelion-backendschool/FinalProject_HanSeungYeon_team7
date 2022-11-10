@@ -1,10 +1,11 @@
 package com.example.mutbooks.app.postHashTag.service;
 
+import com.example.mutbooks.app.member.entity.Member;
+import com.example.mutbooks.app.post.entity.Post;
 import com.example.mutbooks.app.postHashTag.entity.PostHashTag;
 import com.example.mutbooks.app.postHashTag.repository.PostHashTagRepository;
 import com.example.mutbooks.app.postKeyword.entity.PostKeyword;
 import com.example.mutbooks.app.postKeyword.service.PostKeywordService;
-import com.example.mutbooks.app.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -78,7 +79,7 @@ public class PostHashTagService {
         return postHashTagRepository.findByPostId(postId);
     }
 
-    public List<PostHashTag> findByPostKeyword(PostKeyword postKeyword) {
-        return postHashTagRepository.findByPostKeyword(postKeyword);
+    public List<PostHashTag> findByPostKeywordAndMember(PostKeyword postKeyword, Member member) {
+        return postHashTagRepository.findByPostKeywordAndMember(postKeyword, member);
     }
 }
