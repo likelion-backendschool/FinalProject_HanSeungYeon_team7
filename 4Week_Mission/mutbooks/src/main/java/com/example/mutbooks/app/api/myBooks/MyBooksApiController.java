@@ -37,7 +37,7 @@ public class MyBooksApiController {
     // 도서 상세 조회
     @GetMapping("/{myBookId}")
     public ResponseEntity<RsData> detail(@PathVariable long myBookId, @AuthenticationPrincipal MemberContext memberContext) {
-        MyBookDetailDto myBookDetailDto = myBookService.findByIdForDetail(myBookId);
+        MyBookDetailDto myBookDetailDto = myBookService.findByIdForDetail(myBookId, memberContext.getId());
 
         return Ut.spring.responseEntityOf(
                 RsData.successOf(Ut.mapOf("myBook", myBookDetailDto))

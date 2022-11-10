@@ -13,4 +13,6 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
     void deleteByProductIdAndOwnerId(Long productId, Long ownerId);
 
     List<MyBook> findByOwner(Member owner);
+
+    Optional<MyBook> findByIdAndOwnerId(long myBookId, long ownerId);
 }

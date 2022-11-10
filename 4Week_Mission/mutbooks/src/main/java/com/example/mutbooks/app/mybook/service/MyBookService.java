@@ -73,14 +73,15 @@ public class MyBookService {
         return myBookDtos;
     }
 
-    public MyBook findById(long id) {
-        return myBookRepository.findById(id).orElseThrow(() -> {
-            throw new MyBookNotFoundException("");
+    public MyBook findByIdAndOwnerId(long myBookId, long ownerId) {
+        return myBookRepository.findByIdAndOwnerId(myBookId, ownerId).orElseThrow(() -> {
+            throw new MyBookNotFoundException("해당 상품 구매 이력이 존재하지 않습니다.");
         });
     }
 
-    public MyBookDetailDto findByIdForDetail(long id) {
-        MyBook myBook = findById(id);
+    public MyBookDetailDto findByIdForDetail(long myBookId, long ownerId) {
+        // 본인이 소유한 도서로 조회
+        MyBook myBook = findByIdAndOwnerId(myBookId, ownerId);
 
         PostKeyword postKeyword = myBook.getProduct().getPostKeyword();
         Member author = myBook.getProduct().getAuthor();
@@ -92,7 +93,6 @@ public class MyBookService {
                 .map(postHashTag -> postHashTag.getPost())
                 .collect(Collectors.toList());
 
-        // 본인이 소유한 도서인지 검증
         return MyBookDetailDto.toDto(myBook, posts);
     }
 }
