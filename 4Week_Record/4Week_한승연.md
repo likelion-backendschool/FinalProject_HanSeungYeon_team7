@@ -77,6 +77,7 @@
 ### 🙈 요구사항 및 접근방법 정리 🙈
 ### JWT 프로세스
 <img src="https://velog.velcdn.com/images%2Fjunghyeonsu%2Fpost%2Faf0fc689-e01a-484e-9519-267cba590864%2F%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202021-09-14%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%209.02.17.png">
+
 1.  사용자가 `username, password` 를 입력하고 서버로 로그인 요청을 보낸다.
 2.  로그인 성공시 서버는 비밀키로 서명을 하고 공개키로 암호화 하여  `Access Token` 을 발급한다.
 3. `응답 Header` 에 `Access Token` 을 담아 클라이언트에게 보낸다.
@@ -237,6 +238,7 @@ public Map<String, Object> getClaims(String accessToken) {
 ```
 - jwt 방식 로그인을 위해 `formLogin.disable()` 설정을 해주어야 한다.
 - 타도메인에서 API 호출을 하기 위해 `cors 허용` 설정을 해주어야 한다.
+  - [cors 오류 해결](https://github.com/likelion-backendschool/FinalProject_JuMinJi_team7/pull/25)
 - `/api/*/member/login` 요청 외 모든  `/api/**` 요청은 인증된 사용자여야 한다.
 - 지정된 필터보다 먼저 실행되도록 `jwtAuthorizationFilter` (커스텀 필터) 를 추가한다.
 
