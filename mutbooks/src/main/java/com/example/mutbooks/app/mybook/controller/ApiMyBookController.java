@@ -1,4 +1,4 @@
-package com.example.mutbooks.app.api.myBooks;
+package com.example.mutbooks.app.mybook.controller;
 
 import com.example.mutbooks.app.base.dto.RsData;
 import com.example.mutbooks.app.member.entity.Member;
@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/myBooks")
 @RequiredArgsConstructor
-public class MyBooksApiController {
+public class ApiMyBookController {
     private final MyBookService myBookService;
 
     // 내 도서 리스트

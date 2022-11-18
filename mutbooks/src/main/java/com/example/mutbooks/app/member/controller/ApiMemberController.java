@@ -1,8 +1,8 @@
-package com.example.mutbooks.app.api.member.controller;
+package com.example.mutbooks.app.member.controller;
 
-import com.example.mutbooks.app.api.member.dto.response.MemberDto;
+import com.example.mutbooks.app.member.dto.response.MemberDto;
 import com.example.mutbooks.app.base.dto.RsData;
-import com.example.mutbooks.app.api.member.dto.request.LoginDto;
+import com.example.mutbooks.app.member.dto.request.LoginDto;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.security.dto.MemberContext;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/member")
 @RequiredArgsConstructor
 @Slf4j
-public class MemberApiController {
+public class ApiMemberController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
 

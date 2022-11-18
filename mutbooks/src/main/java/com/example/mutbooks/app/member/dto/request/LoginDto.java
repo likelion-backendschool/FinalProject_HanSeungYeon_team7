@@ -1,4 +1,4 @@
-package com.example.mutbooks.app.api.member.dto.request;
+package com.example.mutbooks.app.member.dto.request;
 
 import lombok.Data;
 

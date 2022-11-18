@@ -1,4 +1,4 @@
-package com.example.mutbooks.app.api.member.dto.response;
+package com.example.mutbooks.app.member.dto.response;
 
 import com.example.mutbooks.app.member.entity.Member;
 import lombok.AllArgsConstructor;
