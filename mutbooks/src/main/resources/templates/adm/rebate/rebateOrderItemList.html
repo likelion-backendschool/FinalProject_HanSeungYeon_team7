@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/adm/layout/layout}">
+
+<head>
+    <title>정산데이터 목록</title>
+</head>
+
+<main layout:fragment="main">
+    <div class="container mx-auto">
+        <div>
+            <h1>정산데이터 목록</h1>
+
+            <div class="overflow-x-auto">
+                <table class="table table-compact w-full">
+                    <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" class="orderItemCheckboxAll checkbox">
+                        </th>
+                        <th>정산번호</th>
+                        <th>주문품목번호</th>
+                        <th>상품명</th>
+                        <th>결제일시</th>
+                        <th>결제금액</th>
+                        <th>PG 수수료</th>
+                        <th>도매가</th>
+                        <th>환불일시</th>
+                        <th>환불금액</th>
+                        <th>판매자</th>
+                        <th>예상정산금액</th>
+                        <th>정산내역번호</th>
+                        <th>비고</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="item : ${items}">
+                        <td>
+                            <input onchange="OrderItemCheckbox__changed();" th:if="${item.rebateAvailable}"
+                                   type="checkbox" class="orderItemCheckbox checkbox" th:value="${item.id}">
+                        </td>
+
+                        <td th:text="${item.id}"></td>
+                        <td th:text="${item.orderItem.id}"></td>
+                        <td th:text="${item.productSubject}"></td>
+                        <td th:text="${#temporals.format(item.payDate, 'yyyy-MM-dd hh:mm:ss.SSS')}"></td>
+                        <td th:text="${item.payPrice}"></td>
+                        <td th:text="${item.pgFee}"></td>
+                        <td th:text="${item.wholesalePrice}" ></td>
+                        <td th:text="${#temporals.format(item.refundDate, 'yyyy-MM-dd hh:mm:ss.SSS')}"></td>
+                        <td th:text="${item.refundPrice}"></td>
+                        <td th:text="${item.sellerName}"></td>
+                        <td th:text="${item.calculateRebatePrice}"></td>
+                        <td th:text="${item.rebateCashLog?.id}"></td>
+                        <td>
+                            <a th:if="${item.rebateAvailable}" href="javascript:;" onclick="$(this).next().submit();" class="btn btn-xs">건별정산</a>
+                            <form method="POST" th:action="@{|/adm/rebate/rebateOne/${item.id}|}" hidden>
+                            </form>
+                            <div th:if="${item.isRebated}" class="text-blue-600">정산완료</div>
+                            <div th:if="${item.isRefunded}" class="text-red-600">환불완료</div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <a href="javascript:;" onclick="RebateForm__submit();" class="btn btn-primary btn-sm">선택정산</a>
+                <form method="POST" name="rebateForm" th:action="@{|/adm/rebate/rebate|}" hidden>
+                    <input type="hidden" name="ids">
+                </form>
+
+                <script>
+                    // 전체선택 체크박스
+                    const $orderItemCheckboxAll = $('.orderItemCheckboxAll');
+                    // 아이템 체크박스
+                    const $orderItemCheckbox = $('.orderItemCheckbox');
+
+                    $orderItemCheckboxAll.change(function () {
+                        const allChecked = $(this).prop('checked');
+                        $orderItemCheckbox.prop('checked', allChecked); // 아이템 체크박스들에게 체크상태 동기화
+                    });
+
+                    function OrderItemCheckbox__changed() {
+                        // 모든 체크박스가 선택되었는지 여부
+                        const allChecked = $orderItemCheckbox.length == $('.orderItemCheckbox:checked').length;
+                        // 전체 체크박스 값 변경하기
+                        $orderItemCheckboxAll.prop('checked', allChecked);
+                    }
+
+                    let RebateForm__submitDone = false;
+
+                    function RebateForm__submit() {
+                        if (RebateForm__submitDone) return;
+
+                        const form = document.rebateForm;
+
+                        const $checked = $('.orderItemCheckbox:checked');
+
+                        if ($checked.length == 0) {
+                            alert('정산할 주문품목을 선택해주세요.');
+                            return;
+                        }
+
+                        const ids = $checked.map((index, el) => $(el).val()).get();
+                        form.ids.value = ids;   // [1, 4, 5] -> 1, 4, 5
+
+                        form.submit();
+                        RebateForm__submitDone = true;
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+</main>
+
+</html>
