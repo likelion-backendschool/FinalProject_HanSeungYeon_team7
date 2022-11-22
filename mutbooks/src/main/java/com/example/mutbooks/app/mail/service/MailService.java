@@ -3,6 +3,7 @@ package com.example.mutbooks.app.mail.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +28,12 @@ public class MailService {
         javaMailSender.send(message);   // 메일 발송
     }
 
+    /**
+     * 회원가입 축하 메일 발송
+     * @param username 수신자 username(id)
+     * @param to 수신자 email
+     */
+    @Async  // 비동기 처리
     public void sendJoinCongrats(String username, String to) {
         String subject = "[MUTBooks] %s 회원님 환영합니다.".formatted(username);
         String text = """
@@ -36,7 +43,13 @@ public class MailService {
         send(to, subject, text);
     }
 
-    // 임시 비밀번호 발급 메일 전송
+    /**
+     * 임시 비밀번호 발급 메일 발송
+     * @param username 수신자 username(id)
+     * @param to 수신자 email
+     * @param tempPwd 임시비밀번호
+     */
+    @Async  // 비동기 처리
     public void sendTempPassword(String username, String to, String tempPwd) {
         String subject = "[MUTBooks] 회원님의 임시 비밀번호입니다.";
         String text = """
