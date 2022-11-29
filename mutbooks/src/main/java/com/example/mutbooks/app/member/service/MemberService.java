@@ -2,7 +2,7 @@ package com.example.mutbooks.app.member.service;
 
 import com.example.mutbooks.app.cash.entity.CashLog;
 import com.example.mutbooks.app.cash.service.CashService;
-import com.example.mutbooks.app.mail.service.MailService;
+import com.example.mutbooks.app.mail.service.EmailSenderService;
 import com.example.mutbooks.app.member.entity.AuthLevel;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.entity.MemberExtra;
@@ -14,6 +14,7 @@ import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.app.security.jwt.JwtProvider;
+import com.example.mutbooks.util.Ut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -24,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ import java.util.UUID;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MailService mailService;
+    private final EmailSenderService emailSenderService;
     private final CashService cashService;
     private final JwtProvider jwtProvider;
 
@@ -43,17 +43,28 @@ public class MemberService {
         if(joinForm.getUsername().equals("admin")) {
             authLevel = AuthLevel.ADMIN;
         }
-
+        String authKey = Ut.genEmailAuthKey();      // 이메일 인증키 생성
         // 기본 권한 = 일반
         Member member = Member.builder()
                 .username(joinForm.getUsername())
                 .password(passwordEncoder.encode(joinForm.getPassword()))
                 .email(joinForm.getEmail())
+                .emailVerified(false)
+                .authKey(authKey)
                 .nickname(joinForm.getNickname())
                 .authLevel(authLevel)
                 .build();
 
         memberRepository.save(member);
+        // TODO: 테스트를 위해 잠시 주석 처리
+        // 가입 축하 이메일 전송
+        String subject = "[MUTBooks] %s 회원님 환영합니다.".formatted(member.getUsername());
+        String text = """
+        %s 님의 MUTBooks 가입을 축하합니다.
+        아래 '메일 인증' 버튼을 클릭하여 회원가입을 완료해주세요.
+        <a href='http://localhost:8010/member/verifyEmail?email=%s&key=%s' target='_blank'>메일 인증</a>
+        """.formatted(member.getUsername(), member.getEmail(), authKey);
+        emailSenderService.send(member.getEmail(), subject, text);
 
         return member;
     }
@@ -98,11 +109,14 @@ public class MemberService {
         Member member = memberRepository.findByUsernameAndEmail(username, email).orElse(null);
         // 임시 비번 발급 후, 비밀번호 업데이트
         if(member != null) {
-            // 1. 임시 비밀번호 생성(UUID이용)
-            String tempPwd= UUID.randomUUID().toString().replace("-", "");//-를 제거
-            tempPwd = tempPwd.substring(0,10);  //tempPwd를 앞에서부터 10자리 잘라줌
+            // 1. 임시 비밀번호 생성
+            String tempPwd = Ut.genTempPassword();
+            String subject = "[MUTBooks] 회원님의 임시 비밀번호입니다.";
+            String text = """
+            %S 님의 임시 비밀번호는 %s 입니다.
+            """.formatted(username, tempPwd);
             // 2. 메일 전송
-            mailService.sendTempPassword(username, email, tempPwd);
+            emailSenderService.send(email, subject, text);
             // 3. 회원 비밀번호 -> 임시 비밀번호로 변경
             modifyPassword(member, tempPwd);
         }
@@ -181,5 +195,12 @@ public class MemberService {
     // 해당 토큰이 화이트 리스트에 있는지 검증
     public boolean verifyWithWhiteList(Member member, String token) {
         return member.getAccessToken().equals(token);
+    }
+
+    // 이메일 인증
+    @Transactional
+    public void verifyEmail(String email) {
+        Member member = memberRepository.findByEmail(email).orElse(null);
+        member.setEmailVerified(true);
     }
 }

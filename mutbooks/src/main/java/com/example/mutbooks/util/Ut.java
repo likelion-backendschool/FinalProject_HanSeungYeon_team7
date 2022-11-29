@@ -15,8 +15,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Ut {
+    private static final int TEMP_PASSWORD_LENGTH = 10;
+    private static final int EMAIL_AUTHKEY_LENGTH = 20;
+
     // jwt 관련
     private static ObjectMapper getObjectMapper() {
         return (ObjectMapper) AppConfig.getContext().getBean("objectMapper");
@@ -131,5 +135,21 @@ public class Ut {
         public static String format(LocalDateTime datetime) {
             return format("yyyy-MM-dd HH:mm:ss.SSSSSS", datetime);
         }
+    }
+
+    // 랜덤 문자열 생성
+    public static String genRandomUUID(int length) {
+        return UUID.randomUUID().toString()
+                .replace("-", "").substring(0, length);
+    }
+
+    // 임시 비밀번호 발급
+    public static String genTempPassword() {
+        return genRandomUUID(TEMP_PASSWORD_LENGTH);
+    }
+
+    // 이메일 인증키 발급
+    public static String genEmailAuthKey() {
+        return genRandomUUID(EMAIL_AUTHKEY_LENGTH);
     }
 }

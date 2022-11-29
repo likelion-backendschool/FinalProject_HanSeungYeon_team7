@@ -30,6 +30,10 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String email;
 
+    private Boolean emailVerified;  // 이메일 인증여부
+
+    private String authKey; // 이메일 인증키
+
     @Convert(converter = AuthLevelConverter.class)
     private AuthLevel authLevel;    // 권한레벨(3 = 일반, 7 = 관리자)
 

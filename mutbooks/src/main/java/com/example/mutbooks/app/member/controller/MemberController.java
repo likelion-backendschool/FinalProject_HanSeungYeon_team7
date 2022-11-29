@@ -1,14 +1,13 @@
 package com.example.mutbooks.app.member.controller;
 
-import com.example.mutbooks.app.security.dto.MemberContext;
-import com.example.mutbooks.app.mail.service.MailService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.form.JoinForm;
-import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
+import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.member.validator.PwdModifyFormValidator;
+import com.example.mutbooks.app.security.dto.MemberContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,7 +27,6 @@ import javax.validation.Valid;
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
-    private final MailService mailService;
     private final PwdModifyFormValidator pwdModifyFormValidator;
 
     // 회원가입 폼
@@ -56,9 +54,6 @@ public class MemberController {
         }
 
         Member member = memberService.join(joinForm);
-        // TODO: 테스트를 위해 잠시 주석 처리
-        // 가입 축하 이메일 전송
-//        mailService.sendJoinCongrats(member.getUsername(), member.getEmail());
 
         // 회원가입 완료 후, 자동 로그인 처리
         try {
@@ -66,7 +61,6 @@ public class MemberController {
         } catch (ServletException e) {
             throw new RuntimeException(e);
         }
-
         return "redirect:/";
     }
 
@@ -216,4 +210,11 @@ public class MemberController {
         // 출금 게좌 관리 페이지로 리다이렉트
         return "redirect:/member/manageWithdrawAccount";
     }
+
+    // 이메일 인증
+//    @GetMapping("/verifyEmail")
+//    public String verifyEmail(@RequestParam String email, Model model) {
+//        memberService.verifyEmail(email);
+//        return "redirect:/member/login";
+//    }
 }
