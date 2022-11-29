@@ -32,6 +32,7 @@ public class Member extends BaseEntity {
 
     private Boolean emailVerified;  // 이메일 인증여부
 
+    // TODO: 다른 테이블로 옮기기
     private String authKey; // 이메일 인증키
 
     @Convert(converter = AuthLevelConverter.class)

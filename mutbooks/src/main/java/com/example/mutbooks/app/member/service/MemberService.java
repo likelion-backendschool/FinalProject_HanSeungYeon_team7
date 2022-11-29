@@ -31,8 +31,8 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
     private final EmailSenderService emailSenderService;
+    private final PasswordEncoder passwordEncoder;
     private final CashService cashService;
     private final JwtProvider jwtProvider;
 
@@ -62,7 +62,7 @@ public class MemberService {
         String text = """
         %s 님의 MUTBooks 가입을 축하합니다.
         아래 '메일 인증' 버튼을 클릭하여 회원가입을 완료해주세요.
-        <a href='http://localhost:8010/member/verifyEmail?email=%s&key=%s' target='_blank'>메일 인증</a>
+        <a href='http://localhost:8010/emailVerification/verify?email=%s&authKey=%s' target='_blank'>메일 인증</a>
         """.formatted(member.getUsername(), member.getEmail(), authKey);
         emailSenderService.send(member.getEmail(), subject, text);
 
@@ -197,10 +197,16 @@ public class MemberService {
         return member.getAccessToken().equals(token);
     }
 
+    // TODO : 예외처리
     // 이메일 인증
     @Transactional
-    public void verifyEmail(String email) {
-        Member member = memberRepository.findByEmail(email).orElse(null);
+    public void verifyEmail(String email, String authKey) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원"));
+        if(!authKey.equals(member.getAuthKey())) {
+            throw new RuntimeException("유효하지 않은 인증키입니다.");
+        }
+        // 인증 완료 처리
         member.setEmailVerified(true);
     }
 }
