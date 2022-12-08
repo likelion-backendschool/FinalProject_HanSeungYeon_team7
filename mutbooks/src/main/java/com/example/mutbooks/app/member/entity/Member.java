@@ -33,7 +33,7 @@ public class Member extends BaseEntity {
     private Boolean emailVerified;  // 이메일 인증여부
 
     // TODO: 다른 테이블로 옮기기
-    private String authKey; // 이메일 인증키
+    private String token; // 이메일 인증키
 
     @Convert(converter = AuthLevelConverter.class)
     private AuthLevel authLevel;    // 권한레벨(3 = 일반, 7 = 관리자)

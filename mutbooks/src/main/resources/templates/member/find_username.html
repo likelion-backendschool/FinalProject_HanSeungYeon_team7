@@ -14,39 +14,46 @@
 
             <script>
                 let FindUsername__submitDone = false;
-
-                function FindUsername__submit(form) {
+                // ajax 호출
+                function sendEmailByFindUsername() {
                     if (FindUsername__submitDone) {
                         return;
                     }
-
-                    form.email.value = form.email.value.trim();
-
-                    if (form.email.value.length == 0) {
+                    const email = $("#email").val().trim();
+                    if (email.length == 0) {
                         warningModal("이메일을 입력해주세요.");
-                        form.email.focus();
-
+                        $("#email").focus();
                         return;
                     }
-
-                    form.submit();
+                    const usernameFindDto = {
+                        "email" : email
+                    };
+                    console.log(email);
+                    console.log(usernameFindDto);
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/v1/member/username/find",
+                        data: usernameFindDto,
+                        success: function(response){
+                            console.log(response);
+                            // 로그인 페이지로 리다이렉트
+                            window.location.href = 'http://localhost:8010/member/login';
+                        }
+                    })
                     FindUsername__submitDone = true;
                 }
             </script>
 
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">이메일</span>
+                </label>
+                <input autofocus type="text" id="email" name="email" placeholder="email" class="input input-bordered" maxlength="50">
+            </div>
 
-            <form th:action method="POST" class="flex flex-col gap-3" onsubmit="FindUsername__submit(this); return false;">
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">이메일</span>
-                    </label>
-                    <input autofocus type="text" name="email" placeholder="email" class="input input-bordered" maxlength="50">
-                </div>
-
-                <div class="grid grid-cols-1 mt-2 gap-2">
-                    <input class="btn btn-primary" type="submit" value="아이디 찾기">
-                </div>
-            </form>
+            <div class="grid grid-cols-1 mt-2 gap-2">
+                <button class="btn btn-primary" onclick="sendEmailByFindUsername();">이메일 인증</button>
+            </div>
         </div>
 
         </div>

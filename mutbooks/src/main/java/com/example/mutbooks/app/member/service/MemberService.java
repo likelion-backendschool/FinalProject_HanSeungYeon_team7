@@ -43,29 +43,28 @@ public class MemberService {
         if(joinForm.getUsername().equals("admin")) {
             authLevel = AuthLevel.ADMIN;
         }
-        String authKey = Ut.genEmailAuthKey();      // 이메일 인증키 생성
+        String token = Ut.genEmailToken();      // 이메일 인증키 생성
         // 기본 권한 = 일반
         Member member = Member.builder()
                 .username(joinForm.getUsername())
                 .password(passwordEncoder.encode(joinForm.getPassword()))
                 .email(joinForm.getEmail())
                 .emailVerified(false)
-                .authKey(authKey)
+                .token(token)
                 .nickname(joinForm.getNickname())
                 .authLevel(authLevel)
                 .build();
 
         memberRepository.save(member);
-        // TODO: 테스트를 위해 잠시 주석 처리
         // 가입 축하 이메일 전송
         String subject = "[MUTBooks] %s 회원님 환영합니다.".formatted(member.getUsername());
         String text = """
         %s 님의 MUTBooks 가입을 축하합니다.
         아래 '메일 인증' 버튼을 클릭하여 회원가입을 완료해주세요.
-        <a href='http://localhost:8010/emailVerification/verify?email=%s&authKey=%s' target='_blank'>메일 인증</a>
-        """.formatted(member.getUsername(), member.getEmail(), authKey);
-        emailSenderService.send(member.getEmail(), subject, text);
-
+        <a href='http://localhost:8010/email_verification/verify?email=%s&token=%s' target='_blank'>메일 인증</a>
+        """.formatted(member.getUsername(), member.getEmail(), token);
+        // TODO: 테스트를 위해 잠시 주석 처리
+//        emailSenderService.send(member.getEmail(), subject, text);
         return member;
     }
 
@@ -200,13 +199,32 @@ public class MemberService {
     // TODO : 예외처리
     // 이메일 인증
     @Transactional
-    public void verifyEmail(String email, String authKey) {
+    public Member verifyEmail(String email, String authKey) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 회원"));
-        if(!authKey.equals(member.getAuthKey())) {
+        if(!authKey.equals(member.getToken())) {
             throw new RuntimeException("유효하지 않은 인증키입니다.");
         }
         // 인증 완료 처리
         member.setEmailVerified(true);
+
+        return member;
+    }
+
+    // 아이디 찾기 인증 메일 전송
+    @Transactional
+    public void sendVerificationEmail(String email) {
+        Member member = findByEmail(email);
+
+        String token = Ut.genEmailToken();      // 이메일 인증키 생성
+        String subject = "[MUTBooks] 아이디 찾기를 위한 인증 메일입니다.".formatted(member.getUsername());
+        String text = """
+        안녕하세요. MUT Books 입니다.
+        이메일 인증을 위해 아래 '메일 인증' 버튼을 클릭해주세요.
+        http://localhost:8010/email_verification/verify/find_username?email=%s&token=%s
+        """.formatted(member.getEmail(), token);
+        emailSenderService.send(member.getEmail(), subject, text);
+        // 인증키 변경
+        member.setToken(token);
     }
 }

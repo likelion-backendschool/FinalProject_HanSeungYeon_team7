@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class Ut {
     private static final int TEMP_PASSWORD_LENGTH = 10;
-    private static final int EMAIL_AUTHKEY_LENGTH = 20;
+    private static final int EMAIL_TOKEN_LENGTH = 20;
 
     // jwt 관련
     private static ObjectMapper getObjectMapper() {
@@ -149,7 +149,7 @@ public class Ut {
     }
 
     // 이메일 인증키 발급
-    public static String genEmailAuthKey() {
-        return genRandomUUID(EMAIL_AUTHKEY_LENGTH);
+    public static String genEmailToken() {
+        return genRandomUUID(EMAIL_TOKEN_LENGTH);
     }
 }

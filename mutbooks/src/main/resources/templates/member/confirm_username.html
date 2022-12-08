@@ -14,17 +14,15 @@
 
             <div class="flex flex-col gap-3">
                 <div class="form-control">
-                    <span th:if="${member != null}" class="input input-bordered" style="display: flex; align-items: center"
-                          th:text="|해당 계정의 아이디는 ${member.username} 입니다.|"></span>
-                    <span th:if="${member == null}" class="input input-bordered" style="display: flex; align-items: center"
-                          th:text="|해당 이메일을 가진 회원은 존재하지않습니다.|"></span>
+                    <span th:if="${username != null}" class="input input-bordered" style="display: flex; align-items: center"
+                          th:text="|귀하의 아이디는 ${username} 입니다.|"></span>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 mt-2 gap-2">
-                <a href="/member/join" class="btn btn-primary">로그인</a>
+                <a href="/member/login" class="btn btn-primary">로그인</a>
             </div>
-
+xw
             <ul class="flex my-2" style="justify-content: center">
                 <li class="mx-2" style="color: #888888">
                     <a href="/member/findUsername" >아이디 찾기</a>

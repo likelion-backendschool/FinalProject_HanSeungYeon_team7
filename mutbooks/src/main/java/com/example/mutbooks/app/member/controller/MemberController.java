@@ -210,11 +210,4 @@ public class MemberController {
         // 출금 게좌 관리 페이지로 리다이렉트
         return "redirect:/member/manageWithdrawAccount";
     }
-
-    // 이메일 인증
-//    @GetMapping("/verifyEmail")
-//    public String verifyEmail(@RequestParam String email, Model model) {
-//        memberService.verifyEmail(email);
-//        return "redirect:/member/login";
-//    }
 }
