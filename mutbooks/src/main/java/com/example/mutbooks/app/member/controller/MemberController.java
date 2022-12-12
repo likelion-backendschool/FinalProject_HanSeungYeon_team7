@@ -148,17 +148,6 @@ public class MemberController {
         return "member/find_username";
     }
 
-    // 이메일로 아이디 찾기
-    @PreAuthorize("isAnonymous()")
-    @PostMapping("/findUsername")
-    public String findUsername(@Valid String email, Model model) {
-        Member member = memberService.findByEmail(email);
-
-        model.addAttribute("member", member);
-
-        return "member/confirm_username";
-    }
-
     // 비밀번호 찾기 폼
     @PreAuthorize("isAnonymous")
     @GetMapping("/findPassword")
@@ -166,16 +155,6 @@ public class MemberController {
         return "member/find_password";
     }
 
-    // 아이디 + 이메일로 임시 비밀번호 발급하기
-    @PreAuthorize("isAnonymous()")
-    @PostMapping("/findPassword")
-    public String findPassword(@Valid String username, String email, Model model) {
-        Member member = memberService.findByUsernameAndEmail(username, email);
-
-        model.addAttribute("member", member);
-
-        return "member/confirm_password";
-    }
 
     // 출금 계좌 관리
     @PreAuthorize("isAuthenticated()")

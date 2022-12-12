@@ -39,9 +39,9 @@ public class ApiSecurityConfig {
                 )
                 .authorizeRequests(
                         authorizeRequests -> authorizeRequests
-                                // 로그인 요청, 아이디 찾기 외 모든 요청은 로그인 필수
+                                // 로그인 요청, 아이디 찾기, 비밀번호 찾기 외 모든 요청은 로그인 필수
                                 .antMatchers("/api/*/member/login").permitAll()
-                                .antMatchers("/api/*/member/username/find").permitAll()
+                                .antMatchers("/api/*/member/*/find").permitAll()
                                 .anyRequest()
                                 .authenticated() // 최소자격 : 로그인
                 )

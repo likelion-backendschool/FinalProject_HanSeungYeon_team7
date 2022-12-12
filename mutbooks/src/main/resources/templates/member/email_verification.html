@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/layout.html}">
+
+<head>
+    <title>아이디 확인</title>
+</head>
+
+<body>
+<main layout:fragment="main">
+    <script th:inline="javascript">
+        function MemberFindUsername__click(form) {
+            form.authKey.value = form.authKey.value.trim();
+
+            if (form.authKey.value.length == 0) {
+                warningModal("인증 코드를 입력해주세요.");
+                form.authKey.focus();
+
+                return;
+            }
+
+            const authKey = form.email.value;
+            const email = [[${email}]];
+
+            $.ajax({
+                url: "/member/findUsername",
+                type: "POST",
+                data: {
+                    "email": email,
+                    "authKey": authKey
+                },
+                success: data => {
+                    $("#username").text(data.username);
+                }
+            });
+        }
+    </script>
+
+    <section class="section section-join flex-grow flex flex-col items-center justify-center">
+
+        <div class="max-w-md w-full px-2 pt-4">
+            <h1 class="font-bold text-lg">아이디 확인</h1>
+
+            <div class="flex flex-col gap-3">
+                <div class="form-control">
+                    <div>[[${email}]] 로 인증 메일 발송이 완료되었습니다.</div>
+                </div>
+            </div>
+
+            <form th:action method="POST" class="flex flex-col gap-3" onsubmit="FindUsername__submit(this); return false;">
+                <div class="form-control">
+                    <input autofocus type="text" name="authKey" placeholder="인증코드" class="input input-bordered" maxlength="50">
+                </div>
+
+                <div class="grid grid-cols-1 mt-2 gap-2">
+                    <input class="btn btn-primary" type="submit" value="확인">
+                </div>
+            </form>
+        </div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

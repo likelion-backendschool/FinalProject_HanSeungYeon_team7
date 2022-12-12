@@ -2,6 +2,7 @@ package com.example.mutbooks.app.member.controller;
 
 import com.example.mutbooks.app.base.dto.RsData;
 import com.example.mutbooks.app.member.dto.request.LoginDto;
+import com.example.mutbooks.app.member.dto.request.PasswordFindDto;
 import com.example.mutbooks.app.member.dto.request.UsernameFindDto;
 import com.example.mutbooks.app.member.dto.response.MemberDto;
 import com.example.mutbooks.app.member.entity.Member;
@@ -10,12 +11,13 @@ import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.util.Ut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/member")
@@ -73,12 +75,20 @@ public class ApiMemberController {
 
     // 아이디 찾기 인증 메일 전송
     @PostMapping("/username/find")
-    public ResponseEntity<?> verifyEmail(UsernameFindDto usernameFindDto) {
+    public ResponseEntity<?> verifyEmail(@Valid UsernameFindDto usernameFindDto) {
         String email = usernameFindDto.getEmail();
         memberService.sendVerificationEmail(email);
 
-        HttpHeaders headers = new HttpHeaders();
+        return new ResponseEntity<>(email, HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(email, headers, HttpStatus.OK);
+    // 아이디 + 이메일로 비밀번호 찾기 임시 비밀번호 발급 메일 전송
+    @PostMapping("/password/find")
+    public ResponseEntity<?> findPassword(@Valid PasswordFindDto passwordFindDto) {
+        String username = passwordFindDto.getUsername();
+        String email = passwordFindDto.getEmail();
+        memberService.findByUsernameAndEmail(username, email);
+
+        return new ResponseEntity<>(email, HttpStatus.OK);
     }
 }
