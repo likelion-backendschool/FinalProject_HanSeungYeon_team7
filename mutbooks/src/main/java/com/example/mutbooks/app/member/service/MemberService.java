@@ -2,8 +2,8 @@ package com.example.mutbooks.app.member.service;
 
 import com.example.mutbooks.app.cash.entity.CashLog;
 import com.example.mutbooks.app.cash.service.CashService;
+import com.example.mutbooks.app.global.mapper.MemberMapper;
 import com.example.mutbooks.app.mail.service.EmailSenderService;
-import com.example.mutbooks.app.member.entity.AuthLevel;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.entity.MemberExtra;
 import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
@@ -38,22 +38,12 @@ public class MemberService {
 
     @Transactional
     public Member join(JoinForm joinForm) {
-        AuthLevel authLevel = AuthLevel.USER;      // 디폴트 USER 권한
-        // username 이 admin 인 회원을 관리자 회원으로 설정
-        if(joinForm.getUsername().equals("admin")) {
-            authLevel = AuthLevel.ADMIN;
-        }
-        String token = Ut.genEmailToken();      // 이메일 인증키 생성
-        // 기본 권한 = 일반
-        Member member = Member.builder()
-                .username(joinForm.getUsername())
-                .password(passwordEncoder.encode(joinForm.getPassword()))
-                .email(joinForm.getEmail())
-                .emailVerified(false)
-                .token(token)
-                .nickname(joinForm.getNickname())
-                .authLevel(authLevel)
-                .build();
+        String token = Ut.genEmailToken();// 이메일 인증키 생성
+
+        Member member = MemberMapper.INSTANCE.JoinFormToEntity(joinForm);
+        member.updatePassword(passwordEncoder.encode(member.getPassword()));
+        member.updateToken(token);
+        member.grantAuthLevel();
 
         memberRepository.save(member);
         // 가입 축하 이메일 전송
@@ -125,7 +115,7 @@ public class MemberService {
     @Transactional
     public void modifyPassword(Member member, String password) {
         String newPassword = passwordEncoder.encode(password);
-        member.modifyPassword(newPassword);
+        member.updatePassword(newPassword);
     }
 
     // 비밀번호 수정
@@ -137,7 +127,7 @@ public class MemberService {
         }
 
         String newPassword = passwordEncoder.encode(pwdModifyForm.getNewPassword());
-        member.modifyPassword(newPassword);
+        member.updatePassword(newPassword);
     }
 
     // 회원의 남은 예치금 잔액 조회

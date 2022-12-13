@@ -1,6 +1,7 @@
 package com.example.mutbooks.app.member.form;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class JoinForm {
     @Size(min = 5, max = 20, message = "id는 5 ~ 20자리로 입력해주세요.")

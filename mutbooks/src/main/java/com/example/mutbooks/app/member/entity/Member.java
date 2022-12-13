@@ -38,7 +38,7 @@ public class Member extends BaseEntity {
     @Convert(converter = AuthLevelConverter.class)
     private AuthLevel authLevel;    // 권한레벨(3 = 일반, 7 = 관리자)
 
-    private int restCash;      // 예치금
+    private Integer restCash;      // 예치금
 
     // accessToken
     @Column(columnDefinition = "TEXT")
@@ -49,7 +49,7 @@ public class Member extends BaseEntity {
     private MemberExtra memberExtra;
 
     // 비밀번호 수정
-    public void modifyPassword(String newPassword) {
+    public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
 
@@ -57,6 +57,21 @@ public class Member extends BaseEntity {
     public void modifyInfo(String email, String nickname) {
         this.email = email;
         this.nickname = nickname;
+    }
+
+    // 토큰 수정
+    public void updateToken(String token) {
+        this.token = token;
+    }
+
+    // username 값에 따라 권한 부여
+    public void grantAuthLevel() {
+        AuthLevel authLevel = AuthLevel.USER;   // 디폴트 일반 권한
+        // username 이 admin 인 회원을 관리자 회원으로 설정
+        if(username.equals("admin")) {
+           authLevel = AuthLevel.ADMIN;
+        }
+        this.authLevel = authLevel;
     }
 
     // 추가정보 수정
