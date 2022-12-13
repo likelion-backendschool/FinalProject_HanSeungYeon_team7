@@ -6,7 +6,9 @@ import com.example.mutbooks.app.global.mapper.MemberMapper;
 import com.example.mutbooks.app.mail.service.EmailSenderService;
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.entity.MemberExtra;
+import com.example.mutbooks.app.member.exception.EmailDuplicationException;
 import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
+import com.example.mutbooks.app.member.exception.UsernameDuplicationException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
@@ -38,6 +40,9 @@ public class MemberService {
 
     @Transactional
     public Member join(JoinForm joinForm) {
+        checkUsernameDuplication(joinForm.getUsername());
+        checkEmailDuplication(joinForm.getEmail());
+
         String token = Ut.genEmailToken();// 이메일 인증키 생성
 
         Member member = MemberMapper.INSTANCE.JoinFormToEntity(joinForm);
@@ -56,6 +61,22 @@ public class MemberService {
         // TODO: 테스트를 위해 잠시 주석 처리
 //        emailSenderService.send(member.getEmail(), subject, text);
         return member;
+    }
+
+    // 아이디 중복 검사
+    public void checkUsernameDuplication(String username) {
+        boolean isDuplicated = memberRepository.existsByUsername(username);
+        if(isDuplicated) {
+            throw new UsernameDuplicationException();
+        }
+    }
+
+    // 이메일 중복 검사
+    public void checkEmailDuplication(String email) {
+        boolean isDuplicated = memberRepository.existsByEmail(email);
+        if(isDuplicated) {
+            throw new EmailDuplicationException();
+        }
     }
 
     // 회원기본 정보 수정

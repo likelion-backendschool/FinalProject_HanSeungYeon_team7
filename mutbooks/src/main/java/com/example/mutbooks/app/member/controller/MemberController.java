@@ -1,6 +1,8 @@
 package com.example.mutbooks.app.member.controller;
 
 import com.example.mutbooks.app.member.entity.Member;
+import com.example.mutbooks.app.member.exception.EmailDuplicationException;
+import com.example.mutbooks.app.member.exception.UsernameDuplicationException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PwdModifyForm;
@@ -40,21 +42,15 @@ public class MemberController {
     @PreAuthorize("isAnonymous()")
     @PostMapping("/join")
     public String join(@Valid JoinForm joinForm, BindingResult bindingResult, HttpServletRequest request) throws ServletException {
-        // 아이디 중복 검사
-        Member oldMember = memberService.findByUsername(joinForm.getUsername());
-        if (oldMember != null) {
+        try {
+            memberService.join(joinForm);
+        } catch(UsernameDuplicationException e) {
             bindingResult.rejectValue("username", "duplicated username", "중복된 아이디 입니다.");
             return "member/join";
-        }
-        // 이메일 중복 검사
-        oldMember = memberService.findByEmail(joinForm.getEmail());
-        if(oldMember != null) {
+        } catch(EmailDuplicationException e) {
             bindingResult.rejectValue("email", "duplicated email", "중복된 이메일 입니다.");
             return "member/join";
         }
-
-        Member member = memberService.join(joinForm);
-
         // 회원가입 완료 후, 자동 로그인 처리
         try {
             request.login(joinForm.getUsername(), joinForm.getPassword());
