@@ -2,6 +2,7 @@ package com.example.mutbooks.app.member.controller;
 
 import com.example.mutbooks.app.member.entity.Member;
 import com.example.mutbooks.app.member.exception.EmailDuplicationException;
+import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
 import com.example.mutbooks.app.member.exception.UsernameDuplicationException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
@@ -106,20 +107,24 @@ public class MemberController {
                                 HttpServletRequest request) {
         // 유효성 검증 추가
         pwdModifyFormValidator.validate(passwordUpdateForm, bindingResult);
-
         if(bindingResult.hasErrors()) {
             System.out.println("bindingResult = " + bindingResult.getErrorCount());
             return "member/modify_password";
         }
-        memberService.modifyPassword(memberContext.getUsername(), passwordUpdateForm);
-
-        // 강제 로그아웃 처리 후 로그인 페이지로 리다이렉트
         try {
-            request.logout();
-        } catch (ServletException e) {
-            throw new RuntimeException(e);
+            memberService.modifyPassword(memberContext.getUsername(), passwordUpdateForm);
+        } catch(PasswordNotMatchedException e) {
+            bindingResult.rejectValue("password", "not matched password", "기존 비밀번호가 올바르지 않습니다.");
+            return "member/modify_password";
         }
-        return "redirect:/member/login";
+        // 강제 로그아웃 처리 후 로그인 페이지로 리다이렉트
+//        try {
+//            request.logout();
+//        } catch (ServletException e) {
+//            throw new RuntimeException(e);
+//        }
+        // 회원프로필 페이지로 리다이렉트
+        return "redirect:/member/profile";
     }
 
     // 회원정보 조회
