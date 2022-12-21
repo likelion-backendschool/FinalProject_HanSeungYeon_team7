@@ -1,12 +1,14 @@
 package com.example.mutbooks.app.member.form;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class ModifyForm {
     private String nickname;

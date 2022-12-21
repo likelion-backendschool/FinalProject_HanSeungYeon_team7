@@ -5,7 +5,7 @@ import com.example.mutbooks.app.member.exception.EmailDuplicationException;
 import com.example.mutbooks.app.member.exception.UsernameDuplicationException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
-import com.example.mutbooks.app.member.form.PwdModifyForm;
+import com.example.mutbooks.app.member.form.PasswordUpdateForm;
 import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.member.validator.PwdModifyFormValidator;
@@ -86,9 +86,7 @@ public class MemberController {
         if(bindingResult.hasErrors()) {
             return "member/modify";
         }
-
-        Member member = memberService.findByUsername(memberContext.getUsername());
-        memberService.modifyProfile(member, modifyForm);
+        memberService.modifyProfile(memberContext.getUsername(), modifyForm);
 
         return "redirect:/member/profile";
     }
@@ -96,7 +94,7 @@ public class MemberController {
     // 비밀번호 수정폼
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modifyPassword")
-    public String modifyPassword(PwdModifyForm pwdModifyForm) {
+    public String modifyPassword(PasswordUpdateForm passwordUpdateForm) {
         return "member/modify_password";
     }
 
@@ -104,18 +102,16 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modifyPassword")
     public String modifyProfile(@AuthenticationPrincipal MemberContext memberContext,
-                                @Valid PwdModifyForm pwdModifyForm, BindingResult bindingResult,
+                                @Valid PasswordUpdateForm passwordUpdateForm, BindingResult bindingResult,
                                 HttpServletRequest request) {
         // 유효성 검증 추가
-        pwdModifyFormValidator.validate(pwdModifyForm, bindingResult);
+        pwdModifyFormValidator.validate(passwordUpdateForm, bindingResult);
 
         if(bindingResult.hasErrors()) {
             System.out.println("bindingResult = " + bindingResult.getErrorCount());
             return "member/modify_password";
         }
-
-        Member member = memberService.findByUsername(memberContext.getUsername());
-        memberService.modifyPassword(member, pwdModifyForm);
+        memberService.modifyPassword(memberContext.getUsername(), passwordUpdateForm);
 
         // 강제 로그아웃 처리 후 로그인 페이지로 리다이렉트
         try {

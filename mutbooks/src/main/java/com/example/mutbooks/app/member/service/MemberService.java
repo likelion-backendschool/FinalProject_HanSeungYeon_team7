@@ -11,7 +11,7 @@ import com.example.mutbooks.app.member.exception.PasswordNotMatchedException;
 import com.example.mutbooks.app.member.exception.UsernameDuplicationException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
-import com.example.mutbooks.app.member.form.PwdModifyForm;
+import com.example.mutbooks.app.member.form.PasswordUpdateForm;
 import com.example.mutbooks.app.member.form.WithdrawAccountForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import com.example.mutbooks.app.security.dto.MemberContext;
@@ -81,10 +81,13 @@ public class MemberService {
 
     // 회원기본 정보 수정
     @Transactional
-    public void modifyProfile(Member member, ModifyForm modifyForm) {
+    public void modifyProfile(String username, ModifyForm modifyForm) {
+        // TODO : Not Found Exception 처리
+        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException());
         // TODO : 작가->일반 회원 될 수 있는지 고민(글 작성자 이름 표시 문제)
+        // TODO : 이메일 변경할 경우 이메일 인증여부
         member.modifyInfo(modifyForm.getEmail(), modifyForm.getNickname().trim());
-
+        // 세션값 강제 수정
         forceAuthentication(member);
     }
 
@@ -141,13 +144,14 @@ public class MemberService {
 
     // 비밀번호 수정
     @Transactional
-    public void modifyPassword(Member member, PwdModifyForm pwdModifyForm) {
+    public void modifyPassword(String username, PasswordUpdateForm passwordUpdateForm) {
+        // TODO : Not Found Exception 처리
+        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException());
         // 기존 비밀번호가 맞는지 검증 후 수정
-        if(!passwordEncoder.matches(pwdModifyForm.getPassword(), member.getPassword())) {
+        if(!passwordEncoder.matches(passwordUpdateForm.getPassword(), member.getPassword())) {
             throw new PasswordNotMatchedException("기존 비밀번호와 일치하지 않습니다.");
         }
-
-        String newPassword = passwordEncoder.encode(pwdModifyForm.getNewPassword());
+        String newPassword = passwordEncoder.encode(passwordUpdateForm.getNewPassword());
         member.updatePassword(newPassword);
     }
 
