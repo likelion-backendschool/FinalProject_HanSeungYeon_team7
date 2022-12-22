@@ -180,9 +180,7 @@ public class MemberController {
         if(bindingResult.hasErrors()) {
             return "member/register_withdraw_account";
         }
-        Member member = memberService.findByUsername(memberContext.getUsername());
-        memberService.createBankInfo(member, withDrawAccountForm);
-
+        memberService.createBankInfo(memberContext.getUsername(), withDrawAccountForm);
         // 출금 게좌 관리 페이지로 리다이렉트
         return "redirect:/member/manageWithdrawAccount";
     }

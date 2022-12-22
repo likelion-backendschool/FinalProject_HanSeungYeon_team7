@@ -1,5 +1,6 @@
 package com.example.mutbooks.app.member.form;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
+@Builder
 public class WithdrawAccountForm {
     @NotBlank(message = "은행을 선택해주세요.")
     private String bankName;        // 은행명

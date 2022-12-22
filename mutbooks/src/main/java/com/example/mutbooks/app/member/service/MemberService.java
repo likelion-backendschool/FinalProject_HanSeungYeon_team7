@@ -179,7 +179,9 @@ public class MemberService {
 
     // 계좌 등록
     @Transactional
-    public void createBankInfo(Member member, WithdrawAccountForm withDrawAccountForm) {
+    public void createBankInfo(String username, WithdrawAccountForm withDrawAccountForm) {
+        // TODO : Not Found Exception 처리
+        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException());
         MemberExtra memberExtra = MemberExtra.builder()
                 .member(member)
                 .bankName(withDrawAccountForm.getBankName())
