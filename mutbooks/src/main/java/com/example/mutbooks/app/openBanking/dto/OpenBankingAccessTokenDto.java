@@ -1,5 +1,7 @@
 package com.example.mutbooks.app.openBanking.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -7,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 @SuperBuilder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class OpenBankingAccessTokenDto {
     private String accessToken;     // 오픈뱅킹에서 발행된 Access Token
     private String tokenType;       // Access Token 유형(고정값: Bearer)
