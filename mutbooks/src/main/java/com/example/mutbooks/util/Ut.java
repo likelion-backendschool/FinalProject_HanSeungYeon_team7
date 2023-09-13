@@ -140,7 +140,7 @@ public class Ut {
     // 랜덤 문자열 생성
     public static String genRandomUUID(int length) {
         return UUID.randomUUID().toString()
-                .replace("-", "").substring(0, length);
+                .toUpperCase().replace("-", "").substring(0, length);
     }
 
     // 임시 비밀번호 발급

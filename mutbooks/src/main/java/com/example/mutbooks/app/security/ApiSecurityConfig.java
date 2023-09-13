@@ -42,6 +42,7 @@ public class ApiSecurityConfig {
                                 // 로그인 요청, 아이디 찾기, 비밀번호 찾기 외 모든 요청은 로그인 필수
                                 .antMatchers("/api/*/member/login").permitAll()
                                 .antMatchers("/api/*/member/*/find").permitAll()
+                                .antMatchers("/api/v1/open-banking/token").permitAll()
                                 .anyRequest()
                                 .authenticated() // 최소자격 : 로그인
                 )

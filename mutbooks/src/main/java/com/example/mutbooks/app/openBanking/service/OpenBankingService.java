@@ -1,8 +1,10 @@
 package com.example.mutbooks.app.openBanking.service;
 
+import com.example.mutbooks.app.member.form.AccountRegisterForm;
 import com.example.mutbooks.app.openBanking.dto.OpenBankingAccessTokenDto;
 import com.example.mutbooks.app.openBanking.entity.OpenBankingAccessToken;
 import com.example.mutbooks.app.openBanking.repository.OpenBankingRepository;
+import com.example.mutbooks.util.Ut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,21 +16,27 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class OpenBankingService {
     private final RestTemplate restTemplate;
     private final OpenBankingRepository openBankingRepository;
 
-    @Value("${openapi.openBanking.client_id}")
+    @Value("${openapi.open-banking.client-id}")
     private String clientId;
 
-    @Value("${openapi.openBanking.client_secret}")
+    @Value("${openapi.open-banking.client-secret}")
     private String clientSecret;
 
+    @Value("${openapi.open-banking.agent-code}")
+    private String agentCode;
+
+    // 토큰 발급
     @Transactional
     public OpenBankingAccessTokenDto genAccessToken() {
         // 만료되지 않은 AccessToken 이 있는지 검사
@@ -63,5 +71,32 @@ public class OpenBankingService {
             }
         }
         return newAccessTokenDto;
+    }
+
+    // 계좌실명조회
+    public void inquiryAccountRealName(AccountRegisterForm accountRegisterForm) {
+        String url = "https://testapi.openbanking.or.kr/v2.0/inquiry/real_name";
+
+        HttpHeaders headers = new HttpHeaders();
+        String accessToken = genAccessToken().getAccessToken();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        // 이용기관코드(10자리) + 생성주체구분코드(“U”) + 이용기관 부여번호(9자리)
+        String bankTranId = agentCode + "U" + Ut.genRandomUUID(9);
+        String tranDtime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmss"));
+        params.add("bank_tran_id", bankTranId);
+        params.add("bank_code_id", accountRegisterForm.getBankAccountNo());
+        params.add("account_num", accountRegisterForm.getBankAccountNo());
+        params.add("account_holder_info_type", " ");
+        params.add("account_holder_info", accountRegisterForm.getAccountHolderBirth());
+        params.add("tran_dtime", tranDtime);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        ResponseEntity<OpenBankingAccessTokenDto> responseEntity = restTemplate.postForEntity(
+                url,
+                request,
+                OpenBankingAccessTokenDto.class);
     }
 }

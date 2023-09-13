@@ -12,7 +12,7 @@ import com.example.mutbooks.app.member.exception.UsernameDuplicationException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PasswordUpdateForm;
-import com.example.mutbooks.app.member.form.WithdrawAccountForm;
+import com.example.mutbooks.app.member.form.AccountRegisterForm;
 import com.example.mutbooks.app.member.repository.MemberRepository;
 import com.example.mutbooks.app.security.dto.MemberContext;
 import com.example.mutbooks.app.security.jwt.JwtProvider;
@@ -179,13 +179,13 @@ public class MemberService {
 
     // 계좌 등록
     @Transactional
-    public void createBankInfo(String username, WithdrawAccountForm withDrawAccountForm) {
+    public void createBankInfo(String username, AccountRegisterForm withDrawAccountRegisterForm) {
         // TODO : Not Found Exception 처리
         Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException());
         MemberExtra memberExtra = MemberExtra.builder()
                 .member(member)
-                .bankName(withDrawAccountForm.getBankName())
-                .bankAccountNo(withDrawAccountForm.getBankAccountNo())
+                .bankName(withDrawAccountRegisterForm.getBankName())
+                .bankAccountNo(withDrawAccountRegisterForm.getBankAccountNo())
                 .build();
         member.modifyMemberExtra(memberExtra);
         // TODO: 계좌 정보는 memberContext 값에 담겨있지 않으므로 세션값 강제 수정할 필요X

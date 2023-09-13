@@ -7,7 +7,7 @@ import com.example.mutbooks.app.member.exception.UsernameDuplicationException;
 import com.example.mutbooks.app.member.form.JoinForm;
 import com.example.mutbooks.app.member.form.ModifyForm;
 import com.example.mutbooks.app.member.form.PasswordUpdateForm;
-import com.example.mutbooks.app.member.form.WithdrawAccountForm;
+import com.example.mutbooks.app.member.form.AccountRegisterForm;
 import com.example.mutbooks.app.member.service.MemberService;
 import com.example.mutbooks.app.member.validator.PwdModifyFormValidator;
 import com.example.mutbooks.app.security.dto.MemberContext;
@@ -166,7 +166,7 @@ public class MemberController {
     // 출금 계좌 등록폼
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/registerWithdrawAccount")
-    public String showRegisterWithdrawAccount(WithdrawAccountForm withDrawAccountForm) {
+    public String showRegisterWithdrawAccount(AccountRegisterForm withDrawAccountRegisterForm) {
         return "member/register_withdraw_account";
     }
 
@@ -175,12 +175,12 @@ public class MemberController {
     @PostMapping("/registerWithdrawAccount")
     public String registerWithdrawAccount(
             @AuthenticationPrincipal MemberContext memberContext,
-            @Valid WithdrawAccountForm withDrawAccountForm, BindingResult bindingResult
+            @Valid AccountRegisterForm withDrawAccountRegisterForm, BindingResult bindingResult
     ) {
         if(bindingResult.hasErrors()) {
             return "member/register_withdraw_account";
         }
-        memberService.createBankInfo(memberContext.getUsername(), withDrawAccountForm);
+        memberService.createBankInfo(memberContext.getUsername(), withDrawAccountRegisterForm);
         // 출금 게좌 관리 페이지로 리다이렉트
         return "redirect:/member/manageWithdrawAccount";
     }

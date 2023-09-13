@@ -44,16 +44,16 @@
             </script>
 
             <form th:action method="POST" class="flex flex-col gap-3"
-                  onsubmit="RegisterWithdrawAccount__submit(this); return false;" th:object="${withdrawAccountForm}" >
+                  onsubmit="RegisterWithdrawAccount__submit(this); return false;" th:object="${accountRegisterForm}" >
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text">은행</span>
                     </label>
                     <select class="select select-bordered" name="bankName">
                         <option selected disabled hidden>은행 선택</option>
-                        <option th:value="신한" th:text="신한"></option>
-                        <option th:value="국민" th:text="국민"></option>
-                        <option th:value="농협" th:text="농협"></option>
+                        <option th:value="002" th:text="KDB산업은행"></option>
+                        <option th:value="003" th:text="IBK기업은행"></option>
+                        <option th:value="004" th:text="KB국민은행"></option>
                     </select>
                 </div>
                 <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('bankName')}" >
@@ -71,6 +71,18 @@
                 <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('bankAccountNo')}" >
                     <span>*</span>
                     <span th:errors="*{bankAccountNo}"></span>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">예금주 성함</span>
+                    </label>
+                    <input type="text" name="accountHolderName" placeholder="예금주 성함" th:value="${withdrawAccountForm.bankAccountNo}"
+                           class="input input-bordered">
+                </div>
+                <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('accountHolderName')}" >
+                    <span>*</span>
+                    <span th:errors="*{accountHolderName}"></span>
                 </div>
 
                 <div class="grid grid-cols-1 mt-2 gap-2">
