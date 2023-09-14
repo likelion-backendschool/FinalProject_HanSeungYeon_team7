@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mariadb://${db.host}:3306/mutbooks_prod?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
+    username: ${db.user}
+    password: ${db.password}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
