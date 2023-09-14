@@ -23,7 +23,7 @@ public class AdmRebateController {
     @PreAuthorize("isAuthenticated() and hasAuthority('ADMIN')")
     @GetMapping("/makeData")
     public String showMakeData() {
-        return "/adm/rebate/makeData";
+        return "adm/rebate/makeData";
     }
 
     // 정산 데이터 생성
@@ -31,7 +31,7 @@ public class AdmRebateController {
     @PostMapping("/makeData")
     public String makeData(RebateDataForm rebateDataForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "/adm/rebate/makeData";
+            return "adm/rebate/makeData";
         }
 
         int year = rebateDataForm.getYear();
@@ -61,7 +61,7 @@ public class AdmRebateController {
         }
         model.addAttribute("items", items);
 
-        return "/adm/rebate/rebateOrderItemList";
+        return "adm/rebate/rebateOrderItemList";
     }
 
     // 건별 정산

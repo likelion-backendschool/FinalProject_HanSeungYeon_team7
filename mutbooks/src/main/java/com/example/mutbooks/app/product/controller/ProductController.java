@@ -38,7 +38,7 @@ public class ProductController {
         List<PostKeywordDto> postKeywords = postKeywordService.findByMemberId(memberContext.getId());
         model.addAttribute("postKeywords", postKeywords);
 
-        return "/product/create";
+        return "product/create";
     }
 
     // 도서 등록
@@ -47,7 +47,7 @@ public class ProductController {
     public String create(@AuthenticationPrincipal MemberContext memberContext,
                          @Valid ProductForm productForm, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
-            return "/product/create";
+            return "product/create";
         }
 
         Member author = memberContext.getMember();
@@ -88,7 +88,7 @@ public class ProductController {
 
         model.addAttribute("product", product);
 
-        return "/product/modify";
+        return "product/modify";
     }
 
     // 도서 수정
