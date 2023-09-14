@@ -1,103 +1,23 @@
 # MUT Books
-
-  
-
-## 프로젝트 소개
-
 - Mut Books 는 eBook 마켓과 eBook리더로 이루어진 서비스입니다.
 
-  
+<h3 align="center"><a href="https://mutbooks.store/"> 🔗 Mutbooks 바로가기</a></h3>
 
-## 🕰개발 기간
+## 📍Stack
+|  | Stack |
+|--|--|
+| BackEnd | <img src="https://img.shields.io/badge/java 17-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/spring boot 2.7.4-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white"> <img src="https://img.shields.io/badge/Spring Data JPA-6DB33F?style=for-the-badge&logo=&logoColor=white"> <img src="https://img.shields.io/badge/QueryDsl-008DE4?style=for-the-badge&logoColor=white">|
+|Build Tool|<img src="https://img.shields.io/badge/gradle 7.5-02303A?style=for-the-badge&logo=gradle&logoColor=white">|
+|Database|<img src="https://img.shields.io/badge/mariadb-003545?style=for-the-badge&logo=mariadb&logoColor=white">|
+|Infra|<img src="https://img.shields.io/badge/aws ec2-FF9900?style=for-the-badge&logo=Amazon ec2&logoColor=white"> <img src="https://img.shields.io/badge/aws rds-527FFF?style=for-the-badge&logo=Amazon RDS&logoColor=white"> <img src="https://img.shields.io/badge/aws route 53-8C4FFF?style=for-the-badge&logo=Amazon Route53&logoColor=white"> <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"> <img src="https://img.shields.io/badge/nginx proxy manager-F15833?style=for-the-badge&logo=nginx proxy manager&logoColor=white">|
+|FrontEnd|<img src="https://img.shields.io/badge/thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white"> <img  src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white"> <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"> <img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white"> <img src="https://img.shields.io/badge/bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white"> <img src="https://img.shields.io/badge/fontawesome-339AF0?style=for-the-badge&logo=fontawesome&logoColor=white">|
+|Etc|<img src="https://img.shields.io/badge/intellij idea-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|  
 
-- 22.10.17 ~ 22.11.11(4주) : 1차 프로젝트 개발
-
-- 22.11.14 ~ 22.12.16(5주) : 1차 프로젝트 리팩토링 및 2차 프로젝트 개발(진행중)
-
-  
-
-## 🛠Stack
-
-<div align=center>
-
-<img src="https://img.shields.io/badge/java 17-007396?style=for-the-badge&logo=java&logoColor=white">
-
-<img src="https://img.shields.io/badge/gradle 7.5-02303A?style=for-the-badge&logo=gradle&logoColor=white">
-
-<img src="https://img.shields.io/badge/springboot 2.7.4-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
-
-<img src="https://img.shields.io/badge/intellij idea-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white">
-
-<img src="https://img.shields.io/badge/mariaDB-003545?style=for-the-badge&logo=mariaDB 10.8.3&logoColor=white">
-
-<img src="https://img.shields.io/badge/thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white">
-
-<img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
-
-<img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white">
-
-<img src="https://img.shields.io/badge/bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white">
-
-<img src="https://img.shields.io/badge/fontawesome-339AF0?style=for-the-badge&logo=fontawesome&logoColor=white">
-
-<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
-
-<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
-
-</div>
-
-  
-
-## ⚙️개발 환경
-
-- Language: Java 17(JDK 17.0.3)
-
-- Build: Gradle
-
-- IDE: Intellij
-
-- Framework: SrpingBoot 2.7.4
-
-- Database: MariaDB
-
-- ORM: JPA
-
-  
-
-## Git Convention
-
-### Branch
-|이름             |설명                          |
-|----------------|-------------------------------|
-|`main`    |배포용 메인 브랜치           |
-|`devbranch`    |배포 전 개발 브랜치           |
-
-### Commit
-`#이슈번호 - Type : 내용` 형태로 커밋 메시지 작성
-|Type             |설명                          |
-|----------------|-------------------------------|
-|`Feat`      |기능개발           |
-|`Fix`       |버그수정             |
-|`Docs`      |문서수정             |
-|`Style`     |스타일수정 (들여쓰기, 세미콜론 등)  |
-|`Refactor`     |리팩토링  |
-|`Test`     |테스트 코드  |
-|`Chore`     |빌드, 패키지매니저 수정 (gitignore 등)  |
-
-
-  
-
-  
-
-## ERD 설계
+## 📍ERD
 
 <img src="https://user-images.githubusercontent.com/48237976/200752261-5dd5f21a-05fb-4d71-85a4-657e81b64aca.png">
-  
 
-## 🔍Preview
-
-
-## 🛠Features
+## 📍Features
 ### 회원
 -   회원가입
     -   가입 완료시 축하메일 발송
