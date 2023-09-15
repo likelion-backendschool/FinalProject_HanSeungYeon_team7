@@ -179,13 +179,13 @@ public class MemberService {
 
     // 계좌 등록
     @Transactional
-    public void createBankInfo(String username, AccountRegisterForm withDrawAccountRegisterForm) {
+    public void createBankInfo(String username, AccountRegisterForm accountRegisterForm) {
         // TODO : Not Found Exception 처리
         Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException());
         MemberExtra memberExtra = MemberExtra.builder()
                 .member(member)
-                .bankName(withDrawAccountRegisterForm.getBankName())
-                .bankAccountNo(withDrawAccountRegisterForm.getBankAccountNo())
+                .bankName(accountRegisterForm.getBankName())
+                .bankAccountNo(accountRegisterForm.getBankAccountNo())
                 .build();
         member.modifyMemberExtra(memberExtra);
         // TODO: 계좌 정보는 memberContext 값에 담겨있지 않으므로 세션값 강제 수정할 필요X

@@ -65,7 +65,7 @@
                     <label class="label">
                         <span class="label-text">계좌번호</span>
                     </label>
-                    <input type="text" name="bankAccountNo" placeholder="계좌번호" th:value="${withdrawAccountForm.bankAccountNo}"
+                    <input type="text" name="bankAccountNo" placeholder="계좌번호" th:value="${accountRegisterForm.bankAccountNo}"
                            class="input input-bordered">
                 </div>
                 <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('bankAccountNo')}" >
@@ -77,12 +77,24 @@
                     <label class="label">
                         <span class="label-text">예금주 성함</span>
                     </label>
-                    <input type="text" name="accountHolderName" placeholder="예금주 성함" th:value="${withdrawAccountForm.bankAccountNo}"
+                    <input type="text" name="accountHolderName" placeholder="예금주 성함" th:value="${accountRegisterForm.accountHolderName}"
                            class="input input-bordered">
                 </div>
                 <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('accountHolderName')}" >
                     <span>*</span>
                     <span th:errors="*{accountHolderName}"></span>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">예금주 생년월일</span>
+                    </label>
+                    <input type="text" name="accountHolderBirth" placeholder="예금주 생년월일" th:value="${accountRegisterForm.accountHolderBirth}"
+                           class="input input-bordered">
+                </div>
+                <div class="text-red-600 mt-1" th:if="${#fields.hasErrors('accountHolderBirth')}" >
+                    <span>*</span>
+                    <span th:errors="*{accountHolderBirth}"></span>
                 </div>
 
                 <div class="grid grid-cols-1 mt-2 gap-2">

@@ -166,7 +166,7 @@ public class MemberController {
     // 출금 계좌 등록폼
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/registerWithdrawAccount")
-    public String showRegisterWithdrawAccount(AccountRegisterForm withDrawAccountRegisterForm) {
+    public String showRegisterWithdrawAccount(AccountRegisterForm accountRegisterForm) {
         return "member/register_withdraw_account";
     }
 
@@ -175,13 +175,13 @@ public class MemberController {
     @PostMapping("/registerWithdrawAccount")
     public String registerWithdrawAccount(
             @AuthenticationPrincipal MemberContext memberContext,
-            @Valid AccountRegisterForm withDrawAccountRegisterForm, BindingResult bindingResult
+            @Valid AccountRegisterForm accountRegisterForm, BindingResult bindingResult
     ) {
         if(bindingResult.hasErrors()) {
             return "member/register_withdraw_account";
         }
-        memberService.createBankInfo(memberContext.getUsername(), withDrawAccountRegisterForm);
-        // 출금 게좌 관리 페이지로 리다이렉트
+        memberService.createBankInfo(memberContext.getUsername(), accountRegisterForm);
+        // 출금 계좌 관리 페이지로 리다이렉트
         return "redirect:/member/manageWithdrawAccount";
     }
 }
